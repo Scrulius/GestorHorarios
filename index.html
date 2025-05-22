@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Horarios Laborales para el hotel roto2r</title>
+    <title>Gestor de Horarios Laborales para Gran Hotel Miramar</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -961,7 +961,7 @@
         </main>
 
         <footer class="mt-16 text-center text-sm text-gray-500">
-            <p id="footer-text">Gestor de Horarios. Creado por <span id="creator-name" class="footer-name">Patatudo</span> con <i id="footer-heart" class="fas fa-heart text-red-500 footer-name"></i>.</p>
+            <p id="footer-text">Gestor de Horarios. Creado por <span id="creator-name" class="footer-name">Nefi Badillo</span> con <i id="footer-heart" class="fas fa-heart text-red-500 footer-name"></i>.</p>
         </footer>
     </div>
 
@@ -1109,8 +1109,8 @@
                 <defs>
                     <path id="star-shape" d="M10 0 L12.3511 6.1803 L19.5106 7.2949 L14.7295 12.3197 L15.2939 19.0211 L10 16 L4.7061 19.0211 L5.2705 12.3197 L0.4894 7.2949 L7.6489 6.1803 Z" />
                 </defs>
-                <text x="110" y="28" class="logo-text-gh">Hotel</text>
-                <text x="110" y="55" class="logo-text-m">Roto2</text>
+                <text x="110" y="28" class="logo-text-gh">GRAN HOTEL</text>
+                <text x="110" y="55" class="logo-text-m">MIRAMAR</text>
                 <g class="stars-group" transform="translate(68.5, 72) scale(0.7)">
                     <use href="#star-shape" x="0" />
                     <use href="#star-shape" x="25" />
@@ -2056,7 +2056,7 @@
                 if (domCache.creatorNameElement) {
                     domCache.creatorNameElement.classList.add('hidden-name');
                     setTimeout(() => {
-                        domCache.creatorNameElement.textContent = 'Melonsio';
+                        domCache.creatorNameElement.textContent = 'Scrulius';
                         domCache.creatorNameElement.classList.remove('hidden-name');
                         domCache.creatorNameElement.classList.add('visible-name');
                         showToast('✨ ¡Easter egg activado! ✨', 'success');
@@ -4047,7 +4047,7 @@
             const firstDayOfMonth = new Date(yearOfSchedule, currentSelectedMonth - 1, 1);
             const lastDayOfMonth = new Date(yearOfSchedule, currentSelectedMonth, 0);
             let icalContent = [
-                'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Scrulius//GestorHorariosLaborales//ES',
+                'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NefiBadillo//GestorHorariosLaborales//ES',
                 `X-WR-CALNAME:Horario ${selectedEmployeeForCalendar} - ${MONTH_NAMES[currentSelectedMonth - 1]} ${yearOfSchedule}`
             ];
             const empName = selectedEmployeeForCalendar;
@@ -4066,7 +4066,7 @@
                         const uid = `${formatDateForICalAllDay(currentDateIter)}-${empName.replace(/\s+/g, '')}-${uidSuffix}@gestorhorarios.com`;
                         icalContent.push('BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${dtStamp}`);
                         let summaryText = shiftType === "" ? `Otro - ${empName}` : (isKnownShift ? `Turno ${SHIFT_TYPE_FULL_NAMES[shiftType]} (${shiftType}) - ${empName}` : `${shiftType} - ${empName}`);
-                        icalContent.push(`SUMMARY:${summaryText}`, `DESCRIPTION:Horario laboral: ${summaryText}.`, `LOCATION:Hotel Roto2`, `STATUS:CONFIRMED`);
+                        icalContent.push(`SUMMARY:${summaryText}`, `DESCRIPTION:Horario laboral: ${summaryText}.`, `LOCATION:Gran Hotel Miramar`, `STATUS:CONFIRMED`);
                         if (!shiftTimeConfig || shiftType === 'L' || shiftType === 'V' || shiftType === "") {
                             const eventDate = new Date(currentIterYear, currentIterMonth - 1, day);
                             const startDateAllDay = formatDateForICalAllDay(eventDate);
