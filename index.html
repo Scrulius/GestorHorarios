@@ -1024,9 +1024,18 @@
             </div>
         </main>
 
-        <footer class="mt-16 text-center text-sm text-gray-500">
-            <p id="footer-text">Gestor de Horarios. Creado por <span id="creator-name" class="footer-name">Nefi Badillo</span> con <i id="footer-heart" class="fas fa-heart text-red-500 footer-name"></i>.</p>
-        </footer>
+		<footer class="mt-16 text-center text-sm text-gray-500 relative pb-4 md:pb-2 px-4 md:px-2">
+			<p id="footer-text" class="mb-2 md:mb-0">Gestor de Horarios. Creado por <span id="creator-name" class="footer-name">Nefi Badillo</span> con <i id="footer-heart" class="fas fa-heart text-red-500 footer-name"></i>.</p>
+
+			<div class="absolute bottom-1 left-1 md:bottom-2 md:left-2">
+				<a id="download-test-csv-link" 
+				href="https://drive.usercontent.google.com/uc?id=19eMkjmOt4HGF8mLSkhbmoKpiclckcI2y&export=download"  download="csv_prueba.csv"
+				title="Descargar CSV de prueba" 
+				class="inline-block px-2 py-1 bg-gray-200 text-gray-600 hover:bg-gray-300 text-xs rounded-md shadow-sm transition-colors no-underline">
+					Prueba CSV
+				</a>
+			</div>
+		</footer>
     </div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
