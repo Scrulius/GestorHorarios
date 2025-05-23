@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor de Horarios Laborales para Gran Hotel Miramar</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📆</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap" rel="stylesheet">
@@ -1276,17 +1276,18 @@
 
         // MODIFICACIÓN: Añadir color por defecto para "B"
         const DEFAULT_SHIFT_COLORS = {
-            M: { bg: 'bg-green-200', text: 'text-green-700', hexBg: '#a7f3d0', hexText: '#047857' },
-            T: { bg: 'bg-orange-200', text: 'text-orange-700', hexBg: '#fed7aa', hexText: '#c2410c' },
-            N: { bg: 'bg-blue-200', text: 'text-blue-700', hexBg: '#bfdbfe', hexText: '#1d4ed8' },
-            M2: { bg: 'bg-green-300', text: 'text-green-800', hexBg: '#86efac', hexText: '#185938' },
-            T2: { bg: 'bg-orange-300', text: 'text-orange-800', hexBg: '#fdba74', hexText: '#9a3412' },
-            N2: { bg: 'bg-blue-300', text: 'text-blue-800', hexBg: '#93c5fd', hexText: '#1e40af' },
+            M: { bg: 'bg-green-300', text: 'text-green-700', hexBg: '#a7f3d0', hexText: '#047857' },
+            T: { bg: 'bg-orange-300', text: 'text-orange-700', hexBg: '#fed7aa', hexText: '#c2410c' },
+            N: { bg: 'bg-blue-300', text: 'text-blue-700', hexBg: '#bfdbfe', hexText: '#1d4ed8' },
+            M2: { bg: 'bg-green-200', text: 'text-green-800', hexBg: '#86efac', hexText: '#185938' },
+            T2: { bg: 'bg-orange-200', text: 'text-orange-800', hexBg: '#fdba74', hexText: '#9a3412' },
+            N2: { bg: 'bg-blue-200', text: 'text-blue-800', hexBg: '#93c5fd', hexText: '#1e40af' },
             L: { bg: 'bg-gray-200', text: 'text-gray-700', hexBg: '#e5e7eb', hexText: '#374151' },
-            V: { bg: 'bg-yellow-200', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
-            B: { bg: 'bg-red-300', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' },
+            V: { bg: 'bg-yellow-300', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
+            B: { bg: 'bg-red-400', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' },
             empty: { bg: 'bg-purple-200', text: 'text-purple-700', hexBg: '#e9d5ff', hexText: '#7e22ce' }
         };
+
 
         // MODIFICACIÓN: Añadir color para "B" a AVAILABLE_COLORS si se desea que sea personalizable y no existe uno similar
         const AVAILABLE_COLORS = [
@@ -1295,9 +1296,9 @@
             { name: 'Naranja Pastel', bg: 'bg-orange-200', text: 'text-orange-700', hexBg: '#fed7aa', hexText: '#c2410c' },
             { name: 'Azul Pastel', bg: 'bg-blue-200', text: 'text-blue-700', hexBg: '#bfdbfe', hexText: '#1d4ed8' },
             { name: 'Gris Pastel', bg: 'bg-gray-200', text: 'text-gray-700', hexBg: '#e5e7eb', hexText: '#374151' },
-            { name: 'Amarillo Pastel', bg: 'bg-yellow-200', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
+            { name: 'Amarillo Pastel', bg: 'bg-yellow-300', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
             { name: 'Rojo Pastel', bg: 'bg-red-200', text: 'text-red-700', hexBg: '#fecaca', hexText: '#b91c1c' },
-            { name: 'Rojo Suave (Baja)', bg: 'bg-red-300', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' }, // Color para Baja
+            { name: 'Rojo Suave ', bg: 'bg-red-400', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' }, // Color para Baja
             { name: 'Morado Pastel (Def. Otro)', bg: 'bg-purple-200', text: 'text-purple-700', hexBg: '#e9d5ff', hexText: '#7e22ce' },
             { name: 'Cian Pastel', bg: 'bg-cyan-200', text: 'text-cyan-700', hexBg: '#a5f3fc', hexText: '#0e7490' },
             { name: 'Rosa Pastel', bg: 'bg-pink-200', text: 'text-pink-700', hexBg: '#fbcfe8', hexText: '#be185d' },
@@ -3280,19 +3281,27 @@
             return SHORT_WEEK_DAY_NAMES[new Date(year, month - 1, day).getDay()];
         }
 
-        function applyShiftCellStyles(cell, shiftValue) {
-            const allColorKeys = [...SHIFT_TYPES, 'empty', ...Object.keys(currentShiftColors)];
-            allColorKeys.forEach(stKey => {
-                if (DEFAULT_SHIFT_COLORS[stKey]?.bg) cell.classList.remove(DEFAULT_SHIFT_COLORS[stKey].bg);
-                if (DEFAULT_SHIFT_COLORS[stKey]?.text) cell.classList.remove(DEFAULT_SHIFT_COLORS[stKey].text);
-                if (currentShiftColors[stKey]?.bg) cell.classList.remove(currentShiftColors[stKey].bg);
-                if (currentShiftColors[stKey]?.text) cell.classList.remove(currentShiftColors[stKey].text);
-            });
+		function applyShiftCellStyles(cell, shiftValue) {
+		const allColorKeys = [...SHIFT_TYPES, 'empty', ...Object.keys(currentShiftColors)];
+			allColorKeys.forEach(stKey => {
+				if (DEFAULT_SHIFT_COLORS[stKey]?.bg) cell.classList.remove(DEFAULT_SHIFT_COLORS[stKey].bg);
+				if (DEFAULT_SHIFT_COLORS[stKey]?.text) cell.classList.remove(DEFAULT_SHIFT_COLORS[stKey].text);
+				if (currentShiftColors[stKey]?.bg) cell.classList.remove(currentShiftColors[stKey].bg);
+				if (currentShiftColors[stKey]?.text) cell.classList.remove(currentShiftColors[stKey].text);
+				cell.classList.remove('font-bold');
+			});
 
-            const colorConfToApply = SHIFT_TYPES.includes(shiftValue) ? currentShiftColors[shiftValue] : currentShiftColors.empty;
-            if (colorConfToApply?.bg) cell.classList.add(colorConfToApply.bg);
-            if (colorConfToApply?.text) cell.classList.add(colorConfToApply.text);
-        }
+			const colorConfToApply = SHIFT_TYPES.includes(shiftValue) ? currentShiftColors[shiftValue] : currentShiftColors.empty;
+			if (colorConfToApply?.bg) cell.classList.add(colorConfToApply.bg);
+			if (colorConfToApply?.text) cell.classList.add(colorConfToApply.text);
+
+			if (shiftValue && shiftValue.trim() !== "") {
+				cell.classList.add('font-bold');
+			} else {
+				cell.classList.remove('font-bold');
+			}
+		}
+
 
         function handleTableDblClick(event) {
             const target = event.target;
@@ -4071,238 +4080,246 @@
             calculateAndRenderComparativeStats();
         }
 
-        // --- GENERACIÓN DE SVG Y PDF ---
 		function getSvgString(type) {
-		    const yearToRender = yearOfSchedule;
-		    let svgElements = [];
-		    let svgWidth = 0, svgHeight = 0;
+				const yearToRender = yearOfSchedule;
+				let svgElements = [];
+				let svgWidth = 0, svgHeight = 0;
 
-		    const padding = 20, logoRenderWidth = 200, logoRenderHeight = 75, logoBottomMargin = 20;
-		    const employeeColWidth = 120, cellHeight = 30, headerHeight = 45;
-		    const cellFontSize = 10, headerFontSize = 9, weekdayFontSize = 8, titleFontSize = 16;
-		    const monthTitleSpacing = 30, tableSpacing = 25, textYAdjust = cellFontSize * 0.35;
+				const padding = 20, logoRenderWidth = 200, logoRenderHeight = 75, logoBottomMargin = 20;
+				const employeeColWidth = 120, cellHeight = 30, headerHeight = 45;
+				const cellFontSize = 10, headerFontSize = 9, weekdayFontSize = 8, titleFontSize = 16;
+				const monthTitleSpacing = 30, tableSpacing = 25, textYAdjust = cellFontSize * 0.35;
 
-		    let currentY = padding;
-		    currentY += logoRenderHeight + logoBottomMargin;
+				let currentY = padding;
+				currentY += logoRenderHeight + logoBottomMargin;
 
-		    if (type === 'monthlyAnnual') {
-		        if (currentViewMode === 'monthly') {
-		            const monthToRender = currentSelectedMonth;
-		            const titleText = `Horario para ${MONTH_NAMES[monthToRender - 1]} ${yearToRender}`;
-		            const svgCellWidthMonthly = 45;
-		            const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender);
+				if (type === 'monthlyAnnual') {
+						if (currentViewMode === 'monthly') {
+								const monthToRender = currentSelectedMonth;
+								const titleText = `Horario para ${MONTH_NAMES[monthToRender - 1]} ${yearToRender}`;
+								const svgCellWidthMonthly = 45;
+								const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender);
 
-		            svgWidth = padding * 2 + employeeColWidth + (daysInSelectedMonth * svgCellWidthMonthly);
-		            const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
-		            svgElements.push(`<g transform="translate(${logoGroupX}, ${padding})">${SVG_FINAL_LOGO_MARKUP}</g>`);
+								svgWidth = padding * 2 + employeeColWidth + (daysInSelectedMonth * svgCellWidthMonthly);
+								const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
+								svgElements.push(`<g transform="translate(${logoGroupX}, ${padding})">${SVG_FINAL_LOGO_MARKUP}</g>`);
 
-		            const titleY = currentY + titleFontSize / 2 + 5;
-		            svgElements.push(`<text x="${svgWidth / 2}" y="${titleY}" font-family="Inter, sans-serif" font-size="${titleFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${titleText}</text>`);
-		            currentY = titleY + titleFontSize / 2 + monthTitleSpacing - titleFontSize / 2 ;
+								const titleY = currentY + titleFontSize / 2 + 5;
+								svgElements.push(`<text x="${svgWidth / 2}" y="${titleY}" font-family="Inter, sans-serif" font-size="${titleFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${titleText}</text>`);
+								currentY = titleY + titleFontSize / 2 + monthTitleSpacing - titleFontSize / 2 ;
 
-		            let tableHeaderX = padding;
-		            svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
-		            svgElements.push(`<text x="${tableHeaderX + employeeColWidth / 2}" y="${currentY + headerHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">Empleado</text>`);
-		            tableHeaderX += employeeColWidth;
+								let tableHeaderX = padding;
+								svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
+								svgElements.push(`<text x="${tableHeaderX + employeeColWidth / 2}" y="${currentY + headerHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">Empleado</text>`);
+								tableHeaderX += employeeColWidth;
 
-		            for (let day = 1; day <= daysInSelectedMonth; day++) {
-		                svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthMonthly}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
-		                const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
-		                const dayNumberY = currentY + headerHeight * 0.38 + textYAdjust * 0.5;
-		                const weekDayY = currentY + headerHeight * 0.72 + textYAdjust * 0.5;
-		                svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly / 2}" y="${dayNumberY}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">${day}</text>`);
-		                svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly / 2}" y="${weekDayY}" font-family="Inter, sans-serif" font-size="${weekdayFontSize}px" font-weight="bold" text-anchor="middle" fill="#6b7280" dominant-baseline="middle">${weekDayInitial}</text>`);
-		                tableHeaderX += svgCellWidthMonthly;
-		            }
-		            currentY += headerHeight;
+								for (let day = 1; day <= daysInSelectedMonth; day++) {
+										svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthMonthly}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
+										const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
+										const dayNumberY = currentY + headerHeight * 0.38 + textYAdjust * 0.5;
+										const weekDayY = currentY + headerHeight * 0.72 + textYAdjust * 0.5;
+										svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly / 2}" y="${dayNumberY}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">${day}</text>`);
+										svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly / 2}" y="${weekDayY}" font-family="Inter, sans-serif" font-size="${weekdayFontSize}px" font-weight="bold" text-anchor="middle" fill="#6b7280" dominant-baseline="middle">${weekDayInitial}</text>`);
+										tableHeaderX += svgCellWidthMonthly;
+								}
+								currentY += headerHeight;
 
-		            employeeNamesOrdered.forEach((empName, rowIndex) => {
-		                const rowY = currentY + rowIndex * cellHeight;
-		                let currentCellX = padding;
-		                svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#e0e0e0" />`);
-		                svgElements.push(`<text x="${currentCellX + employeeColWidth / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
-		                currentCellX += employeeColWidth;
+								employeeNamesOrdered.forEach((empName, rowIndex) => {
+										const rowY = currentY + rowIndex * cellHeight;
+										let currentCellX = padding;
+										svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#e0e0e0" />`);
+										svgElements.push(`<text x="${currentCellX + employeeColWidth / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
+										currentCellX += employeeColWidth;
 
-		                const employeeMonthData = scheduleData[empName]?.[monthToRender] || {};
-		                for (let day = 1; day <= daysInSelectedMonth; day++) {
-		                    const shift = employeeMonthData[day] || ""; // Turno real (e.g., "M2")
-		                    let displayShiftInPdfCell = shift; // Texto a mostrar en la celda del PDF
+										const employeeMonthData = scheduleData[empName]?.[monthToRender] || {};
+										for (let day = 1; day <= daysInSelectedMonth; day++) {
+												const shift = employeeMonthData[day] || "";
+												let displayShiftInPdfCell = shift;
 
-		                    // INICIO DE MODIFICACIÓN para PDF Mensual (Paso 4.1.1)
-		                    if (type === 'monthlyAnnual') { // Esta condición ya existe y es correcta para PDF mensual
-		                        if (shift === 'M2') displayShiftInPdfCell = 'M';
-		                        else if (shift === 'T2') displayShiftInPdfCell = 'T';
-		                        else if (shift === 'N2') displayShiftInPdfCell = 'N';
-		                    }
-		                    // FIN DE MODIFICACIÓN para PDF Mensual (Paso 4.1.1)
+												if (type === 'monthlyAnnual') {
+														if (shift === 'M2') displayShiftInPdfCell = 'M';
+														else if (shift === 'T2') displayShiftInPdfCell = 'T';
+														else if (shift === 'N2') displayShiftInPdfCell = 'N';
+												}
 
-		                    const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-		                    svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthMonthly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#e0e0e0" />`);
-		                    if (displayShiftInPdfCell) { // Usar el texto modificado para el PDF
-		                        svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShiftInPdfCell}</text>`);
-		                    }
-		                    currentCellX += svgCellWidthMonthly;
-		                }
-		            });
-		            svgHeight = currentY + (employeeNamesOrdered.length * cellHeight) + padding;
-		            svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
+												const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+												svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthMonthly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#e0e0e0" />`);
 
-		        } else { // Annual view (dentro de type === 'monthlyAnnual')
-		            const svgCellWidthAnnual = 35; // Ancho de celda para vista anual
-		            let maxDaysInMonth = 0;
-		            for (let m = 1; m <= 12; m++) maxDaysInMonth = Math.max(maxDaysInMonth, getDaysInMonth(m, yearToRender));
+												let fontWeightForSvgMonthly = "normal";
+												if (shift && shift.trim() !== "") {
+														fontWeightForSvgMonthly = "bold";
+												}
 
-		            svgWidth = padding * 2 + employeeColWidth + (maxDaysInMonth * svgCellWidthAnnual); // Usa maxDaysInMonth para el ancho total
-		            const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
-		            svgElements.push(`<g transform="translate(${logoGroupX}, ${padding})">${SVG_FINAL_LOGO_MARKUP}</g>`);
+												if (displayShiftInPdfCell) {
+														svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="${fontWeightForSvgMonthly}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShiftInPdfCell}</text>`);
+												}
+												currentCellX += svgCellWidthMonthly;
+										}
+								});
+								svgHeight = currentY + (employeeNamesOrdered.length * cellHeight) + padding;
+								svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
 
-		            let currentGlobalY = currentY; // Usa currentY que ya tiene el espacio del logo
-		            for (let monthToRender = 1; monthToRender <= 12; monthToRender++) {
-		                const monthTitleText = `${MONTH_NAMES[monthToRender - 1]} ${yearToRender}`;
-		                const titleY = currentGlobalY + titleFontSize / 2 + 5; // Ajuste para centrar título del mes
-		                svgElements.push(`<text x="${padding + employeeColWidth + (maxDaysInMonth * svgCellWidthAnnual) / 2}" y="${titleY}" font-family="Inter, sans-serif" font-size="${titleFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${monthTitleText}</text>`);
-		                currentGlobalY = titleY + titleFontSize / 2 + (monthTitleSpacing - titleFontSize / 2); // Espacio después del título del mes
+						} else { // Annual view
+								const svgCellWidthAnnual = 35;
+								let maxDaysInMonth = 0;
+								for (let m = 1; m <= 12; m++) maxDaysInMonth = Math.max(maxDaysInMonth, getDaysInMonth(m, yearToRender));
 
-		                let tableHeaderX = padding;
-		                svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
-		                svgElements.push(`<text x="${tableHeaderX + employeeColWidth / 2}" y="${currentGlobalY + headerHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">Empleado</text>`);
-		                tableHeaderX += employeeColWidth;
+								svgWidth = padding * 2 + employeeColWidth + (maxDaysInMonth * svgCellWidthAnnual);
+								const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
+								svgElements.push(`<g transform="translate(${logoGroupX}, ${padding})">${SVG_FINAL_LOGO_MARKUP}</g>`);
 
-		                const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender);
-		                for (let day = 1; day <= daysInCurrentMonth; day++) {
-		                    svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
-		                    const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
-		                    const dayNumberY = currentGlobalY + headerHeight * 0.38 + textYAdjust * 0.7; // Ajustado para mejor alineación vertical
-		                    const weekDayY = currentGlobalY + headerHeight * 0.72 + textYAdjust * 0.7;   // Ajustado para mejor alineación vertical
-		                    svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual / 2}" y="${dayNumberY}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">${day}</text>`);
-		                    svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual / 2}" y="${weekDayY}" font-family="Inter, sans-serif" font-size="${weekdayFontSize}px" font-weight="bold" text-anchor="middle" fill="#6b7280" dominant-baseline="middle">${weekDayInitial}</text>`);
-		                    tableHeaderX += svgCellWidthAnnual;
-		                }
-		                 // Rellenar celdas vacías en la cabecera si el mes tiene menos de maxDaysInMonth
-		                for (let day = daysInCurrentMonth + 1; day <= maxDaysInMonth; day++) {
-		                    svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#fdfdff" stroke="#e0e0e0" />`); // Un color ligeramente diferente para celdas de relleno
-		                    tableHeaderX += svgCellWidthAnnual;
-		                }
-		                currentGlobalY += headerHeight;
+								let currentGlobalY = currentY;
+								for (let monthToRender = 1; monthToRender <= 12; monthToRender++) {
+										const monthTitleText = `${MONTH_NAMES[monthToRender - 1]} ${yearToRender}`;
+										const titleY = currentGlobalY + titleFontSize / 2 + 5;
+										svgElements.push(`<text x="${padding + employeeColWidth + (maxDaysInMonth * svgCellWidthAnnual) / 2}" y="${titleY}" font-family="Inter, sans-serif" font-size="${titleFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${monthTitleText}</text>`);
+										currentGlobalY = titleY + titleFontSize / 2 + (monthTitleSpacing - titleFontSize / 2);
 
-		                employeeNamesOrdered.forEach((empName, rowIndex) => {
-		                    const rowY = currentGlobalY + rowIndex * cellHeight;
-		                    let currentCellX = padding;
-		                    svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#e0e0e0" />`);
-		                    svgElements.push(`<text x="${currentCellX + employeeColWidth / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
-		                    currentCellX += employeeColWidth;
+										let tableHeaderX = padding;
+										svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
+										svgElements.push(`<text x="${tableHeaderX + employeeColWidth / 2}" y="${currentGlobalY + headerHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">Empleado</text>`);
+										tableHeaderX += employeeColWidth;
 
-		                    const employeeMonthData = scheduleData[empName]?.[monthToRender] || {};
-		                    for (let day = 1; day <= daysInCurrentMonth; day++) {
-		                        const shift = employeeMonthData[day] || ""; // Turno real (e.g., "M2")
-		                        let displayShiftInPdfCell = shift; // Texto a mostrar en la celda del PDF
+										const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender);
+										for (let day = 1; day <= daysInCurrentMonth; day++) {
+												svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0" />`);
+												const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
+												const dayNumberY = currentGlobalY + headerHeight * 0.38 + textYAdjust * 0.7;
+												const weekDayY = currentGlobalY + headerHeight * 0.72 + textYAdjust * 0.7;
+												svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual / 2}" y="${dayNumberY}" font-family="Inter, sans-serif" font-size="${headerFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">${day}</text>`);
+												svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual / 2}" y="${weekDayY}" font-family="Inter, sans-serif" font-size="${weekdayFontSize}px" font-weight="bold" text-anchor="middle" fill="#6b7280" dominant-baseline="middle">${weekDayInitial}</text>`);
+												tableHeaderX += svgCellWidthAnnual;
+										}
+										for (let day = daysInCurrentMonth + 1; day <= maxDaysInMonth; day++) {
+												svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#fdfdff" stroke="#e0e0e0" />`);
+												tableHeaderX += svgCellWidthAnnual;
+										}
+										currentGlobalY += headerHeight;
 
-		                        // INICIO DE MODIFICACIÓN para PDF Anual (Paso 4.1.1)
-		                        if (type === 'monthlyAnnual') { // Esta condición ya existe y es correcta para PDF anual
-		                           if (shift === 'M2') displayShiftInPdfCell = 'M';
-		                           else if (shift === 'T2') displayShiftInPdfCell = 'T';
-		                           else if (shift === 'N2') displayShiftInPdfCell = 'N';
-		                        }
-		                        // FIN DE MODIFICACIÓN para PDF Anual (Paso 4.1.1)
+										employeeNamesOrdered.forEach((empName, rowIndex) => {
+												const rowY = currentGlobalY + rowIndex * cellHeight;
+												let currentCellX = padding;
+												svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#e0e0e0" />`);
+												svgElements.push(`<text x="${currentCellX + employeeColWidth / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
+												currentCellX += employeeColWidth;
 
-		                        const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-		                        svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#e0e0e0" />`);
-		                        if (displayShiftInPdfCell) { // Usar el texto modificado para el PDF
-		                            svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShiftInPdfCell}</text>`);
-		                        }
-		                        currentCellX += svgCellWidthAnnual;
-		                    }
-		                    // Rellenar celdas de datos vacías si el mes tiene menos de maxDaysInMonth
-		                    for (let day = daysInCurrentMonth + 1; day <= maxDaysInMonth; day++) {
-		                        svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#e0e0e0" />`);
-		                        currentCellX += svgCellWidthAnnual;
-		                    }
-		                });
-		                currentGlobalY += (employeeNamesOrdered.length * cellHeight) + tableSpacing;
-		            }
-		            svgHeight = currentGlobalY - tableSpacing + padding / 2; // Ajuste final de altura
-		            svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
-		        }
-		    } else if (type === 'weekly') {
-		        const monthToRender = currentSelectedMonth;
-		        const weeks = getWeeksForMonth(yearToRender, monthToRender);
-		        if (weeks.length === 0) return '';
+												const employeeMonthData = scheduleData[empName]?.[monthToRender] || {};
+												for (let day = 1; day <= daysInCurrentMonth; day++) {
+														const shift = employeeMonthData[day] || "";
+														let displayShiftInPdfCell = shift;
 
-		        const dayHeaderHeightWeekly = 40, cellWidthWeekly = 90; // Ajusta cellWidthWeekly si es necesario
-		        const titleHeightWeekly = 30, weekTitleHeight = 25;
-		        const dateFontSizeWeekly = 10, dayNameFontSizeWeekly = 8; // Nombres de día un poco más pequeños
-		        const titleFontSizeWeekly = 16, weekTitleFontSizeWeekly = 12;
+														if (type === 'monthlyAnnual') {
+															 if (shift === 'M2') displayShiftInPdfCell = 'M';
+															 else if (shift === 'T2') displayShiftInPdfCell = 'T';
+															 else if (shift === 'N2') displayShiftInPdfCell = 'N';
+														}
 
-		        svgWidth = padding * 2 + employeeColWidth + (7 * cellWidthWeekly);
-		        const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
-		        svgElements.push(`<g transform="translate(${logoGroupX}, ${padding})">${SVG_FINAL_LOGO_MARKUP}</g>`);
+														const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+														svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#e0e0e0" />`);
+														
+														let fontWeightForSvgAnnual = "normal";
+														if (shift && shift.trim() !== "") {
+																fontWeightForSvgAnnual = "bold";
+														}
 
-		        let currentGlobalY = currentY; // Usa currentY que ya tiene el espacio del logo
-		        const mainTitleY = currentGlobalY + titleFontSizeWeekly / 2 + 5;
-		        svgElements.push(`<text x="${svgWidth / 2}" y="${mainTitleY}" font-family="Inter, sans-serif" font-size="${titleFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Horario Semanal - ${MONTH_NAMES[monthToRender - 1]} ${yearToRender}</text>`);
-		        currentGlobalY = mainTitleY + titleFontSizeWeekly / 2 + tableSpacing / 2; // Menos espacio después del título principal
+														if (displayShiftInPdfCell) {
+																svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual / 2}" y="${rowY + cellHeight / 2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="${fontWeightForSvgAnnual}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShiftInPdfCell}</text>`);
+														}
+														currentCellX += svgCellWidthAnnual;
+												}
+												for (let day = daysInCurrentMonth + 1; day <= maxDaysInMonth; day++) {
+														svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#e0e0e0" />`);
+														currentCellX += svgCellWidthAnnual;
+												}
+										});
+										currentGlobalY += (employeeNamesOrdered.length * cellHeight) + tableSpacing;
+								}
+								svgHeight = currentGlobalY - tableSpacing + padding / 2;
+								svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
+						}
+				} else if (type === 'weekly') {
+						const monthToRender = currentSelectedMonth;
+						const weeks = getWeeksForMonth(yearToRender, monthToRender);
+						if (weeks.length === 0) return '';
 
-		        weeks.forEach((week, weekIndex) => {
-		            const firstDayOfWeek = week[0], lastDayOfWeek = week[week.length-1];
-		            const weekTitle = `Semana ${weekIndex + 1}: ${firstDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short'})} - ${lastDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}`;
-		            const weekTitleYPos = currentGlobalY + weekTitleHeight / 2;
-		            svgElements.push(`<text x="${svgWidth / 2}" y="${weekTitleYPos}" font-family="Inter, sans-serif" font-size="${weekTitleFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#374151" dominant-baseline="middle">${weekTitle}</text>`);
-		            currentGlobalY = weekTitleYPos + weekTitleHeight / 2; // Espacio después del título de la semana
+						const dayHeaderHeightWeekly = 40, cellWidthWeekly = 90;
+						const titleHeightWeekly = 30, weekTitleHeight = 25;
+						const dateFontSizeWeekly = 10, dayNameFontSizeWeekly = 8;
+						const titleFontSizeWeekly = 16, weekTitleFontSizeWeekly = 12;
 
-		            let tableHeaderX = padding;
-		            svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${employeeColWidth}" height="${dayHeaderHeightWeekly}" fill="#f3f4f6" stroke="#d1d5db"/>`);
-		            svgElements.push(`<text x="${tableHeaderX + employeeColWidth/2}" y="${currentGlobalY + dayHeaderHeightWeekly/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${dateFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Empleado</text>`);
-		            tableHeaderX += employeeColWidth;
+						svgWidth = padding * 2 + employeeColWidth + (7 * cellWidthWeekly);
+						const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
+						svgElements.push(`<g transform="translate(${logoGroupX}, ${padding})">${SVG_FINAL_LOGO_MARKUP}</g>`);
 
-		            week.forEach(dateObj => {
-		                svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${cellWidthWeekly}" height="${dayHeaderHeightWeekly}" fill="#f3f4f6" stroke="#d1d5db"/>`);
-		                const dayStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit' });
-		                const monthStr = SHORT_MONTH_NAMES[dateObj.getMonth()]; // Usar SHORT_MONTH_NAMES para consistencia
-		                const dayNameStr = WEEK_DAY_NAMES[dateObj.getDay()].substring(0,3); // Primeras 3 letras
-		                const dayNumberY = currentGlobalY + dayHeaderHeightWeekly * 0.38 + textYAdjust * 0.7; // Ajustado
-		                const weekDayY = currentGlobalY + dayHeaderHeightWeekly * 0.72 + textYAdjust * 0.7;   // Ajustado
-		                svgElements.push(`<text x="${tableHeaderX + cellWidthWeekly/2}" y="${dayNumberY}" font-family="Inter, sans-serif" font-size="${dateFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${dayStr} ${monthStr}</text>`);
-		                svgElements.push(`<text x="${tableHeaderX + cellWidthWeekly/2}" y="${weekDayY}" font-family="Inter, sans-serif" font-size="${dayNameFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">${dayNameStr}</text>`);
-		                tableHeaderX += cellWidthWeekly;
-		            });
-		            currentGlobalY += dayHeaderHeightWeekly;
+						let currentGlobalY = currentY;
+						const mainTitleY = currentGlobalY + titleFontSizeWeekly / 2 + 5;
+						svgElements.push(`<text x="${svgWidth / 2}" y="${mainTitleY}" font-family="Inter, sans-serif" font-size="${titleFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Horario Semanal - ${MONTH_NAMES[monthToRender - 1]} ${yearToRender}</text>`);
+						currentGlobalY = mainTitleY + titleFontSizeWeekly / 2 + tableSpacing / 2;
 
-		            employeeNamesOrdered.forEach((empName, rowIndex) => {
-		                const rowY = currentGlobalY + rowIndex * cellHeight;
-		                let currentCellX = padding;
-		                svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#d1d5db"/>`);
-		                svgElements.push(`<text x="${currentCellX + employeeColWidth/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
-		                currentCellX += employeeColWidth;
+						weeks.forEach((week, weekIndex) => {
+								const firstDayOfWeek = week[0], lastDayOfWeek = week[week.length-1];
+								const weekTitle = `Semana ${weekIndex + 1}: ${firstDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short'})} - ${lastDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}`;
+								const weekTitleYPos = currentGlobalY + weekTitleHeight / 2;
+								svgElements.push(`<text x="${svgWidth / 2}" y="${weekTitleYPos}" font-family="Inter, sans-serif" font-size="${weekTitleFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#374151" dominant-baseline="middle">${weekTitle}</text>`);
+								currentGlobalY = weekTitleYPos + weekTitleHeight / 2;
 
-		                week.forEach(dateObj => {
-		                    const day = dateObj.getDate(); const month = dateObj.getMonth() + 1;
-		                    let shift = scheduleData[empName]?.[month]?.[day] || "";
-		                    const shiftTimeConfig = currentUserShiftTimes[shift];
-		                    let displayShift = shift;
+								let tableHeaderX = padding;
+								svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${employeeColWidth}" height="${dayHeaderHeightWeekly}" fill="#f3f4f6" stroke="#d1d5db"/>`);
+								svgElements.push(`<text x="${tableHeaderX + employeeColWidth/2}" y="${currentGlobalY + dayHeaderHeightWeekly/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${dateFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Empleado</text>`);
+								tableHeaderX += employeeColWidth;
 
-		                    // INICIO DE MODIFICACIÓN para PDF Semanal (Paso 4.1.2)
-		                    if (shiftTimeConfig && (shift === 'M' || shift === 'T' || shift === 'N' || shift === 'M2' || shift === 'T2' || shift === 'N2')) {
-		                        displayShift = `${formatTimeForInput(shiftTimeConfig.start[0], shiftTimeConfig.start[1])}-${formatTimeForInput(shiftTimeConfig.end[0], shiftTimeConfig.end[1])}`;
-		                    } // FIN DE MODIFICACIÓN para PDF Semanal (Paso 4.1.2)
-		                    else if (shift === 'B') { // Lógica existente para 'B', mantener
-		                        displayShift = SHIFT_TYPE_FULL_NAMES['B'];
-		                    }
-		                    // Para otros turnos (L, V, texto personalizado), displayShift ya tiene el valor correcto (shift).
+								week.forEach(dateObj => {
+										svgElements.push(`<rect x="${tableHeaderX}" y="${currentGlobalY}" width="${cellWidthWeekly}" height="${dayHeaderHeightWeekly}" fill="#f3f4f6" stroke="#d1d5db"/>`);
+										const dayStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit' });
+										const monthStr = SHORT_MONTH_NAMES[dateObj.getMonth()];
+										const dayNameStr = WEEK_DAY_NAMES[dateObj.getDay()].substring(0,3);
+										const dayNumberY = currentGlobalY + dayHeaderHeightWeekly * 0.38 + textYAdjust * 0.7;
+										const weekDayY = currentGlobalY + dayHeaderHeightWeekly * 0.72 + textYAdjust * 0.7;
+										svgElements.push(`<text x="${tableHeaderX + cellWidthWeekly/2}" y="${dayNumberY}" font-family="Inter, sans-serif" font-size="${dateFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${dayStr} ${monthStr}</text>`);
+										svgElements.push(`<text x="${tableHeaderX + cellWidthWeekly/2}" y="${weekDayY}" font-family="Inter, sans-serif" font-size="${dayNameFontSizeWeekly}px" font-weight="bold" text-anchor="middle" fill="#4b5563" dominant-baseline="middle">${dayNameStr}</text>`);
+										tableHeaderX += cellWidthWeekly;
+								});
+								currentGlobalY += dayHeaderHeightWeekly;
 
-		                    const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-		                    svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${cellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
-		                    if (displayShift) {
-		                        svgElements.push(`<text x="${currentCellX + cellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShift}</text>`);
-		                    }
-		                    currentCellX += cellWidthWeekly;
-		                });
-		            });
-		            currentGlobalY += (employeeNamesOrdered.length * cellHeight) + tableSpacing;
-		        });
-		         svgHeight = currentGlobalY - tableSpacing + padding / 2; // Ajuste final
-		         svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
-		    }
-		    return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="font-family: 'Inter', sans-serif;">${svgElements.join('')}</svg>`;
+								employeeNamesOrdered.forEach((empName, rowIndex) => {
+										const rowY = currentGlobalY + rowIndex * cellHeight;
+										let currentCellX = padding;
+										svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#d1d5db"/>`);
+										svgElements.push(`<text x="${currentCellX + employeeColWidth/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
+										currentCellX += employeeColWidth;
+
+										week.forEach(dateObj => {
+												const day = dateObj.getDate(); const month = dateObj.getMonth() + 1;
+												let shift = scheduleData[empName]?.[month]?.[day] || "";
+												const shiftTimeConfig = currentUserShiftTimes[shift];
+												let displayShift = shift;
+
+												if (shiftTimeConfig && (shift === 'M' || shift === 'T' || shift === 'N' || shift === 'M2' || shift === 'T2' || shift === 'N2')) {
+														displayShift = `${formatTimeForInput(shiftTimeConfig.start[0], shiftTimeConfig.start[1])}-${formatTimeForInput(shiftTimeConfig.end[0], shiftTimeConfig.end[1])}`;
+												} else if (shift === 'B') {
+														displayShift = SHIFT_TYPE_FULL_NAMES['B'];
+												}
+
+												const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+												svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${cellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
+												
+												let fontWeightForSvgWeekly = "normal";
+												if (shift && shift.trim() !== "") {
+														fontWeightForSvgWeekly = "bold";
+												}
+
+												if (displayShift) {
+														svgElements.push(`<text x="${currentCellX + cellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="${fontWeightForSvgWeekly}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShift}</text>`);
+												}
+												currentCellX += cellWidthWeekly;
+										});
+								});
+								currentGlobalY += (employeeNamesOrdered.length * cellHeight) + tableSpacing;
+						});
+						 svgHeight = currentGlobalY - tableSpacing + padding / 2;
+						 svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
+				}
+				return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="font-family: 'Inter', sans-serif;">${svgElements.join('')}</svg>`;
 		}
 
         function getWeeksForMonth(year, month) {
