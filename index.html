@@ -792,6 +792,48 @@
         }
         /* === FIN: ANIMACIONES PARA BOTONES === */
 
+        @media (max-width: 767px) { /* Breakpoint para móviles */
+
+            /* 1. Reducción del Tamaño de Fuentes */
+            .shift-chart-bar .bar-value {
+                font-size: 0.6rem; /* Reducir tamaño de fuente del número sobre la barra */
+                top: -16px;        /* Ajustar posición vertical si es necesario */
+                padding: 1px 2px;  /* Ajustar padding si es necesario */
+            }
+
+            .shift-chart-bar-label {
+                font-size: 0.55rem; /* Reducir tamaño de fuente de la etiqueta bajo la barra */
+                line-height: 1.1;   /* Ajustar interlineado para texto en múltiples líneas */
+                margin-top: 0.2rem; /* Reducir margen superior */
+            }
+
+            /* 2. Manejo del Texto de las Etiquetas (.shift-chart-bar-label) */
+            .shift-chart-bar-label {
+                white-space: normal;     /* Permitir que el texto de la etiqueta salte de línea */
+                word-break: break-word;  /* Romper palabras largas para evitar desbordamiento */
+                max-width: 100%;         /* La etiqueta no debe ser más ancha que su contenedor (.shift-chart-bar-wrapper) */
+                text-align: center;      /* Centrar texto si va a múltiples líneas */
+            }
+
+            /* 3. Ajuste del Ancho de las Barras y Espaciado */
+            #employee-shift-chart {
+                gap: 0.3rem;         /* Reducir el espacio horizontal entre cada conjunto de barra+etiqueta */
+                /* Opcional: Añadir un poco de padding si las barras se pegan a los bordes del contenedor del gráfico */
+                /* padding-left: 0.25rem; */
+                /* padding-right: 0.25rem; */
+            }
+
+            .shift-chart-bar-wrapper {
+                max-width: 40px;     /* Reducir el ancho máximo para cada conjunto de barra+etiqueta */
+                /* flex-grow: 0; */ /* Descomentar si prefieres que las barras no intenten crecer para llenar espacio */
+            }
+
+            .shift-chart-bar {
+                min-width: 15px;     /* Ancho mínimo más pequeño para cada barra */
+                max-width: 35px;     /* Ancho máximo más pequeño para cada barra */
+                /* width: 100%; */  /* Descomentar si quieres que la barra ocupe todo el .shift-chart-bar-wrapper (si este tiene ancho fijo) */
+            }
+        }
         .sr-only {
             position: absolute;
             width: 1px;
@@ -1176,28 +1218,31 @@
         const SHORT_MONTH_NAMES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         const WEEK_DAY_NAMES = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
         const SHORT_WEEK_DAY_NAMES = ["D", "L", "M", "X", "J", "V", "S"];
-        const SHIFT_TYPES = ["M", "T", "N", "L", "V"];
+        // MODIFICACIÓN: Añadir "B" a SHIFT_TYPES
+        const SHIFT_TYPES = ["M", "T", "N", "L", "V", "B"];
+        // MODIFICACIÓN: Añadir entrada para "B" en SHIFT_TYPE_FULL_NAMES
         const SHIFT_TYPE_FULL_NAMES = {
-            M: "Mañana", T: "Tarde", N: "Noche", L: "Libre", V: "Vacaciones"
+            M: "Mañana", T: "Tarde", N: "Noche", L: "Libre", V: "Vacaciones", B: "Baja"
         };
         const DEFAULT_SHIFT_TIMES = {
             M: { start: [7,0], end: [15,0], nextDayEnd: false },
             T: { start: [15,0], end: [23,0], nextDayEnd: false },
             N: { start: [23,0], end: [7,0], nextDayEnd: true }
+            // "B" (Baja) no necesita entrada aquí si es un evento de día completo sin horario específico.
         };
         let currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
 
         // Actualización de claves de localStorage para la nueva versión
-        const LOCAL_STORAGE_KEY_SCHEDULE = 'scheduleAppData_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_NOTES = 'scheduleAppNotes_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_VIEW = 'scheduleAppView_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_COLORS = 'scheduleAppColors_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_HISTORY = 'scheduleAppHistory_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_YEAR = 'scheduleAppYear_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_SHIFT_TIMES = 'scheduleAppShiftTimes_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_AUTOSAVE = 'scheduleAppAutosaveEnabled_v2.7_features_helpmodal'; 
-        const LOCAL_STORAGE_KEY_UNDO_STACK = 'scheduleAppUndoStack_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
-        const LOCAL_STORAGE_KEY_REDO_STACK = 'scheduleAppRedoStack_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal';
+        const LOCAL_STORAGE_KEY_SCHEDULE = 'scheduleAppData_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja'; // Actualizar versión si la estructura de datos cambia significativamente
+        const LOCAL_STORAGE_KEY_NOTES = 'scheduleAppNotes_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_VIEW = 'scheduleAppView_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_COLORS = 'scheduleAppColors_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_HISTORY = 'scheduleAppHistory_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_YEAR = 'scheduleAppYear_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_SHIFT_TIMES = 'scheduleAppShiftTimes_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_AUTOSAVE = 'scheduleAppAutosaveEnabled_v2.7_features_helpmodal_baja'; 
+        const LOCAL_STORAGE_KEY_UNDO_STACK = 'scheduleAppUndoStack_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
+        const LOCAL_STORAGE_KEY_REDO_STACK = 'scheduleAppRedoStack_v3_26_svglogo_final_stats_reforma_v2.7_features_helpmodal_baja';
 
 
         const TEMPLATE_FLAG_FILENAME = "TEMPLATE_SCHEDULE"; 
@@ -1217,15 +1262,18 @@
         let deleteCountdownInterval = null;
         let employeeToDeleteName = null;
 
+        // MODIFICACIÓN: Añadir color por defecto para "B"
         const DEFAULT_SHIFT_COLORS = {
             M: { bg: 'bg-green-200', text: 'text-green-700', hexBg: '#a7f3d0', hexText: '#047857' },
             T: { bg: 'bg-orange-200', text: 'text-orange-700', hexBg: '#fed7aa', hexText: '#c2410c' },
             N: { bg: 'bg-blue-200', text: 'text-blue-700', hexBg: '#bfdbfe', hexText: '#1d4ed8' },
             L: { bg: 'bg-gray-200', text: 'text-gray-700', hexBg: '#e5e7eb', hexText: '#374151' },
             V: { bg: 'bg-yellow-200', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
+            B: { bg: 'bg-red-300', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' }, // Nuevo turno Baja
             empty: { bg: 'bg-purple-200', text: 'text-purple-700', hexBg: '#e9d5ff', hexText: '#7e22ce' }
         };
 
+        // MODIFICACIÓN: Añadir color para "B" a AVAILABLE_COLORS si se desea que sea personalizable y no existe uno similar
         const AVAILABLE_COLORS = [
             { name: 'Blanco', bg: 'bg-white', text: 'text-gray-400', hexBg: '#ffffff', hexText: '#9ca3af' },
             { name: 'Verde Pastel', bg: 'bg-green-200', text: 'text-green-700', hexBg: '#a7f3d0', hexText: '#047857' },
@@ -1234,6 +1282,7 @@
             { name: 'Gris Pastel', bg: 'bg-gray-200', text: 'text-gray-700', hexBg: '#e5e7eb', hexText: '#374151' },
             { name: 'Amarillo Pastel', bg: 'bg-yellow-200', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
             { name: 'Rojo Pastel', bg: 'bg-red-200', text: 'text-red-700', hexBg: '#fecaca', hexText: '#b91c1c' },
+            { name: 'Rojo Suave (Baja)', bg: 'bg-red-300', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' }, // Color para Baja
             { name: 'Morado Pastel (Def. Otro)', bg: 'bg-purple-200', text: 'text-purple-700', hexBg: '#e9d5ff', hexText: '#7e22ce' },
             { name: 'Cian Pastel', bg: 'bg-cyan-200', text: 'text-cyan-700', hexBg: '#a5f3fc', hexText: '#0e7490' },
             { name: 'Rosa Pastel', bg: 'bg-pink-200', text: 'text-pink-700', hexBg: '#fbcfe8', hexText: '#be185d' },
@@ -1353,17 +1402,12 @@
 		function restoreAppState(snapshot) {
 			const currentGlobalYearBeforeRestore = yearOfSchedule; // Guardar el año global actual
 
-			// ... (lógica existente para restaurar scheduleData, employeeNamesOrdered, etc. desde el snapshot)
-			// Esta parte podría cambiar temporalmente yearOfSchedule si snapshot.yearOfSchedule es diferente:
 			scheduleData = snapshot.scheduleData;
 			employeeNamesOrdered = snapshot.employeeNamesOrdered;
 			currentShiftColors = snapshot.currentShiftColors;
 			currentUserShiftTimes = snapshot.currentUserShiftTimes;
 			domCache.generalNotesTextarea.value = snapshot.generalNotes;
-			// La siguiente línea es la que actualmente podría revertir el año:
-			// yearOfSchedule = snapshot.yearOfSchedule; <--- Esto se anulará por la línea de abajo
-			// domCache.yearInput.value = yearOfSchedule; <--- Esto se anulará por la línea de abajo
-
+			
 			currentSelectedMonth = snapshot.currentSelectedMonth;
 			currentViewMode = snapshot.currentViewMode;
 			if (domCache.csvFileInput) {
@@ -1374,12 +1418,11 @@
 				}
 			}
 
-			// Restaurar el año global al que estaba ANTES de la operación de deshacer/rehacer
 			yearOfSchedule = currentGlobalYearBeforeRestore;
-			domCache.yearInput.value = yearOfSchedule; // Asegurar que el input lo refleje
+			domCache.yearInput.value = yearOfSchedule; 
 
 			updateLegend();
-			handleViewChange(); // Esto usará el yearOfSchedule "protegido"
+			handleViewChange(); 
 			if (isDataLoadedForStats()) {
 				calculateAndRenderComparativeStats();
 			} else {
@@ -1389,7 +1432,7 @@
 			updateViewModeUI();
 			updateUnsavedChangesIndicator();
 			updateUndoRedoButtonsState();
-		}
+	}
 
         function saveStateForUndo(descriptionForHistory) {
             if (undoStack.length >= MAX_UNDO_STACK_SIZE) {
@@ -2107,19 +2150,19 @@
             }
             setupEventListeners();
             populateStatsPeriodFilter();
-            loadYearFromLocalStorage(); // Carga el año primero
+            loadYearFromLocalStorage(); 
             loadCustomColors();
             loadCustomShiftTimes();
-            updateLegend();
+            updateLegend(); // Asegurarse de que la leyenda se actualiza con el nuevo turno "B"
             loadChangeHistory(); 
 
-            setupMultiselectToolbar();
+            setupMultiselectToolbar(); // Se actualizará con "B" debido al cambio en SHIFT_TYPES
             updateMultiselectToolbar();
 
             const dataLoaded = loadDataFromLocalStorage(); 
             if (dataLoaded) {
                 handleViewChange();
-                calculateAndRenderComparativeStats();
+                calculateAndRenderComparativeStats(); // Se actualizará con "B"
             } else {
                 enableControls(false);
                 renderAddEmployeeButtonInTable();
@@ -2251,30 +2294,27 @@
             if (savedYear && !isNaN(parseInt(savedYear))) {
                 yearOfSchedule = parseInt(savedYear);
             } else {
-                yearOfSchedule = new Date().getFullYear(); // Default to current year if nothing saved or invalid
+                yearOfSchedule = new Date().getFullYear(); 
             }
-            domCache.yearInput.value = yearOfSchedule; // Update input field after loading/setting
+            domCache.yearInput.value = yearOfSchedule; 
         }
 
         function handleYearChange(event) {
             const newYear = parseInt(event.target.value);
             if (!isNaN(newYear) && newYear > 1900 && newYear < 2200 && newYear !== yearOfSchedule) {
                 yearOfSchedule = newYear;
-                // Guardar el año inmediatamente en localStorage
                 localStorage.setItem(LOCAL_STORAGE_KEY_YEAR, yearOfSchedule.toString());
-                hasUnsavedChanges = true; // Marcar que hay cambios sin guardar
-                updateUnsavedChangesIndicator(); // Actualizar UI para reflejar cambios
+                hasUnsavedChanges = true; 
+                updateUnsavedChangesIndicator(); 
 
                 if (isDataLoadedForStats()) {
-                    handleViewChange(); // Actualizar la vista de la tabla
-                    domCache.calculateStatsButtonNew.disabled = !isDataLoadedForStats(); // Habilitar/deshabilitar botón de estadísticas
+                    handleViewChange(); 
+                    domCache.calculateStatsButtonNew.disabled = !isDataLoadedForStats(); 
                 }
                 showToast(`Año del horario actualizado a ${yearOfSchedule}.`, 'info');
-                // No se llama a saveStateForUndo() aquí para mantener la pila de deshacer centrada en ediciones del horario.
             } else if (newYear === yearOfSchedule) {
-                // No action needed if the year hasn't actually changed
+                // No action
             } else {
-                // Si el año no es válido, revertir al valor anterior y notificar
                 event.target.value = yearOfSchedule;
                 showToast('Por favor, introduce un año válido (ej. 2024).', 'error');
             }
@@ -2309,7 +2349,7 @@
             if (savedHistory) {
                 try {
                     changeHistory = JSON.parse(savedHistory).map(item => ({
-                        ...item, timestamp: new Date(item.timestamp) // Rehydrate date objects
+                        ...item, timestamp: new Date(item.timestamp) 
                     }));
                 } catch (e) { console.error("Error al cargar historial:", e); changeHistory = []; }
             }
@@ -2321,7 +2361,8 @@
                 try {
                     const parsedColors = JSON.parse(savedColors);
                     let valid = true;
-                    const keysToValidate = [...SHIFT_TYPES, 'empty'];
+                    // MODIFICACIÓN: keysToValidate ahora usa SHIFT_TYPES que ya incluye "B"
+                    const keysToValidate = [...SHIFT_TYPES, 'empty']; 
                     keysToValidate.forEach(type => {
                         if (!parsedColors[type] || !parsedColors[type].bg || !parsedColors[type].text || !parsedColors[type].hexBg || !parsedColors[type].hexText) {
                             valid = false;
@@ -2355,7 +2396,7 @@
                 try {
                     const parsedTimes = JSON.parse(savedTimes);
                     let valid = true;
-                    Object.keys(DEFAULT_SHIFT_TIMES).forEach(type => {
+                    Object.keys(DEFAULT_SHIFT_TIMES).forEach(type => { // Iterar sobre DEFAULT_SHIFT_TIMES para validar solo M, T, N
                         if (!parsedTimes[type] || !Array.isArray(parsedTimes[type].start) || parsedTimes[type].start.length !== 2 ||
                             !Array.isArray(parsedTimes[type].end) || parsedTimes[type].end.length !== 2 ||
                             typeof parsedTimes[type].nextDayEnd !== 'boolean') {
@@ -2375,26 +2416,9 @@
         }
 
         function applyAndSaveColorsAndTimes() {
-            saveStateForUndo("Colores/horarios de leyenda actualizados.");
+            // Se elimina la llamada a saveStateForUndo para que no afecte el historial global.
 
             localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
-
-            const timeInputs = domCache.legendItemsContainer.querySelectorAll('.legend-time-inputs input[type="time"]');
-            timeInputs.forEach(input => {
-                const shiftType = input.dataset.shiftType;
-                const timeType = input.dataset.timeType;
-                const [hours, minutes] = input.value.split(':').map(Number);
-
-                if (currentUserShiftTimes[shiftType] && currentUserShiftTimes[shiftType][timeType]) {
-                    currentUserShiftTimes[shiftType][timeType] = [hours, minutes];
-                    if (shiftType === 'N' && timeType === 'end') {
-                        const startHours = currentUserShiftTimes.N.start[0];
-                        currentUserShiftTimes.N.nextDayEnd = hours < startHours;
-                    } else if (currentUserShiftTimes[shiftType].hasOwnProperty('nextDayEnd')) {
-                         currentUserShiftTimes[shiftType].nextDayEnd = false;
-                    }
-                }
-            });
             localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
 
             const legendItems = domCache.legendItemsContainer.querySelectorAll('.legend-item-container');
@@ -2403,29 +2427,46 @@
                 setTimeout(() => item.classList.remove('legend-item-flash'), 700);
             });
 
-            updateLegend();
-            handleViewChange(); 
-            if (isDataLoadedForStats()) calculateAndRenderComparativeStats(); 
+            updateLegend(); // Actualiza la visualización de la leyenda.
+            handleViewChange(); // Refresca la tabla para aplicar los nuevos colores.
+            if (isDataLoadedForStats()) {
+                calculateAndRenderComparativeStats(); // Recalcula estadísticas si hay datos.
+            }
             showToast('Colores y horarios de turno aplicados y guardados.', 'success');
-            domCache.applyColorsButton.disabled = true;
-            domCache.resetColorsButton.disabled = false;
+            
+            // Deshabilitar el botón "Aplicar" ya que los cambios están aplicados.
+            if (domCache.applyColorsButton) domCache.applyColorsButton.disabled = true;
+            // Habilitar el botón "Restaurar" ya que ahora hay una configuración personalizada.
+            if (domCache.resetColorsButton) domCache.resetColorsButton.disabled = false; 
+            
+            // Marcar que hay cambios sin guardar para el estado general de la aplicación,
+            // ya que la configuración de la leyenda es parte de lo que "Guardar Local" persiste.
             hasUnsavedChanges = true; 
             updateUnsavedChangesIndicator();
         }
 
         function resetColorsAndTimes() {
-            saveStateForUndo("Colores/horarios de leyenda restaurados.");
+            // Se elimina la llamada a saveStateForUndo.
 
             currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
             currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
-            localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES);
-            updateLegend();
-            handleViewChange();
-            if (isDataLoadedForStats()) calculateAndRenderComparativeStats();
+            localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS); // Elimina los colores personalizados.
+            localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES); // Elimina los horarios personalizados.
+
+            updateLegend(); // Actualiza la visualización de la leyenda.
+            handleViewChange(); // Refresca la tabla para aplicar los colores por defecto.
+            if (isDataLoadedForStats()) {
+                calculateAndRenderComparativeStats(); // Recalcula estadísticas si hay datos.
+            }
             showToast('Colores y horarios de turno restaurados a los valores por defecto.', 'info');
-            domCache.applyColorsButton.disabled = false;
-            domCache.resetColorsButton.disabled = true;
+
+            // Habilitar "Aplicar" si el usuario quiere volver a hacer cambios y aplicarlos.
+            if (domCache.applyColorsButton) domCache.applyColorsButton.disabled = false; 
+            // Deshabilitar "Restaurar" ya que se está en los valores por defecto.
+            if (domCache.resetColorsButton) domCache.resetColorsButton.disabled = true;
+            
+            // Marcar que hay cambios sin guardar para el estado general,
+            // ya que la restauración a defaults es un cambio en la configuración persistida.
             hasUnsavedChanges = true; 
             updateUnsavedChangesIndicator();
         }
@@ -2437,9 +2478,10 @@
 
         function updateLegend() {
             domCache.legendItemsContainer.innerHTML = '';
-            const relevantShiftTypesForTimeInput = ['M', 'T', 'N'];
+            const relevantShiftTypesForTimeInput = ['M', 'T', 'N']; // "B" no se incluye aquí
 
-            [...SHIFT_TYPES, 'empty'].forEach(type => {
+            // MODIFICACIÓN: El bucle ahora incluye "B" debido a la actualización de SHIFT_TYPES
+            [...SHIFT_TYPES, 'empty'].forEach(type => { 
                 const colorInfo = currentShiftColors[type];
                 const legendItemDiv = createElement('div', { className: 'legend-item-container' });
 
@@ -2449,13 +2491,15 @@
                     title: `Cambiar color para ${type === 'empty' ? 'Otro' : SHIFT_TYPE_FULL_NAMES[type]}`
                 });
                 swatch.addEventListener('click', (event) => openColorPalette(event, type));
-
+                
+                // SHIFT_TYPE_FULL_NAMES[type] ahora funcionará para "B"
                 const labelText = type === 'empty' ? 'Otro' : `${SHIFT_TYPE_FULL_NAMES[type]} (${type})`;
                 const label = createElement('span', { textContent: labelText, className: 'mr-2' });
 
                 legendItemDiv.appendChild(swatch);
                 legendItemDiv.appendChild(label);
 
+                // "B" no entrará en esta condición si no está en relevantShiftTypesForTimeInput
                 if (relevantShiftTypesForTimeInput.includes(type)) {
                     const timeConfig = currentUserShiftTimes[type] || DEFAULT_SHIFT_TIMES[type];
                     const timeInputsDiv = createElement('div', { className: 'legend-time-inputs' });
@@ -2729,8 +2773,8 @@
             scheduleData = {}; employeeNamesOrdered = [];
             hasUnsavedChanges = false; updateUnsavedChangesIndicator();
             currentSelectedMonth = new Date().getMonth() + 1;
-            yearOfSchedule = new Date().getFullYear(); // Restablecer año al actual
-            domCache.yearInput.value = yearOfSchedule; // Actualizar input
+            yearOfSchedule = new Date().getFullYear(); 
+            domCache.yearInput.value = yearOfSchedule; 
             clearSelection();
             if (domCache.csvFileInput) {
                  domCache.csvFileInput.value = '';
@@ -2756,7 +2800,7 @@
             localStorage.removeItem(LOCAL_STORAGE_KEY_VIEW);
             localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS);
             localStorage.removeItem(LOCAL_STORAGE_KEY_HISTORY);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_YEAR); // Eliminar año guardado
+            localStorage.removeItem(LOCAL_STORAGE_KEY_YEAR); 
             localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES);
             
             renderAddEmployeeButtonInTable();
@@ -2829,7 +2873,7 @@
                 localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
                 localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
                 localStorage.setItem(LOCAL_STORAGE_KEY_HISTORY, JSON.stringify(changeHistory));
-                localStorage.setItem(LOCAL_STORAGE_KEY_YEAR, yearOfSchedule.toString()); // Asegura que el año se guarde
+                localStorage.setItem(LOCAL_STORAGE_KEY_YEAR, yearOfSchedule.toString()); 
                 localStorage.setItem(LOCAL_STORAGE_KEY_UNDO_STACK, JSON.stringify(undoStack));
                 localStorage.setItem(LOCAL_STORAGE_KEY_REDO_STACK, JSON.stringify(redoStack));
 
@@ -2858,7 +2902,6 @@
         function loadDataFromLocalStorage() {
             let dataLoadedSuccessfully = false;
             try {
-                // El año ya se carga en loadYearFromLocalStorage(), llamado antes en DOMContentLoaded
                 const savedDataString = localStorage.getItem(LOCAL_STORAGE_KEY_SCHEDULE);
                 const savedNotes = localStorage.getItem(LOCAL_STORAGE_KEY_NOTES);
                 const savedView = localStorage.getItem(LOCAL_STORAGE_KEY_VIEW);
@@ -2881,8 +2924,7 @@
 
                         if (isDataLoadedForStats()) {
                             dataLoadedSuccessfully = true;
-                            hasUnsavedChanges = false; // Reset after successful load
-                            // updateUnsavedChangesIndicator(); // Se llamará más abajo
+                            hasUnsavedChanges = false; 
                             populateMonthTabs();
                             enableControls(true);
                             showToast('Datos cargados desde almacenamiento local.', 'success');
@@ -2918,7 +2960,7 @@
             } catch (error) {
                 console.error("Error al cargar desde localStorage:", error);
                 showToast('Error al cargar datos locales. Podrían estar corruptos.', 'error');
-                localStorage.removeItem(LOCAL_STORAGE_KEY_SCHEDULE); // Clear potentially corrupt data
+                localStorage.removeItem(LOCAL_STORAGE_KEY_SCHEDULE); 
                 undoStack = []; redoStack = []; 
                 localStorage.removeItem(LOCAL_STORAGE_KEY_UNDO_STACK);
                 localStorage.removeItem(LOCAL_STORAGE_KEY_REDO_STACK);
@@ -2977,7 +3019,7 @@
                     localStorage.removeItem(LOCAL_STORAGE_KEY_REDO_STACK); 
                     updateUndoRedoButtonsState();
                     populateMonthTabs();
-                    hasUnsavedChanges = true; // A new template is an unsaved change
+                    hasUnsavedChanges = true; 
                     updateUnsavedChangesIndicator();
                     enableControls(true);
                     switchViewMode('monthly');
@@ -3242,26 +3284,40 @@
                 const saveName = () => {
                     const newName = input.value.trim();
                     if (newName && newName !== currentName) {
+                        if (newName.includes(',')) {
+                            showToast('El nombre del empleado no puede contener comas (,).', 'error');
+                            td.innerHTML = ''; 
+                            const originalNameSpan = createElement('span', { className: 'employee-name-display flex-grow', textContent: currentName, attributes: { draggable: "true" } });
+                            const deleteIcon = createDeleteEmployeeIcon(currentName);
+                            td.appendChild(originalNameSpan);
+                            td.appendChild(deleteIcon);
+                            input.focus(); 
+                            return;
+                        }
                         if (employeeNamesOrdered.includes(newName)) {
                             showToast(`El nombre "${newName}" ya existe.`, 'error');
-                            td.innerHTML = '';
-                            const newNameSpan = createElement('span', { className: 'employee-name-display flex-grow', textContent: currentName, attributes: { draggable: "true" } });
+                            td.innerHTML = ''; 
+                            const originalNameSpan = createElement('span', { className: 'employee-name-display flex-grow', textContent: currentName, attributes: { draggable: "true" } });
                             const deleteIcon = createDeleteEmployeeIcon(currentName);
-                            td.appendChild(newNameSpan); td.appendChild(deleteIcon);
+                            td.appendChild(originalNameSpan);
+                            td.appendChild(deleteIcon);
                             return;
                         }
                         updateEmployeeName(currentName, newName); 
-                    } else {
+                    } else { 
                         td.innerHTML = '';
-                        const newNameSpan = createElement('span', { className: 'employee-name-display flex-grow', textContent: currentName, attributes: { draggable: "true" } });
-                        const deleteIcon = createDeleteEmployeeIcon(currentName);
-                        td.appendChild(newNameSpan); td.appendChild(deleteIcon);
+                        const nameSpanToRestore = createElement('span', { className: 'employee-name-display flex-grow', textContent: currentName, attributes: { draggable: "true" } });
+                        const deleteIconToRestore = createDeleteEmployeeIcon(currentName);
+                        td.appendChild(nameSpanToRestore);
+                        td.appendChild(deleteIconToRestore);
                     }
                 };
                 input.addEventListener('blur', saveName);
                 input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') saveName();
-                    else if (e.key === 'Escape') {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); 
+                        input.blur(); 
+                    } else if (e.key === 'Escape') {
                         td.innerHTML = '';
                         const newNameSpan = createElement('span', { className: 'employee-name-display flex-grow', textContent: currentName, attributes: { draggable: "true" } });
                         const deleteIcon = createDeleteEmployeeIcon(currentName);
@@ -3578,7 +3634,7 @@
             const shiftCell = cellInfo.tdElement;
             const currentValue = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
 
-            if (SHIFT_TYPES.includes(currentValue)) {
+            if (SHIFT_TYPES.includes(currentValue)) { // SHIFT_TYPES ahora incluye "B"
                  return;
             }
 
@@ -3658,9 +3714,10 @@
             lastSelectedCellInfo = null;
             if (hideToolbar) updateMultiselectToolbar();
         }
+        // MODIFICACIÓN: setupMultiselectToolbar ahora incluirá "B" automáticamente
         function setupMultiselectToolbar() {
             domCache.multiselectToolbar.innerHTML = '';
-            SHIFT_TYPES.forEach(shift => {
+            SHIFT_TYPES.forEach(shift => { // SHIFT_TYPES ahora incluye "B"
                 const button = createElement('button', {
                     textContent: shift, title: `Asignar ${SHIFT_TYPE_FULL_NAMES[shift]} (${shift}) a selección`
                 });
@@ -3760,7 +3817,8 @@
             let employeeStatsArray = [];
 
             employeeNamesOrdered.forEach(empName => {
-                let stats = { M: 0, T: 0, N: 0, L: 0, V: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0 };
+                // MODIFICACIÓN: Inicializar contador para "B"
+                let stats = { M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0 };
                 if (!scheduleData[empName]) {
                     employeeStatsArray.push({ name: empName, ...stats, totalShifts: 0 });
                     return;
@@ -3780,22 +3838,24 @@
                     for (let day = 1; day <= daysInThisMonth; day++) {
                         const shift = scheduleData[empName][month][day];
                         if (shift !== undefined && shift !== null) {
+                            // La lógica `SHIFT_TYPES.includes(shift)` ahora manejará "B"
                             if (SHIFT_TYPES.includes(shift)) {
                                 stats[shift]++;
+                                // "B" (Baja) no debería contar como día trabajado
                                 if (["M", "T", "N"].includes(shift)) stats.totalWorkDays++;
                             } else if (shift !== "") {
                                 stats.Otro++;
-                                stats.totalWorkDays++;
+                                stats.totalWorkDays++; // Asumimos que "Otro" es un día trabajado
                             }
 
                             const currentDate = new Date(currentYearForStats, month - 1, day);
-                            if (currentDate.getDay() === 6) { // Sábado
+                            if (currentDate.getDay() === 6) { 
                                 const nextDayDate = new Date(currentYearForStats, month - 1, day + 1);
                                 if (nextDayDate.getMonth() === month - 1) { 
                                     const satShift = scheduleData[empName][month][day];
                                     const sunShift = scheduleData[empName][month][day + 1];
-                                    if ((satShift === "L" || satShift === "V" || satShift === "") &&
-                                        (sunShift === "L" || sunShift === "V" || sunShift === "")) {
+                                    if ((satShift === "L" || satShift === "V" || satShift === "B" || satShift === "") && // Incluir B en fin de semana libre
+                                        (sunShift === "L" || sunShift === "V" || sunShift === "B" || sunShift === "")) { // Incluir B
                                          stats.weekendsOff++;
                                     }
                                 }
@@ -3803,7 +3863,8 @@
                         }
                     }
                 });
-                const totalShifts = stats.M + stats.T + stats.N + stats.L + stats.V + stats.Otro;
+                // El total de turnos ahora incluirá "B"
+                const totalShifts = stats.M + stats.T + stats.N + stats.L + stats.V + stats.B + stats.Otro;
                 employeeStatsArray.push({ name: empName, ...stats, totalShifts });
             });
 
@@ -3838,11 +3899,13 @@
             const tbody = createElement('tbody');
             const headerRow = createElement('tr');
 
+            // MODIFICACIÓN: Añadir columna para "B"
             const columns = [
                 { key: 'name', label: 'Empleado', sortable: true },
                 { key: 'M', label: 'M', sortable: true }, { key: 'T', label: 'T', sortable: true },
                 { key: 'N', label: 'N', sortable: true }, { key: 'L', label: 'L', sortable: true },
-                { key: 'V', label: 'V', sortable: true }, { key: 'Otro', label: 'Otros', sortable: true },
+                { key: 'V', label: 'V', sortable: true }, { key: 'B', label: 'B', sortable: true }, // Nueva columna Baja
+                { key: 'Otro', label: 'Otros', sortable: true },
                 { key: 'totalWorkDays', label: 'Días Trab.', sortable: true },
                 { key: 'weekendsOff', label: 'FDS Lib.', sortable: true, title: 'Fines de Semana Libres (Sáb+Dom)' }
             ];
@@ -3909,7 +3972,8 @@
             const chartElement = domCache.employeeShiftChart;
             chartElement.innerHTML = '';
 
-            const relevantShiftTypes = [...SHIFT_TYPES, 'Otro'];
+            // MODIFICACIÓN: relevantShiftTypes ahora incluirá "B" automáticamente
+            const relevantShiftTypes = [...SHIFT_TYPES, 'Otro']; 
             let maxCount = 0;
             relevantShiftTypes.forEach(typeKey => {
                 const count = typeKey === 'Otro' ? employeeData.Otro : employeeData[typeKey];
@@ -3922,19 +3986,17 @@
 
             relevantShiftTypes.forEach(typeKey => {
                 const count = typeKey === 'Otro' ? employeeData.Otro : employeeData[typeKey];
-                const colorConf = typeKey === 'Otro' ? currentShiftColors.empty : currentShiftColors[typeKey];
+                const colorConf = typeKey === 'Otro' ? currentShiftColors.empty : currentShiftColors[typeKey]; // Esto usará el color de "B"
                 const fullName = typeKey === 'Otro' ? 'Otros' : SHIFT_TYPE_FULL_NAMES[typeKey];
-
                 const barWrapper = createElement('div', { className: 'shift-chart-bar-wrapper' });
                 const barPixelHeight = (count / maxCount) * chartContainerHeight;
                 const actualBarHeight = count > 0 ? Math.max(5, barPixelHeight) : 0;
-
 
                 const bar = createElement('div', {
                     className: 'shift-chart-bar',
                     style: {
                         height: `${actualBarHeight}px`,
-                        backgroundColor: colorConf.hexBg
+                        backgroundColor: colorConf.hexBg // Usará el color de "B" si typeKey es "B"
                     }
                 });
                 const valueSpan = createElement('span', { className: 'bar-value', textContent: count });
@@ -3944,8 +4006,8 @@
                 barWrapper.appendChild(bar);
                 barWrapper.appendChild(labelSpan);
                 chartElement.appendChild(barWrapper);
-            });
-        }
+            }); // Fin del bucle relevantShiftTypes.forEach en renderEmployeeShiftDetailChart
+        } // Fin de la función renderEmployeeShiftDetailChart
 
 
         function handleStatsSort(event) {
@@ -3960,6 +4022,165 @@
             }
             calculateAndRenderComparativeStats();
         }
+
+        // --- ESTADÍSTICAS (VERSIÓN ACTUALIZADA PARA TURNO "B") ---
+        // REEMPLAZA TU FUNCIÓN calculateAndRenderComparativeStats EXISTENTE CON ESTA:
+        function calculateAndRenderComparativeStats() {
+            if (!isDataLoadedForStats()) {
+                updateStatsDisplayForNoData();
+                if(domCache.calculateStatsButtonNew) domCache.calculateStatsButtonNew.disabled = true; // Asegurar que el botón se deshabilita
+                return;
+            }
+            if(domCache.statsPlaceholder) domCache.statsPlaceholder.classList.add('hidden-by-default');
+            if(domCache.comparativeStatsTableContainer) domCache.comparativeStatsTableContainer.classList.remove('hidden-by-default');
+            if(domCache.calculateStatsButtonNew) domCache.calculateStatsButtonNew.disabled = false;
+
+            const selectedPeriodValue = domCache.statsPeriodFilterNew.value;
+            const currentYearForStats = yearOfSchedule;
+            let employeeStatsArray = [];
+
+            employeeNamesOrdered.forEach(empName => {
+                // Incluye "B: 0" para el nuevo turno
+                let stats = { M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0 };
+                if (!scheduleData[empName]) {
+                    employeeStatsArray.push({ name: empName, ...stats, totalShifts: 0 });
+                    return;
+                }
+
+                let monthsToProcess = [];
+                if (selectedPeriodValue === 'full_year') {
+                    for (let m = 1; m <= 12; m++) monthsToProcess.push(m);
+                } else {
+                    monthsToProcess.push(parseInt(selectedPeriodValue));
+                }
+
+                monthsToProcess.forEach(month => {
+                    if (!scheduleData[empName][month]) return;
+
+                    const daysInThisMonth = getDaysInMonth(month, currentYearForStats);
+                    for (let day = 1; day <= daysInThisMonth; day++) {
+                        const shift = scheduleData[empName][month][day];
+                        if (shift !== undefined && shift !== null) {
+                            if (SHIFT_TYPES.includes(shift)) { // SHIFT_TYPES ya incluye "B"
+                                stats[shift]++;
+                                // "B" (Baja) no cuenta como día trabajado
+                                if (["M", "T", "N"].includes(shift)) stats.totalWorkDays++;
+                            } else if (shift !== "") {
+                                stats.Otro++;
+                                stats.totalWorkDays++; 
+                            }
+
+                            const currentDate = new Date(currentYearForStats, month - 1, day);
+                            if (currentDate.getDay() === 6) { // Sábado
+                                const nextDayDate = new Date(currentYearForStats, month - 1, day + 1);
+                                if (nextDayDate.getMonth() === month - 1) { 
+                                    const satShift = scheduleData[empName][month][day];
+                                    const sunShift = scheduleData[empName][month][day + 1];
+                                    // Incluir "B" en la lógica de fines de semana libres
+                                    if ((satShift === "L" || satShift === "V" || satShift === "B" || satShift === "") &&
+                                        (sunShift === "L" || sunShift === "V" || sunShift === "B" || sunShift === "")) {
+                                         stats.weekendsOff++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                // El total de turnos ahora incluirá "B"
+                const totalShifts = stats.M + stats.T + stats.N + stats.L + stats.V + stats.B + stats.Otro;
+                employeeStatsArray.push({ name: empName, ...stats, totalShifts });
+            });
+
+            if (comparativeStatsSortConfig.column) {
+                employeeStatsArray.sort((a, b) => {
+                    let valA = a[comparativeStatsSortConfig.column];
+                    let valB = b[comparativeStatsSortConfig.column];
+
+                    if (typeof valA === 'string') valA = valA.toLowerCase();
+                    if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                    if (valA < valB) return comparativeStatsSortConfig.direction === 'asc' ? -1 : 1;
+                    if (valA > valB) return comparativeStatsSortConfig.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+            renderComparativeTable(employeeStatsArray);
+        }
+
+        // REEMPLAZA TU FUNCIÓN renderComparativeTable EXISTENTE CON ESTA:
+        function renderComparativeTable(employeeStatsArray) {
+            if (!domCache.comparativeStatsTableContainer) return;
+            domCache.comparativeStatsTableContainer.innerHTML = '';
+            if (domCache.employeeShiftDistributionDetailContainer) domCache.employeeShiftDistributionDetailContainer.classList.add('hidden-by-default');
+            lastSelectedEmployeeStatsRow = null;
+
+            if (employeeStatsArray.length === 0) {
+                updateStatsDisplayForNoData();
+                return;
+            }
+
+            const table = createElement('table', { id: 'comparative-stats-table', className: 'min-w-full' });
+            const thead = createElement('thead');
+            const tbody = createElement('tbody');
+            const headerRow = createElement('tr');
+
+            // Incluye la columna para "B"
+            const columns = [
+                { key: 'name', label: 'Empleado', sortable: true },
+                { key: 'M', label: 'M', sortable: true }, { key: 'T', label: 'T', sortable: true },
+                { key: 'N', label: 'N', sortable: true }, { key: 'L', label: 'L', sortable: true },
+                { key: 'V', label: 'V', sortable: true }, 
+                { key: 'B', label: 'B', sortable: true }, // Nueva columna Baja
+                { key: 'Otro', label: 'Otros', sortable: true },
+                { key: 'totalWorkDays', label: 'Días Trab.', sortable: true },
+                { key: 'weekendsOff', label: 'FDS Lib.', sortable: true, title: 'Fines de Semana Libres (Sáb+Dom)' }
+            ];
+
+            columns.forEach(col => {
+                const th = createElement('th', { textContent: col.label, title: col.title || col.label });
+                if (col.key === 'name') th.classList.add('employee-name-col');
+                if (col.sortable) {
+                    th.classList.add('sortable');
+                    th.dataset.sortKey = col.key;
+                    const sortIcon = createElement('span', {className: 'sort-icon fas'});
+                    if (comparativeStatsSortConfig.column === col.key) {
+                        sortIcon.classList.add(comparativeStatsSortConfig.direction === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+                    } else {
+                        sortIcon.classList.add('fa-sort');
+                    }
+                    th.appendChild(sortIcon);
+                    th.addEventListener('click', handleStatsSort);
+                }
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+
+            employeeStatsArray.forEach((empStat, rowIndex) => {
+                const tr = createElement('tr');
+                tr.dataset.employeeName = empStat.name;
+                if (rowIndex % 2 !== 0) tr.classList.add('bg-gray-50'); 
+
+                columns.forEach(col => {
+                    const td = createElement('td');
+                    if (col.key === 'name') {
+                        td.textContent = empStat.name;
+                        td.classList.add('employee-name-col', 'font-medium', 'text-gray-900');
+                        td.style.backgroundColor = 'inherit';
+                    } else {
+                        td.textContent = empStat[col.key]; 
+                        td.classList.add('text-center');
+                    }
+                    tr.appendChild(td);
+                });
+                tr.addEventListener('click', () => handleEmployeeStatsRowClick(empStat, tr));
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            domCache.comparativeStatsTableContainer.appendChild(table);
+        }
+
 
         // --- GENERACIÓN DE SVG Y PDF ---
         function getSvgString(type) {
@@ -4140,17 +4361,28 @@
 
                         week.forEach(dateObj => {
                             const day = dateObj.getDate(); const month = dateObj.getMonth() + 1;
-                            let shift = scheduleData[empName]?.[month]?.[day] || "";
-                            const shiftTimeConfig = currentUserShiftTimes[shift];
-                            let displayShift = shift;
-                            if (shiftTimeConfig && (shift === 'M' || shift === 'T' || shift === 'N')) {
-                                displayShift = `${formatTimeForInput(shiftTimeConfig.start[0], shiftTimeConfig.start[1])}-${formatTimeForInput(shiftTimeConfig.end[0], shiftTimeConfig.end[1])}`;
-                            }
+							let shift = scheduleData[empName]?.[month]?.[day] || "";
+							const shiftTimeConfig = currentUserShiftTimes[shift];
+							let displayShift = shift; 
 
-                            const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-                            svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${cellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
-                            if (displayShift) svgElements.push(`<text x="${currentCellX + cellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShift}</text>`);
-                            currentCellX += cellWidthWeekly;
+							// --- INICIO DE LA NUEVA LÓGICA ---
+							if (shift === 'B') {
+								displayShift = SHIFT_TYPE_FULL_NAMES['B']; // Esto asignará "Baja"
+							} 
+							// --- FIN DE LA NUEVA LÓGICA ---
+							// La lógica existente para M, T, N debe ir en un 'else if'
+							// para no sobrescribir "Baja" si el turno es 'B'.
+							else if (shiftTimeConfig && (shift === 'M' || shift === 'T' || shift === 'N')) {
+								displayShift = `${formatTimeForInput(shiftTimeConfig.start[0], shiftTimeConfig.start[1])}-${formatTimeForInput(shiftTimeConfig.end[0], shiftTimeConfig.end[1])}`;
+							}
+							// Para otros turnos (L, V, texto personalizado), displayShift ya tiene el valor correcto (shift).
+
+							const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+							svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${cellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
+							if (displayShift) {
+								svgElements.push(`<text x="${currentCellX + cellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize}px" font-weight="bold" text-anchor="middle" fill="${colorConf.hexText || '#000000'}" dominant-baseline="middle">${displayShift}</text>`);
+							}
+							currentCellX += cellWidthWeekly;
                         });
                     });
                     currentGlobalY += (employeeNamesOrdered.length * cellHeight) + tableSpacing;
@@ -4191,32 +4423,7 @@
 
 
         // --- EXPORTACIÓN A CALENDAR (.ics) ---
-        function showExportToCalendarModal() {
-            if (currentViewMode !== 'monthly' || !isDataLoadedForStats()) {
-                showToast('Exportación a Calendar: vista mensual y datos cargados requeridos.', 'warning'); return;
-            }
-            if (employeeNamesOrdered.length === 0) {
-                showToast('No hay empleados para seleccionar.', 'info'); return;
-            }
-            populateEmployeeSelects(domCache.modalCalendarEmployeeSelect);
-            showModal(domCache.exportCalendarModal, domCache.modalCalendarEmployeeSelect);
-        }
-        function updateCalendarExportButtonsState() {
-            const dataExistsAndMonthlyView = isDataLoadedForStats() && currentViewMode === 'monthly';
-            domCache.exportMonthCalendarButton.disabled = !dataExistsAndMonthlyView;
-            if (domCache.downloadWeeklySvgButton) {
-                 domCache.downloadWeeklySvgButton.disabled = !dataExistsAndMonthlyView;
-            }
-        }
-        const formatForICalTimezone = (date) => {
-            const y = date.getFullYear(), m = String(date.getMonth() + 1).padStart(2, '0'), d = String(date.getDate()).padStart(2, '0');
-            const H = String(date.getHours()).padStart(2, '0'), M = String(date.getMinutes()).padStart(2, '0'), S = String(date.getSeconds()).padStart(2, '0');
-            return `${y}${m}${d}T${H}${M}${S}`;
-        };
-        const formatDateForICalAllDay = (date) => {
-            const y = date.getFullYear(), m = String(date.getMonth() + 1).padStart(2, '0'), d = String(date.getDate()).padStart(2, '0');
-            return `${y}${m}${d}`;
-        };
+        // REEMPLAZA TU FUNCIÓN exportToCalendar EXISTENTE CON ESTA VERSIÓN ACTUALIZADA:
         function exportToCalendar(selectedEmployeeForCalendar) {
             let icalFilenameBase = generateDefaultFilename('calendar', selectedEmployeeForCalendar);
             const firstDayOfMonth = new Date(yearOfSchedule, currentSelectedMonth - 1, 1);
@@ -4231,24 +4438,26 @@
             while(currentDateIter <= lastDayOfMonth) {
                 const day = currentDateIter.getDate(), currentIterMonth = currentDateIter.getMonth() + 1, currentIterYear = currentDateIter.getFullYear();
                 let shiftType = scheduleData[empName]?.[currentIterMonth]?.[day];
-                if (shiftType === undefined || shiftType === null) shiftType = ""; // Consider undefined/null as empty string for logic below
-                if (shiftType !== undefined) { // This condition will always be true now
+                if (shiftType === undefined || shiftType === null) shiftType = ""; 
+                if (shiftType !== undefined) { 
                     const shiftTimeConfig = currentUserShiftTimes[shiftType];
-                    const isKnownShift = SHIFT_TYPE_FULL_NAMES[shiftType];
-                    if (isKnownShift || (shiftType && !isKnownShift) || shiftType === "") { // Process known shifts, custom text, or empty strings (for "Otro")
+                    const isKnownShift = SHIFT_TYPE_FULL_NAMES[shiftType]; // Esto funcionará para "B"
+                    if (isKnownShift || (shiftType && !isKnownShift) || shiftType === "") { 
                         const dtStamp = new Date().toISOString().replace(/[-:.]/g, '').substring(0, 15) + 'Z';
-                        const uidSuffix = shiftType || 'otro'; // Use 'otro' for empty string to avoid issues
+                        const uidSuffix = shiftType || 'otro'; 
                         const uid = `${formatDateForICalAllDay(currentDateIter)}-${empName.replace(/\s+/g, '')}-${uidSuffix}@gestorhorarios.com`;
                         icalContent.push('BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${dtStamp}`);
                         let summaryText = shiftType === "" ? `Otro - ${empName}` : (isKnownShift ? `Turno ${SHIFT_TYPE_FULL_NAMES[shiftType]} (${shiftType}) - ${empName}` : `${shiftType} - ${empName}`);
                         icalContent.push(`SUMMARY:${summaryText}`, `DESCRIPTION:Horario laboral: ${summaryText}.`, `LOCATION:Gran Hotel Miramar`, `STATUS:CONFIRMED`);
-                        if (!shiftTimeConfig || shiftType === 'L' || shiftType === 'V' || shiftType === "") { // All-day events
+                        
+                        // MODIFICACIÓN AQUÍ: Tratar "B" como evento de día completo
+                        if (!shiftTimeConfig || shiftType === 'L' || shiftType === 'V' || shiftType === 'B' || shiftType === "") { 
                             const eventDate = new Date(currentIterYear, currentIterMonth - 1, day);
                             const startDateAllDay = formatDateForICalAllDay(eventDate);
-                            eventDate.setDate(eventDate.getDate() + 1); // End date for all-day is the start of the next day
+                            eventDate.setDate(eventDate.getDate() + 1); 
                             const endDateAllDay = formatDateForICalAllDay(eventDate);
                             icalContent.push(`DTSTART;VALUE=DATE:${startDateAllDay}`, `DTEND;VALUE=DATE:${endDateAllDay}`, `TRANSP:OPAQUE`);
-                        } else { // Timed events
+                        } else { 
                             let startDateEvent = new Date(currentIterYear, currentIterMonth - 1, day, shiftTimeConfig.start[0], shiftTimeConfig.start[1]);
                             let endDateEvent = new Date(currentIterYear, currentIterMonth - 1, day, shiftTimeConfig.end[0], shiftTimeConfig.end[1]);
                             if (shiftTimeConfig.nextDayEnd) endDateEvent.setDate(endDateEvent.getDate() + 1);
@@ -4260,7 +4469,7 @@
                 currentDateIter.setDate(currentDateIter.getDate() + 1);
             }
             icalContent.push('END:VCALENDAR');
-            if (icalContent.length <= 4) { // Only BEGIN:VCALENDAR, VERSION, PRODID, X-WR-CALNAME
+            if (icalContent.length <= 4) { 
                  showToast(`No hay eventos programados para ${selectedEmployeeForCalendar} en ${MONTH_NAMES[currentSelectedMonth - 1]}.`, 'info'); return;
             }
             const blob = new Blob([icalContent.join('\r\n')], { type: 'text/calendar;charset=utf-8;' });
@@ -4270,14 +4479,59 @@
             showToast(`Archivo Calendar (.ics) generado para ${selectedEmployeeForCalendar}.`, 'success');
         }
 
+
+        function showExportToCalendarModal() {
+            if (currentViewMode !== 'monthly' || !isDataLoadedForStats()) {
+                showToast('Exportación a Calendar: vista mensual y datos cargados requeridos.', 'warning'); return;
+            }
+            if (employeeNamesOrdered.length === 0) {
+                showToast('No hay empleados para seleccionar.', 'info'); return;
+            }
+            populateEmployeeSelects(domCache.modalCalendarEmployeeSelect);
+            showModal(domCache.exportCalendarModal, domCache.modalCalendarEmployeeSelect);
+        }
+
+        function updateCalendarExportButtonsState() {
+            const dataExistsAndMonthlyView = isDataLoadedForStats() && currentViewMode === 'monthly';
+            if(domCache.exportMonthCalendarButton) domCache.exportMonthCalendarButton.disabled = !dataExistsAndMonthlyView;
+            if (domCache.downloadWeeklySvgButton) {
+                 domCache.downloadWeeklySvgButton.disabled = !dataExistsAndMonthlyView;
+            }
+        }
+
+        const formatForICalTimezone = (date) => {
+            const y = date.getFullYear(), m = String(date.getMonth() + 1).padStart(2, '0'), d = String(date.getDate()).padStart(2, '0');
+            const H = String(date.getHours()).padStart(2, '0'), M = String(date.getMinutes()).padStart(2, '0'), S = String(date.getSeconds()).padStart(2, '0');
+            return `${y}${m}${d}T${H}${M}${S}`;
+        };
+
+        const formatDateForICalAllDay = (date) => {
+            const y = date.getFullYear(), m = String(date.getMonth() + 1).padStart(2, '0'), d = String(date.getDate()).padStart(2, '0');
+            return `${y}${m}${d}`;
+        };
+
         function showAddEmployeeModal() {
-            domCache.modalEmployeeNameInput.value = '';
+            if(domCache.modalEmployeeNameInput) domCache.modalEmployeeNameInput.value = '';
             showModal(domCache.addEmployeeModal, domCache.modalEmployeeNameInput);
         }
+
         function handleAddEmployeeFromModal() {
             const newName = domCache.modalEmployeeNameInput.value.trim();
-            if (!newName) { showToast('Introduce un nombre.', 'error'); domCache.modalEmployeeNameInput.focus(); return; }
-            if (employeeNamesOrdered.includes(newName)) { showToast(`"${newName}" ya existe.`, 'error'); domCache.modalEmployeeNameInput.focus(); return; }
+            if (!newName) { 
+                showToast('Introduce un nombre.', 'error'); 
+                domCache.modalEmployeeNameInput.focus(); 
+                return; 
+            }
+            if (newName.includes(',')) {
+                showToast('El nombre del empleado no puede contener comas (,).', 'error');
+                domCache.modalEmployeeNameInput.focus();
+                return;
+            }
+            if (employeeNamesOrdered.includes(newName)) { 
+                showToast(`"${newName}" ya existe.`, 'error'); 
+                domCache.modalEmployeeNameInput.focus(); 
+                return; 
+            }
 
             saveStateForUndo(`Empleado "${newName}" añadido.`); 
             employeeNamesOrdered.push(newName);
@@ -4299,22 +4553,24 @@
             }
 
             employeeToDeleteName = employeeName;
-            domCache.employeeNameToDeleteSpan.textContent = employeeName;
-            domCache.modalConfirmDeleteEmployee.disabled = true;
+            if(domCache.employeeNameToDeleteSpan) domCache.employeeNameToDeleteSpan.textContent = employeeName;
+            if(domCache.modalConfirmDeleteEmployee) domCache.modalConfirmDeleteEmployee.disabled = true;
             let countdown = 5;
-            domCache.deleteCountdownMessageSpan.textContent = `Botón activo en ${countdown}s...`;
+            if(domCache.deleteCountdownMessageSpan) domCache.deleteCountdownMessageSpan.textContent = `Botón activo en ${countdown}s...`;
             if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
             deleteCountdownInterval = setInterval(() => {
                 countdown--;
-                if (countdown > 0) domCache.deleteCountdownMessageSpan.textContent = `Botón activo en ${countdown}s...`;
-                else {
+                if (countdown > 0) {
+                    if(domCache.deleteCountdownMessageSpan) domCache.deleteCountdownMessageSpan.textContent = `Botón activo en ${countdown}s...`;
+                } else {
                     clearInterval(deleteCountdownInterval);
-                    domCache.deleteCountdownMessageSpan.textContent = '¡Botón de eliminar activo!';
-                    domCache.modalConfirmDeleteEmployee.disabled = false;
+                    if(domCache.deleteCountdownMessageSpan) domCache.deleteCountdownMessageSpan.textContent = '¡Botón de eliminar activo!';
+                    if(domCache.modalConfirmDeleteEmployee) domCache.modalConfirmDeleteEmployee.disabled = false;
                 }
             }, 1000);
             showModal(domCache.deleteEmployeeModal);
         }
+
         function confirmEmployeeDeletion() {
             if (employeeToDeleteName) {
                 if (employeeNamesOrdered.length === 1 && employeeNamesOrdered[0] === employeeToDeleteName) {
@@ -4325,7 +4581,7 @@
                     return;
                 }
 
-                saveStateForUndo(`Empleado "${employeeToDeleteName}" eliminado.`); // UNDO/REDO SELECTIVO: Esto SÍ debe estar
+                saveStateForUndo(`Empleado "${employeeToDeleteName}" eliminado.`); 
 
                 const index = employeeNamesOrdered.indexOf(employeeToDeleteName);
                 if (index > -1) employeeNamesOrdered.splice(index, 1);
@@ -4365,8 +4621,6 @@
                 showToast('Autoguardado local desactivado.', 'info');
             }
         }
-
     </script>
 </body>
 </html>
-
