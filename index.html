@@ -5130,78 +5130,87 @@
             });
         }
 
-        function handleNewStatsMonthFilterClick(event, buttonId, textElementId, contextType) { // contextType ahora es 'main', 'details', o 'general'
-             
-   event.preventDefault();
-                const selectedLink = event.currentTarget;
-                const newSelectedMonth = selectedLink.dataset.month;
-                const textElement = document.getElementById(textElementId);
+        function handleNewStatsMonthFilterClick(event, buttonId, textElementId, contextType) {
+            event.preventDefault();
+            const selectedLink = event.currentTarget;
+            const newSelectedMonth = selectedLink.dataset.month;
+            const textElement = document.getElementById(textElementId);
 
-                if (textElement) {
-                        textElement.textContent = selectedLink.textContent;
-                        textElement.dataset.currentMonthValue = newSelectedMonth;
+            // Actualizar el texto del botón del dropdown y su valor de dataset
+            if (textElement) {
+                textElement.textContent = selectedLink.textContent;
+                textElement.dataset.currentMonthValue = newSelectedMonth;
+            }
+
+            // Actualizar la clase 'active' en las opciones del dropdown
+            const dropdownOptionsContainer = document.getElementById(buttonId).nextElementSibling;
+            if (dropdownOptionsContainer) {
+                dropdownOptionsContainer.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+            }
+            selectedLink.classList.add('active');
+            toggleNewStatsMonthDropdown(false, buttonId); // Cierra el dropdown
+
+            // Lógica específica según el contexto del dropdown
+            if (contextType === 'details') {
+                currentSelectedPeriodForDetailsStats = newSelectedMonth;
+                if (currentSelectedEmployeeForDetails) {
+                    const employeeData = currentStatsEmployeeData.find(e => e.name === currentSelectedEmployeeForDetails);
+                    if (employeeData) {
+                        showIndividualEmployeeCharts(employeeData, currentSelectedPeriodForDetailsStats);
+                    }
+                }
+            } else if (contextType === 'general') {
+                currentSelectedPeriodForGeneralStats = newSelectedMonth; // Actualiza el período para las estadísticas generales
+
+                // Llama directamente a las funciones para renderizar los gráficos generales
+                // solo si la sección de estadísticas generales está visible.
+                if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
+                    requestAnimationFrame(() => { // Usar requestAnimationFrame para asegurar que el DOM está listo
+                        renderGeneralStackedBarChart();
+                        renderGeneralGroupedBarChart();
+                    });
+                }
+            } else { // 'main' context (dropdown principal de la tabla de estadísticas)
+                currentSelectedPeriodForMainStats = newSelectedMonth;
+                renderNewStatsTable();
+
+                // Sincronizar las otras vistas si están abiertas
+                if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
+                    currentSelectedPeriodForGeneralStats = newSelectedMonth;
+                    if (domCache.generalStatsSelectedMonthText) {
+                        domCache.generalStatsSelectedMonthText.textContent = selectedLink.textContent;
+                        domCache.generalStatsSelectedMonthText.dataset.currentMonthValue = newSelectedMonth;
+                    }
+                    if (domCache.generalStatsMonthDropdownOptions) {
+                        domCache.generalStatsMonthDropdownOptions.querySelectorAll('a').forEach(a => {
+                            a.classList.toggle('active', a.dataset.month === newSelectedMonth);
+                        });
+                    }
+                    requestAnimationFrame(() => {
+                        renderGeneralStackedBarChart();
+                        renderGeneralGroupedBarChart();
+                    });
                 }
 
-                const dropdownOptionsContainer = document.getElementById(buttonId).nextElementSibling;
-                if (dropdownOptionsContainer) {
-                        dropdownOptionsContainer.querySelectorAll('a').forEach(a => a.classList.remove('active'));
-                }
-                selectedLink.classList.add('active');
-                toggleNewStatsMonthDropdown(false, buttonId); // Cierra el dropdown
-
-                if (contextType === 'details') {
+                if (domCache.individualChartsSection && !domCache.individualChartsSection.classList.contains('hidden') && currentSelectedEmployeeForDetails) {
+                    const employeeData = currentStatsEmployeeData.find(e => e.name === currentSelectedEmployeeForDetails);
+                    if (employeeData) {
                         currentSelectedPeriodForDetailsStats = newSelectedMonth;
-                        if (currentSelectedEmployeeForDetails) {
-                                const employeeData = currentStatsEmployeeData.find(e => e.name === currentSelectedEmployeeForDetails);
-                                if (employeeData) {
-                                        showIndividualEmployeeCharts(employeeData, currentSelectedPeriodForDetailsStats);
-                                }
+                        if (domCache.detailsSelectedMonthText) {
+                            domCache.detailsSelectedMonthText.textContent = selectedLink.textContent;
+                            domCache.detailsSelectedMonthText.dataset.currentMonthValue = newSelectedMonth;
                         }
-                } else if (contextType === 'general') { 
-                        // PUNTO DE VERIFICACIÓN 1: ¿Se actualiza currentSelectedPeriodForGeneralStats?
-                        currentSelectedPeriodForGeneralStats = newSelectedMonth; 
-
-                        // PUNTO DE VERIFICACIÓN 2: ¿Se llama a renderGeneralPlantillaStatsCharts si la sección está visible?
-                        if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
-                                renderGeneralPlantillaStatsCharts(); 
+                        if (domCache.detailsMonthDropdownOptions) {
+                            domCache.detailsMonthDropdownOptions.querySelectorAll('a').forEach(a => {
+                                a.classList.toggle('active', a.dataset.month === newSelectedMonth);
+                            });
                         }
-                } else { // 'main' context (dropdown principal de la tabla de estadísticas)
-                        currentSelectedPeriodForMainStats = newSelectedMonth;
-                        renderNewStatsTable(); 
-
-                        if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
-                                currentSelectedPeriodForGeneralStats = newSelectedMonth; 
-                                
-                                if(domCache.generalStatsSelectedMonthText) { 
-                                        domCache.generalStatsSelectedMonthText.textContent = selectedLink.textContent; 
-                                        domCache.generalStatsSelectedMonthText.dataset.currentMonthValue = newSelectedMonth;
-                                }
-                                if(domCache.generalStatsMonthDropdownOptions) {
-                                         domCache.generalStatsMonthDropdownOptions.querySelectorAll('a').forEach(a => {
-                                                a.classList.toggle('active', a.dataset.month === newSelectedMonth);
-                                        });
-                                }
-                                renderGeneralPlantillaStatsCharts();
-                        }
-
-                        if (domCache.individualChartsSection && !domCache.individualChartsSection.classList.contains('hidden') && currentSelectedEmployeeForDetails) {
-                                const employeeData = currentStatsEmployeeData.find(e => e.name === currentSelectedEmployeeForDetails);
-                                if (employeeData) {
-                                        if (domCache.detailsSelectedMonthText) {
-                                                domCache.detailsSelectedMonthText.textContent = selectedLink.textContent; 
-                                                domCache.detailsSelectedMonthText.dataset.currentMonthValue = newSelectedMonth;
-                                        }
-                                        currentSelectedPeriodForDetailsStats = newSelectedMonth; 
-                                        if (domCache.detailsMonthDropdownOptions) {
-                                                domCache.detailsMonthDropdownOptions.querySelectorAll('a').forEach(a => {
-                                                        a.classList.toggle('active', a.dataset.month === newSelectedMonth);
-                                                });
-                                        }
-                                        showIndividualEmployeeCharts(employeeData, newSelectedMonth);
-                                }
-                        }
+                        showIndividualEmployeeCharts(employeeData, newSelectedMonth);
+                    }
                 }
+            }
         }
+
 
         function toggleNewStatsMonthDropdown(forceShow, buttonId) {
             const buttonElement = document.getElementById(buttonId);
@@ -5696,7 +5705,6 @@
             }
   
             let dataForGeneralCharts;
-            // ***** CORRECCIÓN CRUCIAL AQUÍ: Usar currentSelectedPeriodForGeneralStats *****
             if (currentSelectedPeriodForGeneralStats === 'all') {
                 dataForGeneralCharts = currentStatsEmployeeData; // Usa datos anuales ya agregados
             } else {
