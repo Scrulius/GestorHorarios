@@ -937,8 +937,36 @@
 			body.annual-view-active #schedule-table .employee-name-cell .employee-name-display {
 				max-width: 70px; /* Aún más corto para nombres en vista anual */
 			}
-		}
 		/* === FIN: ESTILOS PARA ADAPTACIÓN MÓVIL DE TABLAS === */
+		
+		/* === INICIO: ESTILOS PARA ADAPTACIÓN MÓVIL DE LA BARRA DE TURNOS === */
+			#multiselect-toolbar {
+				/* Permitir que los botones se envuelvan en múltiples líneas */
+				flex-wrap: wrap;
+				justify-content: center; /* Centrar los botones si se envuelven */
+
+				/* Ajustar el ancho máximo para que no exceda la pantalla con paddings */
+				width: calc(100% - 40px); /* 100% del viewport menos algo de padding lateral */
+				max-width: 400px; /* Un máximo razonable para que no sea demasiado ancha incluso en móviles grandes */
+        
+				/* Opcional: reducir el padding vertical de la barra si es necesario */
+				padding-top: 0.5rem;    /* Reducido desde 0.75rem */
+				padding-bottom: 0.5rem; /* Reducido desde 0.75rem */
+        
+				/* Ajustar el 'gap' si es necesario para líneas envueltas */
+				gap: 0.375rem; /* Reducido desde 0.5rem */
+			}
+
+			#multiselect-toolbar button {
+				/* Reducir ligeramente el padding y tamaño de fuente de los botones */
+				padding: 0.4rem 0.6rem; /* Reducido desde 0.5rem 0.75rem */
+				font-size: 0.8rem;    /* Reducido desde 0.875rem */
+        
+				/* Opcional: añadir un pequeño margen inferior si se envuelven mucho */
+				margin-bottom: 0.25rem; 
+			}
+		}
+		/* === FIN: ESTILOS PARA ADAPTACIÓN MÓVIL DE LA BARRA DE TURNOS === */
 
     </style>
 </head>
@@ -5098,75 +5126,118 @@
 
 
         function renderDonutChartForEmployee(empData, monthContext) {
-            const canvasElement = domCache.donutChartCanvas; 
-            const messageDiv = domCache.donutChartMessage; 
-            if (!canvasElement || !messageDiv) { console.error("Elementos para Donut Chart no encontrados."); return; }
+            const canvasElement = domCache.donutChartCanvas;
+            const messageDiv = domCache.donutChartMessage;
+            if (!canvasElement || !messageDiv) {
+                console.error("Elementos para Donut Chart no encontrados.");
+                return;
+            }
             const ctx = canvasElement.getContext('2d');
             const chartId = 'employeeDonutChart';
 
-            if (statsChartInstances[chartId]) statsChartInstances[chartId].destroy();
-            messageDiv.textContent = '';
+            // Destruir instancia previa del gráfico si existe
+            if (statsChartInstances[chartId]) {
+                statsChartInstances[chartId].destroy();
+            }
+            messageDiv.textContent = ''; // Limpiar mensajes previos
 
-            let dataForChart = { ...empData };
+            // Inicializa dataForChart para las categorías consolidadas
+            let dataForChart = { name: empData.name, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0 };
+
             if (monthContext !== 'all') {
+                // --- Lógica para contexto mensual ---
                 const selectedMonthNum = parseInt(monthContext);
-                dataForChart = { name: empData.name, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, M2:0, T2:0, N2:0 };
+                // Reiniciamos dataForChart para el cálculo mensual específico
+                dataForChart = { name: empData.name, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0 };
+
                 if (scheduleData[empData.name] && scheduleData[empData.name][selectedMonthNum]) {
                     const monthSchedule = scheduleData[empData.name][selectedMonthNum];
                     const daysInMonth = getDaysInMonth(selectedMonthNum, yearOfSchedule);
+
                     for (let day = 1; day <= daysInMonth; day++) {
                         const shift = monthSchedule[day];
-                        if (shift && SHIFT_TYPES.includes(shift)) {
-                            dataForChart[shift] = (dataForChart[shift] || 0) + 1;
-                        } else if (shift && shift !== "") {
-                            dataForChart.Otro = (dataForChart.Otro || 0) + 1;
+                        if (shift && shift !== "") { // Solo procesar si hay un turno asignado
+                            if (shift === 'M' || shift === 'M2') {
+                                dataForChart.M = (dataForChart.M || 0) + 1;
+                            } else if (shift === 'T' || shift === 'T2') {
+                                dataForChart.T = (dataForChart.T || 0) + 1;
+                            } else if (shift === 'N' || shift === 'N2') {
+                                dataForChart.N = (dataForChart.N || 0) + 1;
+                            } else if (SHIFT_TYPES.includes(shift)) { // Para L, V, B directos
+                                dataForChart[shift] = (dataForChart[shift] || 0) + 1;
+                            } else { // Turnos personalizados o no estándar que no son L, V, B
+                                dataForChart.Otro = (dataForChart.Otro || 0) + 1;
+                            }
                         }
                     }
                 }
+            } else {
+                // --- Lógica para contexto anual ('all') ---
+                // Se asume que empData (proveniente de calculateAllEmployeeStatsForNewUI)
+                // contiene los conteos anuales separados para M, M2, T, T2, N, N2.
+                dataForChart.M = (empData.M || 0) + (empData.M2 || 0);
+                dataForChart.T = (empData.T || 0) + (empData.T2 || 0);
+                dataForChart.N = (empData.N || 0) + (empData.N2 || 0);
+                dataForChart.L = empData.L || 0;
+                dataForChart.V = empData.V || 0;
+                dataForChart.B = empData.B || 0;
+                dataForChart.Otro = empData.Otro || 0;
             }
 
-            const shiftTypes = ['M', 'T', 'N', 'L', 'V', 'B', 'Otro'];
+            // Preparar datos para Chart.js
+            const shiftTypesForDonutDisplay = ['M', 'T', 'N', 'L', 'V', 'B', 'Otro'];
             const labelsForDonut = [];
             const dataCountsForDonut = [];
             const backgroundColorsForDonut = [];
 
-            shiftTypes.forEach(st => {
+            shiftTypesForDonutDisplay.forEach(st => {
                 const count = dataForChart[st] || 0;
-                if (count > 0) {
-                    labelsForDonut.push(SHIFT_TYPE_FULL_NAMES[st] || st);
+                if (count > 0) { // Solo añadir al gráfico si hay conteo
+                    labelsForDonut.push(SHIFT_TYPE_FULL_NAMES[st] || st); // Usar nombre completo si está disponible
                     dataCountsForDonut.push(count);
                     backgroundColorsForDonut.push(getShiftBackgroundColorForChart(st));
                 }
             });
 
+            // Manejar caso sin datos
             if (dataCountsForDonut.length === 0) {
                 messageDiv.textContent = 'Sin datos de turnos para mostrar en este período.';
-                ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-                delete statsChartInstances[chartId];
+                ctx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Limpiar canvas
+                delete statsChartInstances[chartId]; // Eliminar referencia a instancia inexistente
                 return;
             }
 
+            // Crear nueva instancia de Chart.js
             statsChartInstances[chartId] = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: labelsForDonut,
                     datasets: [{
-                        label: 'Proporción',
+                        label: 'Proporción de Turnos',
                         data: dataCountsForDonut,
                         backgroundColor: backgroundColorsForDonut,
                         hoverOffset: 6,
-                        borderColor: '#fff',
+                        borderColor: '#fff', // Borde blanco entre segmentos
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    cutout: '60%',
+                    cutout: '60%', // Tamaño del agujero central
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { size: 10, weight: '500' }, padding: 8, boxWidth: 12, boxHeight: 12 } },
+                        legend: {
+                            position: 'bottom', // Posición de la leyenda
+                            labels: {
+                                font: { size: 10, weight: '500' },
+                                padding: 8,
+                                boxWidth: 12,
+                                boxHeight: 12
+                            }
+                        },
                         tooltip: {
-                            titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 },
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
                             callbacks: {
                                 title: (tooltipItems) => tooltipItems[0].label,
                                 label: (context) => {
@@ -5182,47 +5253,32 @@
             });
         }
 
-        function renderGeneralPlantillaStatsCharts() {
-                if (!domCache.generalPlantillaStatsSection || !domCache.mainStatsTableSection || !domCache.individualChartsSection) {
-                        console.error("Alguna sección de estadísticas no está en domCache para renderGeneralPlantillaStatsCharts.");
-                        return;
-                }
-
-                requestAnimationFrame(() => {
-                        renderGeneralStackedBarChart(); 
-                        renderGeneralGroupedBarChart(); 
-                });
-        }
-
         function renderMiniCalendarHeatmapForEmployee(empData, monthContext) {
             const container = domCache.miniCalendarHeatmapContainer; 
             const titleElement = domCache.calendarHeatmapTitle; 
-            if (!container || !titleElement) { console.error("Elementos para Mini Calendar no encontrados."); return; }
+            if (!container || !titleElement) { 
+                console.error("Elementos para Mini Calendar no encontrados en domCache:", domCache);
+                // Comprueba si los IDs 'mini-calendar-heatmap-container' y 'calendar-heatmap-title' 
+                // están correctamente definidos en tu HTML y cacheados en domCache.
+                return; 
+            }
             container.innerHTML = '';
 
             const displayMonth = (monthContext === 'all' || monthContext === undefined) ? new Date().getMonth() : parseInt(monthContext) - 1;
             const displayYear = yearOfSchedule;
 
             titleElement.textContent = `Calendario para ${MONTH_NAMES[displayMonth]} ${displayYear}`;
-
-            // --- INICIO DE LA MODIFICACIÓN ---
-            // Array original (Domingo a Sábado)
-            // const SHORT_WEEK_DAY_NAMES = ["D", "L", "M", "X", "J", "V", "S"];
-            
-            // Nuevo array para las cabeceras, empezando por Lunes
+    
             const CALENDAR_HEADERS_MONDAY_START = ["L", "M", "X", "J", "V", "S", "D"]; 
-            
-            CALENDAR_HEADERS_MONDAY_START.forEach(dayName => { // Usamos el nuevo array
+    
+            CALENDAR_HEADERS_MONDAY_START.forEach(dayName => {
                 const dayHeader = createElement('div', { className: 'calendar-header-day', textContent: dayName });
                 container.appendChild(dayHeader);
             });
-            // --- FIN DE LA MODIFICACIÓN ---
 
             const firstDayOfMonth = new Date(displayYear, displayMonth, 1);
             const daysInMonth = getDaysInMonth(displayMonth + 1, displayYear); 
-            
-            // Esta lógica ya es correcta para una semana que empieza en Lunes
-            // (0 = Lunes, 1 = Martes, ..., 6 = Domingo)
+    
             let firstDayOfWeek = firstDayOfMonth.getDay(); 
             firstDayOfWeek = (firstDayOfWeek === 0) ? 6 : firstDayOfWeek - 1; 
 
@@ -5234,6 +5290,7 @@
                 const dayCell = createElement('div', { className: 'calendar-day border', textContent: dayNum });
                 const shift = scheduleData[empData.name]?.[displayMonth + 1]?.[dayNum] || ""; 
                 const shiftKeyForColor = shift === "" ? 'empty' : shift;
+                // Asegúrate de que currentShiftColors y SHIFT_TYPE_FULL_NAMES estén accesibles y correctos
                 const colorConf = currentShiftColors[shiftKeyForColor] || currentShiftColors.empty;
 
                 dayCell.style.backgroundColor = colorConf.hexBg;
@@ -5241,7 +5298,7 @@
                 dayCell.title = `Día ${dayNum}: ${shift ? (SHIFT_TYPE_FULL_NAMES[shift] || shift) : 'Vacío'}`;
                 container.appendChild(dayCell);
             }
-        }
+        }	
 
         function renderKpiSummaryCardsForEmployee(empData, monthContext) {
             const container = domCache.kpiSummaryCardContainer; 
@@ -5662,6 +5719,7 @@
             if(domCache.individualChartsSection) domCache.individualChartsSection.classList.add('hidden');
             if(domCache.generalPlantillaStatsSection) domCache.generalPlantillaStatsSection.classList.add('hidden');
         }
+		
 
     </script>
 </body>
