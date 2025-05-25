@@ -1075,17 +1075,22 @@
             <div class="mt-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <section id="statistics-section" class="lg:col-span-4">
                     <section class="stats-section" id="idea1-table-improved-expanded">
-                        <div class="table-header-controls">
-                            <h2 class="text-xl font-semibold section-main-title">Tabla Comparativa de Empleados</h2>
-                            <div class="month-dropdown-container" id="main-month-dropdown-container">
-                                <button id="month-dropdown-btn" class="month-dropdown-button">
-                                    <span id="selected-month-text">Año Completo</span>
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </button>
-                                <div id="month-dropdown-options" class="month-dropdown-content">
-                                    </div>
-                            </div>
-                        </div>
+						<div class="table-header-controls">
+							<h2 class="text-xl font-semibold section-main-title">Tabla Comparativa de Empleados</h2>
+							<div class="flex items-center gap-3"> 
+								<div class="month-dropdown-container" id="main-month-dropdown-container">
+									<button id="month-dropdown-btn" class="month-dropdown-button">
+										<span id="selected-month-text">Año Completo</span>
+										<i class="fas fa-chevron-down text-xs"></i>
+									</button>
+									<div id="month-dropdown-options" class="month-dropdown-content">
+									</div>
+								</div>
+								<button id="export-stats-to-pdf-button" class="action-button bg-red-600 text-white hover:bg-red-700">
+									<i class="fas fa-file-pdf mr-2"></i>Exportar Estadísticas PDF
+								</button>
+							</div>
+						</div>
                         <div class="table-wrapper">
                             <table class="min-w-full">
                                 <thead id="stats-table-head">
@@ -1319,7 +1324,7 @@
                     <h4 class="font-semibold text-indigo-600 mb-1">Seleccionar Múltiples Celdas (Arrastrando):</h4>
                      <ul class="list-disc list-inside pl-4 space-y-1">
                         <li><strong>PC/Mac:</strong> Haz clic en una celda, luego vuelve a hacer clic en la misma y, sin soltar, arrastra el cursor para seleccionar un bloque.</li>
-                        <li><strong>Móvil:</strong> Toca una celda para seleccionarla. Luego vuelve a tocar la misma celda, mantén pulsado y arrastra el dedo para expandir la selección a celdas adyacentes.</li>
+                        <li><strong>Móvil:</strong> Toca una celda, mantén pulsado y arrastra el dedo para expandir la selección a celdas adyacentes.</li>
                     </ul>
                 </div>
 
@@ -1393,8 +1398,53 @@
         </div>
     </div>
 
+	<div id="filename-modal-stats-pdf" class="modal hidden-by-default">
+		<div class="modal-content">
+			<h3 id="filename-modal-title-stats-pdf" class="text-lg font-semibold mb-3">Nombre del Archivo PDF</h3>
+			<input type="text" id="modal-filename-input-stats-pdf" class="w-full p-2 border border-gray-300 rounded-md mb-4" placeholder="nombre_del_archivo_pdf">
+			<p id="filename-modal-extension-stats-pdf" class="text-xs text-gray-500 mb-3">Extensión: .pdf</p>
+			<div class="flex justify-end gap-3 mt-6">
+				<button id="modal-cancel-filename-stats-pdf" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
+				<button id="modal-confirm-filename-stats-pdf" class="action-button bg-sky-600 text-white hover:bg-sky-700 px-4 py-2">Aceptar</button>
+			</div>
+		</div>
+	</div>
+
     <script>
         // --- CONSTANTES Y CONFIGURACIÓN ---
+		
+        const SVG_GHM_LOGO_SIMPLE = `
+            <g transform="scale(0.5)">
+                <defs>
+                    <path id="star-shape" d="M10 0 L12.3511 6.1803 L19.5106 7.2949 L14.7295 12.3197 L15.2939 19.0211 L10 16 L4.7061 19.0211 L5.2705 12.3197 L0.4894 7.2949 L7.6489 6.1803 Z" />
+                </defs>
+                <text x="110" y="28" style="font-family: 'Times New Roman', Times, serif; font-size: 20px; font-weight: normal; fill: #252525; text-anchor: middle; dominant-baseline: central;">GRAN HOTEL</text>
+                <text x="110" y="55" style="font-family: 'Times New Roman', Times, serif; font-size: 26px; font-weight: bold; fill: #1a1a1a; text-anchor: middle; dominant-baseline: central;">MIRAMAR</text>
+                <g style="fill: #B08D57;" transform="translate(68.5, 72) scale(0.7)">
+                    <use href="#star-shape" x="0" />
+                    <use href="#star-shape" x="25" />
+                    <use href="#star-shape" x="50" />
+                    <use href="#star-shape" x="75" />
+                    <use href="#star-shape" x="100" />
+                </g>
+            </g>
+        `;
+
+        // Estos pueden mantenerse como en el prototipo, definen la estructura de la tabla en el PDF.
+        const statHeadersPdf = { // Renombrado para evitar conflictos si ya existe statHeaders
+            name: "Empleado",
+            M: "Mañanas",
+            T: "Tardes",
+            N: "Noches",
+            L: "Libres",
+            V: "Vacaciones",
+            B: "Bajas",
+            Otro: "Otros",
+            totalWorkDays: "Días Trab.",
+            weekendsOff: "FDS Libres"
+        };
+        const columnOrderPdf = ["name", "M", "T", "N", "L", "V", "B", "Otro", "totalWorkDays", "weekendsOff"];
+
         const SVG_FINAL_LOGO_MARKUP = `
             <svg width="200" height="75" viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
                 <style>
@@ -1890,6 +1940,17 @@
             domCache.generalStackedBarCanvas = document.getElementById('generalStackedBarCanvas');
             domCache.generalGroupedBarCanvas = document.getElementById('generalGroupedBarCanvas');
             
+			// --- DOM Cache para el nuevo modal (asegúrate de que estos IDs coincidan con tu HTML) ---
+			domCache.filenameModalStatsPdf = document.getElementById('filename-modal-stats-pdf');
+			domCache.filenameModalTitleStatsPdf = document.getElementById('filename-modal-title-stats-pdf');
+			domCache.modalFilenameInputStatsPdf = document.getElementById('modal-filename-input-stats-pdf');
+			domCache.filenameModalExtensionStatsPdf = document.getElementById('filename-modal-extension-stats-pdf');
+			domCache.modalCancelFilenameStatsPdf = document.getElementById('modal-cancel-filename-stats-pdf');
+			domCache.modalConfirmFilenameStatsPdf = document.getElementById('modal-confirm-filename-stats-pdf');
+			domCache.exportStatsToPdfButton = document.getElementById('export-stats-to-pdf-button'); // El nuevo botón
+			let currentStatsPdfConfirmCallback = null;
+			let currentStatsPdfFileExtension = '';
+
             // Placeholder para cuando no hay datos en la nueva sección de estadísticas (si decides usar uno específico)
             // domCache.statsPlaceholderReformed = document.getElementById('stats-placeholder-reformed'); // Descomentar y crear el div si es necesario
 
@@ -2014,25 +2075,37 @@
         }
 
         function handleDocumentTouchMove(event) {
-            let movedSignificantly = false;
-            if (dragSelectionStartCellInfo && !isDraggingToSelect) {
-                const deltaX = Math.abs(event.touches[0].clientX - touchstartX);
-                const deltaY = Math.abs(event.touches[0].clientY - touchstartY);
-                if (deltaX > MAX_TOUCH_MOVE_THRESHOLD || deltaY > MAX_TOUCH_MOVE_THRESHOLD) {
-                    isDraggingToSelect = true;
-                    movedSignificantly = true;
-                    if (longPressTimer) {
-                        clearTimeout(longPressTimer);
-                        longPressTimer = null;
-                    }
+            if (!touchstartTarget) return; // Si no hubo un touchstart, no hacer nada
+
+            const deltaX = Math.abs(event.touches[0].clientX - touchstartX);
+            const deltaY = Math.abs(event.touches[0].clientY - touchstartY);
+
+            if (!isDraggingToSelect && (deltaX > MAX_TOUCH_MOVE_THRESHOLD || deltaY > MAX_TOUCH_MOVE_THRESHOLD)) {
+                // Si no estábamos arrastrando y el movimiento supera el umbral, empezamos a arrastrar.
+                isDraggingToSelect = true;
+                if (longPressTimer) { // Cancelar el timer de pulsación larga si se convierte en arrastre
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
                 }
+                wasLongPress = false; // No fue una pulsación larga si se arrastró
+
+                // Si el arrastre comenzó, la celda inicial debe ser la celda de inicio del arrastre.
+                // Si no estaba seleccionada, seleccionarla ahora.
+                dragSelectionStartCellInfo = getCellInfoFromElement(touchstartTarget);
+                if (dragSelectionStartCellInfo && !selectedCells.some(sc => sc.tdElement === dragSelectionStartCellInfo.tdElement)) {
+                    // Solo la seleccionamos si no estaba ya en la lista (por un toque previo sin arrastre)
+                    // No es necesario llamar a processCellClick aquí, ya que el resto de la lógica de arrastre se encargará.
+                    // Simplemente la marcamos visualmente y la añadimos a selectedCells.
+                    selectedCells.push(dragSelectionStartCellInfo);
+                    dragSelectionStartCellInfo.tdElement.classList.add('cell-selected');
+                    cellsAffectedByCurrentDrag.add(dragSelectionStartCellInfo.tdElement); // Añadir a las afectadas por este arrastre
+                }
+                lastCellOverForDragSelectInfo = dragSelectionStartCellInfo; // La celda inicial es la última sobre la que pasamos
             }
 
-            if (!isDraggingToSelect || !dragSelectionStartCellInfo) return;
+            if (!isDraggingToSelect || !dragSelectionStartCellInfo) return; // Si aún no estamos arrastrando o no hay celda de inicio, salir
 
-            if (movedSignificantly || isDraggingToSelect) {
-                 event.preventDefault();
-            }
+            event.preventDefault(); // Prevenir scroll solo si estamos efectivamente arrastrando para seleccionar
 
             const currentTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
             const currentTd = currentTarget ? currentTarget.closest('td.shift-cell') : null;
@@ -2040,10 +2113,11 @@
 
             const currentCellInfo = getCellInfoFromElement(currentTd);
             if (!currentCellInfo || (lastCellOverForDragSelectInfo && currentCellInfo.tdElement === lastCellOverForDragSelectInfo.tdElement)) {
-                return;
+                return; // No hacer nada si no es una celda válida o es la misma que la última procesada
             }
             lastCellOverForDragSelectInfo = currentCellInfo;
 
+            // Lógica para determinar el rectángulo de selección y actualizar celdas
             const minRow = Math.min(dragSelectionStartCellInfo.rowIndex, currentCellInfo.rowIndex);
             const maxRow = Math.max(dragSelectionStartCellInfo.rowIndex, currentCellInfo.rowIndex);
             const minCol = Math.min(dragSelectionStartCellInfo.colIndex, currentCellInfo.colIndex);
@@ -2056,19 +2130,22 @@
 
                 const isInCurrentRect = cellIterInfo.rowIndex >= minRow && cellIterInfo.rowIndex <= maxRow &&
                                         cellIterInfo.colIndex >= minCol && cellIterInfo.colIndex <= maxCol;
+                
                 let isSelectedInGlobalList = selectedCells.some(sc => sc.tdElement === cellIterInfo.tdElement);
 
                 if (isInCurrentRect) {
                     if (!isSelectedInGlobalList) {
                         selectedCells.push(cellIterInfo);
                         cellElement.classList.add('cell-selected');
-                        cellsAffectedByCurrentDrag.add(cellElement);
+                        cellsAffectedByCurrentDrag.add(cellElement); // Marcar como afectada por ESTE arrastre
                     }
                 } else {
+                    // Si la celda está fuera del rectángulo actual Y fue seleccionada por ESTE arrastre
                     if (isSelectedInGlobalList && cellsAffectedByCurrentDrag.has(cellElement)) {
                         const index = selectedCells.findIndex(sc => sc.tdElement === cellIterInfo.tdElement);
                         if (index > -1) selectedCells.splice(index, 1);
                         cellElement.classList.remove('cell-selected');
+                        // No la quitamos de cellsAffectedByCurrentDrag, ya que su estado cambió debido a este arrastre
                     }
                 }
             });
@@ -2110,105 +2187,78 @@
 
 
         // --- CONFIGURACIÓN DE EVENT LISTENERS ---
-        function setupEventListeners() {
-            domCache.csvFileInput.addEventListener('change', handleFileUpload);
-            domCache.yearInput.addEventListener('change', handleYearChange);
-            domCache.saveLocalButton.addEventListener('click', () => saveScheduleToLocalStorage(false));
-            domCache.exportCsvButton.addEventListener('click', prepareExportScheduleToCSV);
-            domCache.createEmptyCsvButton.addEventListener('click', handleCreateEmptyScheduleClick);
-            domCache.downloadImageButton.addEventListener('click', () => prepareDownloadSvgOrPdf('monthlyAnnual'));
-            domCache.downloadWeeklySvgButton.addEventListener('click', () => prepareDownloadSvgOrPdf('weekly'));
-            domCache.exportMonthCalendarButton.addEventListener('click', showExportToCalendarModal);
-            domCache.viewMonthlyButton.addEventListener('click', () => switchViewMode('monthly'));
-            domCache.viewAnnualButton.addEventListener('click', () => switchViewMode('annual'));
-            domCache.scheduleTableBody.addEventListener('dblclick', handleTableDblClick);
-            domCache.scheduleTableBody.addEventListener('dragstart', handleDragStart);
-            domCache.scheduleTableBody.addEventListener('dragover', handleDragOver);
-            domCache.scheduleTableBody.addEventListener('dragleave', handleDragLeave);
-            domCache.scheduleTableBody.addEventListener('drop', handleDrop);
-            domCache.scheduleTableBody.addEventListener('dragend', handleDragEnd);
-
-            domCache.scheduleTableBody.addEventListener('mousedown', handleCellMouseDown);
-            document.addEventListener('mousemove', handleDocumentMouseMove);
-            document.addEventListener('mouseup', handleDocumentMouseUp);
-
-            domCache.scheduleTableBody.addEventListener('touchstart', handleCellTouchStart, { passive: false });
-            document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
-            document.addEventListener('touchend', handleDocumentTouchEnd);
-
-
-            domCache.scheduleTableBody.addEventListener('contextmenu', (event) => {
-                if (event.target.closest('td.shift-cell') && wasLongPress) {
-                    const cellInfo = getCellInfoFromElement(event.target.closest('td.shift-cell'));
-                    if(cellInfo) {
-                        const currentValue = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
-                        if (!SHIFT_TYPES.includes(currentValue)) {
-                            event.preventDefault();
+        
+		        function setupEventListeners() {
+            // --- Listeners Existentes (basado en el análisis previo de GestorHorarios-4.55.html) ---
+            if (domCache.csvFileInput) {
+                domCache.csvFileInput.addEventListener('change', handleFileUpload);
+            }
+            if (domCache.yearInput) {
+                domCache.yearInput.addEventListener('change', handleYearChange);
+            }
+            if (domCache.saveLocalButton) {
+                domCache.saveLocalButton.addEventListener('click', () => saveScheduleToLocalStorage(false));
+            }
+            if (domCache.exportCsvButton) {
+                domCache.exportCsvButton.addEventListener('click', prepareExportScheduleToCSV);
+            }
+            if (domCache.createEmptyCsvButton) {
+                domCache.createEmptyCsvButton.addEventListener('click', handleCreateEmptyScheduleClick);
+            }
+            if (domCache.downloadImageButton) { // Para PDF mensual/anual del horario
+                domCache.downloadImageButton.addEventListener('click', () => prepareDownloadSvgOrPdf('monthlyAnnual'));
+            }
+            if (domCache.downloadWeeklySvgButton) { // Para PDF semanal del horario
+                domCache.downloadWeeklySvgButton.addEventListener('click', () => prepareDownloadSvgOrPdf('weekly'));
+            }
+            if (domCache.exportMonthCalendarButton) {
+                domCache.exportMonthCalendarButton.addEventListener('click', showExportToCalendarModal);
+            }
+            if (domCache.viewMonthlyButton) {
+                domCache.viewMonthlyButton.addEventListener('click', () => switchViewMode('monthly'));
+            }
+            if (domCache.viewAnnualButton) {
+                domCache.viewAnnualButton.addEventListener('click', () => switchViewMode('annual'));
+            }
+        
+            // Listeners de la tabla de horario principal
+            if (domCache.scheduleTableBody) {
+                domCache.scheduleTableBody.addEventListener('dblclick', handleTableDblClick);
+                domCache.scheduleTableBody.addEventListener('dragstart', handleDragStart);
+                domCache.scheduleTableBody.addEventListener('dragover', handleDragOver);
+                domCache.scheduleTableBody.addEventListener('dragleave', handleDragLeave);
+                domCache.scheduleTableBody.addEventListener('drop', handleDrop);
+                domCache.scheduleTableBody.addEventListener('dragend', handleDragEnd);
+        
+                // Listeners para selección con mouse
+                domCache.scheduleTableBody.addEventListener('mousedown', handleCellMouseDown);
+                // Estos listeners de mousemove y mouseup se añaden al 'document'
+                // y ya deberían estar en tu código original si seguiste el plan.
+                document.addEventListener('mousemove', handleDocumentMouseMove);
+                document.addEventListener('mouseup', handleDocumentMouseUp);
+        
+        
+                // Listeners para selección táctil
+                domCache.scheduleTableBody.addEventListener('touchstart', handleCellTouchStart, { passive: false });
+                // Estos listeners de touchmove y touchend se añaden al 'document'
+                // y ya deberían estar en tu código original si seguiste el plan.
+                document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
+                document.addEventListener('touchend', handleDocumentTouchEnd);
+        
+        
+                domCache.scheduleTableBody.addEventListener('contextmenu', (event) => {
+                    if (event.target.closest('td.shift-cell') && wasLongPress) { // wasLongPress es una variable global de tu app
+                        const cellInfo = getCellInfoFromElement(event.target.closest('td.shift-cell'));
+                        if (cellInfo) {
+                            const currentValue = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
+                            if (!SHIFT_TYPES.includes(currentValue)) { // SHIFT_TYPES es una constante global de tu app
+                                event.preventDefault();
+                            }
                         }
                     }
-                }
-            });
-
-            domCache.applyColorsButton.addEventListener('click', applyAndSaveColorsAndTimes);
-            domCache.resetColorsButton.addEventListener('click', resetColorsAndTimes);
-            domCache.generalNotesTextarea.addEventListener('input', () => {
-                hasUnsavedChanges = true;
-                updateUnsavedChangesIndicator();
-                if (Object.keys(scheduleData).length > 0 || domCache.generalNotesTextarea.value.trim()) {
-                    domCache.saveLocalButton.disabled = false;
-                }
-                clearTimeout(notesDebounceTimer);
-                notesDebounceTimer = setTimeout(() => {
-                    const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
-                    if (!lastUndoState || lastUndoState.generalNotes !== domCache.generalNotesTextarea.value) {
-                         // saveStateForUndo("Notas generales modificadas.");
-                    }
-                }, 1500);
-            });
-
-
-            domCache.modalConfirmAddEmployee.addEventListener('click', handleAddEmployeeFromModal);
-            domCache.modalCancelAddEmployee.addEventListener('click', () => hideModal(domCache.addEmployeeModal));
-            domCache.addEmployeeModal.addEventListener('click', (event) => {
-                if (event.target === domCache.addEmployeeModal) hideModal(domCache.addEmployeeModal);
-            });
-            domCache.modalConfirmDeleteEmployee.addEventListener('click', confirmEmployeeDeletion);
-            domCache.modalCancelDeleteEmployee.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
-                if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); employeeToDeleteName = null;
-            }));
-            domCache.deleteEmployeeModal.addEventListener('click', (event) => {
-                if (event.target === domCache.deleteEmployeeModal) hideModal(domCache.deleteEmployeeModal, () => {
-                    if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); employeeToDeleteName = null;
                 });
-            });
-            domCache.modalConfirmFilename.addEventListener('click', handleFilenameConfirm);
-            domCache.modalCancelFilename.addEventListener('click', () => hideModal(domCache.filenameModal, () => {
-                currentFilenameConfirmCallback = null; currentFilenameExtension = ''; domCache.modalFilenameInput.value = '';
-            }));
-            domCache.filenameModal.addEventListener('click', (event) => {
-                if (event.target === domCache.filenameModal) hideModal(domCache.filenameModal, () => {
-                    currentFilenameConfirmCallback = null; currentFilenameExtension = ''; domCache.modalFilenameInput.value = '';
-                });
-            });
-            domCache.modalConfirmExportCalendar.addEventListener('click', () => {
-                const selectedEmployee = domCache.modalCalendarEmployeeSelect.value;
-                if (selectedEmployee) exportToCalendar(selectedEmployee);
-                else showToast('Por favor, selecciona un empleado para exportar.', 'error');
-                hideModal(domCache.exportCalendarModal, () => { domCache.modalCalendarEmployeeSelect.innerHTML = '';});
-            });
-            domCache.modalCancelExportCalendar.addEventListener('click', () => hideModal(domCache.exportCalendarModal, () => { domCache.modalCalendarEmployeeSelect.innerHTML = '';}));
-            domCache.exportCalendarModal.addEventListener('click', (event) => {
-                if (event.target === domCache.exportCalendarModal) hideModal(domCache.exportCalendarModal, () => { domCache.modalCalendarEmployeeSelect.innerHTML = '';});
-            });
-
-            if (domCache.footerHeartElement) {
-                domCache.footerHeartElement.addEventListener('click', handleFooterHeartClick);
             }
-
-            window.addEventListener('beforeunload', (event) => {
-                if (hasUnsavedChanges) { event.preventDefault(); event.returnValue = ''; }
-            });
-
+            // Listener global para deseleccionar
             document.addEventListener('mousedown', (event) => {
                 if (activeColorPalette && !activeColorPalette.contains(event.target) &&
                     !event.target.closest('.legend-color-swatch')) {
@@ -2216,27 +2266,136 @@
                 }
                 const isClickOnTableBody = event.target.closest('#schedule-table-body');
                 const isClickOnToolbar = event.target.closest('#multiselect-toolbar');
-                const isClickOnModal = event.target.closest('.modal-content');
+                const isClickOnModal = event.target.closest('.modal-content'); // Genérico para cualquier modal
                 const isClickOnLegendItem = event.target.closest('.legend-item-container');
                 const isClickOnControls = event.target.closest('#controls-section');
-
-                // Se añade comprobación para no limpiar selección si se hace clic en la nueva sección de estadísticas
                 const isClickOnNewStatsSection = event.target.closest('#statistics-section');
-
-
+        
+        
                 if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModal && !isClickOnLegendItem && !isClickOnControls && !isClickOnNewStatsSection && selectedCells.length > 0) {
                     clearSelection();
                 }
             });
-
-
+        
+        
+            // Listeners para leyenda y notas
+            if (domCache.applyColorsButton) {
+                domCache.applyColorsButton.addEventListener('click', applyAndSaveColorsAndTimes);
+            }
+            if (domCache.resetColorsButton) {
+                domCache.resetColorsButton.addEventListener('click', resetColorsAndTimes);
+            }
+            if (domCache.generalNotesTextarea) {
+                domCache.generalNotesTextarea.addEventListener('input', () => {
+                    hasUnsavedChanges = true;
+                    updateUnsavedChangesIndicator();
+                    if (Object.keys(scheduleData).length > 0 || domCache.generalNotesTextarea.value.trim()) {
+                        if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = false;
+                    }
+                    clearTimeout(notesDebounceTimer); // notesDebounceTimer es una variable global de tu app
+                    notesDebounceTimer = setTimeout(() => {
+                        const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null; // undoStack es global
+                        if (!lastUndoState || lastUndoState.generalNotes !== domCache.generalNotesTextarea.value) {
+                            // saveStateForUndo("Notas generales modificadas."); // saveStateForUndo es global
+                        }
+                    }, 1500);
+                });
+            }
+        
+            // Listeners para modales existentes
+            if (domCache.modalConfirmAddEmployee) {
+                domCache.modalConfirmAddEmployee.addEventListener('click', handleAddEmployeeFromModal);
+            }
+            if (domCache.modalCancelAddEmployee) {
+                domCache.modalCancelAddEmployee.addEventListener('click', () => hideModal(domCache.addEmployeeModal));
+            }
+            if (domCache.addEmployeeModal) {
+                domCache.addEmployeeModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.addEmployeeModal) hideModal(domCache.addEmployeeModal);
+                });
+            }
+        
+            if (domCache.modalConfirmDeleteEmployee) {
+                domCache.modalConfirmDeleteEmployee.addEventListener('click', confirmEmployeeDeletion);
+            }
+            if (domCache.modalCancelDeleteEmployee) {
+                domCache.modalCancelDeleteEmployee.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
+                    if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); // deleteCountdownInterval es global
+                    employeeToDeleteName = null; // employeeToDeleteName es global
+                }));
+            }
+            if (domCache.deleteEmployeeModal) {
+                domCache.deleteEmployeeModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.deleteEmployeeModal) hideModal(domCache.deleteEmployeeModal, () => {
+                        if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
+                        employeeToDeleteName = null;
+                    });
+                });
+            }
+        
+            if (domCache.modalConfirmFilename) { // Modal de nombre de archivo genérico
+                domCache.modalConfirmFilename.addEventListener('click', handleFilenameConfirm);
+            }
+            if (domCache.modalCancelFilename) {
+                domCache.modalCancelFilename.addEventListener('click', () => hideModal(domCache.filenameModal, () => {
+                    currentFilenameConfirmCallback = null; // currentFilenameConfirmCallback es global
+                    currentFilenameExtension = ''; // currentFilenameExtension es global
+                    if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = '';
+                }));
+            }
+            if (domCache.filenameModal) {
+                domCache.filenameModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.filenameModal) hideModal(domCache.filenameModal, () => {
+                        currentFilenameConfirmCallback = null;
+                        currentFilenameExtension = '';
+                        if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = '';
+                    });
+                });
+            }
+        
+            if (domCache.modalConfirmExportCalendar) {
+                domCache.modalConfirmExportCalendar.addEventListener('click', () => {
+                    const selectedEmployee = domCache.modalCalendarEmployeeSelect.value;
+                    if (selectedEmployee) exportToCalendar(selectedEmployee);
+                    else showToast('Por favor, selecciona un empleado para exportar.', 'error');
+                    hideModal(domCache.exportCalendarModal, () => {
+                        if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = '';
+                    });
+                });
+            }
+            if (domCache.modalCancelExportCalendar) {
+                domCache.modalCancelExportCalendar.addEventListener('click', () => hideModal(domCache.exportCalendarModal, () => {
+                    if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = '';
+                }));
+            }
+            if (domCache.exportCalendarModal) {
+                domCache.exportCalendarModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.exportCalendarModal) hideModal(domCache.exportCalendarModal, () => {
+                        if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = '';
+                    });
+                });
+            }
+        
+            if (domCache.footerHeartElement) {
+                domCache.footerHeartElement.addEventListener('click', handleFooterHeartClick);
+            }
+        
+            window.addEventListener('beforeunload', (event) => {
+                if (hasUnsavedChanges) { // hasUnsavedChanges es global
+                    event.preventDefault();
+                    event.returnValue = '';
+                }
+            });
+        
+            // Listeners para Deshacer/Rehacer
             if (domCache.undoButton) {
                 domCache.undoButton.addEventListener('click', undoChange);
             }
             if (domCache.redoButton) {
                 domCache.redoButton.addEventListener('click', redoChange);
             }
-
+        
+            // Listener de teclado para Deshacer/Rehacer y Escape
             document.addEventListener('keydown', (event) => {
                 if (event.ctrlKey || event.metaKey) {
                     if (event.key === 'z' || event.key === 'Z') {
@@ -2247,33 +2406,38 @@
                         if (domCache.redoButton && !domCache.redoButton.disabled) redoChange();
                     }
                 } else if (event.key === 'Escape') {
-                    if (selectedCells.length > 0) clearSelection();
+                    if (selectedCells.length > 0) clearSelection(); // selectedCells es global
                     if (domCache.addEmployeeModal && !domCache.addEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.addEmployeeModal);
                     if (domCache.deleteEmployeeModal && !domCache.deleteEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.deleteEmployeeModal, () => { if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); employeeToDeleteName = null; });
-                    if (domCache.filenameModal && !domCache.filenameModal.classList.contains('hidden-by-default')) hideModal(domCache.filenameModal, () => { currentFilenameConfirmCallback = null; currentFilenameExtension = ''; domCache.modalFilenameInput.value = ''; });
-                    if (domCache.exportCalendarModal && !domCache.exportCalendarModal.classList.contains('hidden-by-default')) hideModal(domCache.exportCalendarModal, () => { domCache.modalCalendarEmployeeSelect.innerHTML = ''; });
+                    if (domCache.filenameModal && !domCache.filenameModal.classList.contains('hidden-by-default')) hideModal(domCache.filenameModal, () => { currentFilenameConfirmCallback = null; currentFilenameExtension = ''; if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = ''; });
+                    if (domCache.exportCalendarModal && !domCache.exportCalendarModal.classList.contains('hidden-by-default')) hideModal(domCache.exportCalendarModal, () => { if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = ''; });
                     if (domCache.tipsModal && !domCache.tipsModal.classList.contains('hidden-by-default')) hideModal(domCache.tipsModal);
                     if (domCache.customEventModal && !domCache.customEventModal.classList.contains('hidden-by-default')) hideCustomEventModal();
                     if (domCache.confirmLoadCsvModal && !domCache.confirmLoadCsvModal.classList.contains('hidden-by-default')) {
                         hideModal(domCache.confirmLoadCsvModal);
-                        domCache.csvFileInput.value = '';
-                        currentConfirmAction = null;
+                        if(domCache.csvFileInput) domCache.csvFileInput.value = ''; // Limpiar input de archivo
+                        currentConfirmAction = null; // currentConfirmAction es global
                     }
                     if (domCache.saveLocalHelpModal && !domCache.saveLocalHelpModal.classList.contains('hidden-by-default')) {
                         hideModal(domCache.saveLocalHelpModal);
                     }
                     // Cerrar vistas de estadísticas nuevas si están abiertas
                     if (domCache.individualChartsSection && !domCache.individualChartsSection.classList.contains('hidden')) {
-                         domCache.individualChartsSection.classList.add('hidden');
-                         if(domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
+                        domCache.individualChartsSection.classList.add('hidden');
+                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
                     }
                     if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
                         domCache.generalPlantillaStatsSection.classList.add('hidden');
-                        if(domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
+                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
+                    }
+                    // Cerrar el nuevo modal de PDF de estadísticas si está abierto
+                    if (domCache.filenameModalStatsPdf && !domCache.filenameModalStatsPdf.classList.contains('hidden-by-default')) {
+                        hideStatsPdfFilenameModal();
                     }
                 }
             });
-
+        
+            // Listeners para el modal de Consejos
             if (domCache.helpIconContainer) {
                 domCache.helpIconContainer.addEventListener('click', () => {
                     showModal(domCache.tipsModal);
@@ -2296,7 +2460,8 @@
                     }
                 });
             }
-
+        
+            // Listeners para el modal de evento personalizado
             if (domCache.modalConfirmCustomEvent) {
                 domCache.modalConfirmCustomEvent.addEventListener('click', handleConfirmCustomEvent);
             }
@@ -2310,79 +2475,83 @@
                     }
                 });
             }
-
-            domCache.modalConfirmLoadCsv.addEventListener('click', () => {
-                hideModal(domCache.confirmLoadCsvModal);
-
-                if (currentConfirmAction === 'applyEmptyTemplate') {
-                    applyEmptyScheduleTemplate();
-                } else {
-                    const fileInput = domCache.csvFileInput;
-                    if (fileInput.files.length > 0) {
-                        const file = fileInput.files[0];
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            try {
-                                const csvContent = e.target.result;
-                                parseCSV(csvContent);
-
-                                if (isDataLoadedForStats()) {
-                                    if (file) {
-                                        domCache.csvFileInput.dataset.uploadedFileName = file.name;
-                                    }
-                                    undoStack = [];
-                                    redoStack = [];
-                                    localStorage.removeItem(LOCAL_STORAGE_KEY_UNDO_STACK);
-                                    localStorage.removeItem(LOCAL_STORAGE_KEY_REDO_STACK);
-                                    updateUndoRedoButtonsState();
-                                    populateMonthTabs();
-                                    currentSelectedMonth = 1;
-                                    hasUnsavedChanges = false;
-                                    updateUnsavedChangesIndicator();
-                                    enableControls(true);
-                                    switchViewMode('monthly');
-                                    showToast('Horario cargado correctamente desde CSV.', 'success');
-                                } else {
-                                    showToast('El CSV está vacío o no tiene el formato esperado.', 'error');
-                                    resetToInitialState();
-                                }
-                            } catch (error) {
-                                console.error("Error al procesar el CSV (confirmado):", error);
-                                showToast(`Error al procesar el CSV: ${error.message}`, 'error');
-                                resetToInitialState();
-                            } finally {
-                                fileInput.value = '';
-                            }
-                        };
-                        reader.readAsText(file, 'UTF-8');
-                    } else if (currentConfirmAction !== 'applyEmptyTemplate' && domCache.csvFileInput.value) {
-                        domCache.csvFileInput.value = '';
-                    }
-                }
-                currentConfirmAction = null;
-            });
-
-            domCache.modalCancelLoadCsv.addEventListener('click', () => {
-                hideModal(domCache.confirmLoadCsvModal);
-                domCache.csvFileInput.value = '';
-                currentConfirmAction = null;
-            });
-
-            domCache.confirmLoadCsvModal.addEventListener('click', (event) => {
-                if (event.target === domCache.confirmLoadCsvModal) {
+        
+            // Listeners para el modal de confirmación de carga de CSV
+            if (domCache.modalConfirmLoadCsv) {
+                domCache.modalConfirmLoadCsv.addEventListener('click', () => {
                     hideModal(domCache.confirmLoadCsvModal);
-                    domCache.csvFileInput.value = '';
+                    if (currentConfirmAction === 'applyEmptyTemplate') {
+                        applyEmptyScheduleTemplate();
+                    } else { // Asume 'loadFile'
+                        const fileInput = domCache.csvFileInput;
+                        if (fileInput && fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                try {
+                                    const csvContent = e.target.result;
+                                    parseCSV(csvContent);
+                                    if (isDataLoadedForStats()) {
+                                        if (file) {
+                                            domCache.csvFileInput.dataset.uploadedFileName = file.name;
+                                        }
+                                        undoStack = []; redoStack = [];
+                                        localStorage.removeItem(LOCAL_STORAGE_KEY_UNDO_STACK);
+                                        localStorage.removeItem(LOCAL_STORAGE_KEY_REDO_STACK);
+                                        updateUndoRedoButtonsState();
+                                        populateMonthTabs();
+                                        currentSelectedMonth = 1;
+                                        hasUnsavedChanges = false;
+                                        updateUnsavedChangesIndicator();
+                                        enableControls(true);
+                                        switchViewMode('monthly');
+                                        initializeAndRenderNewStatistics();
+                                        showToast('Horario cargado correctamente desde CSV.', 'success');
+                                    } else {
+                                        showToast('El CSV está vacío o no tiene el formato esperado.', 'error');
+                                        resetToInitialState();
+                                    }
+                                } catch (error) {
+                                    console.error("Error al procesar el CSV (confirmado):", error);
+                                    showToast(`Error al procesar el CSV: ${error.message}`, 'error');
+                                    resetToInitialState();
+                                } finally {
+                                    fileInput.value = '';
+                                }
+                            };
+                            reader.readAsText(file, 'UTF-8');
+                        } else if (currentConfirmAction !== 'applyEmptyTemplate' && domCache.csvFileInput && domCache.csvFileInput.value) {
+                             domCache.csvFileInput.value = ''; // Limpiar si no hay archivo pero se intentó cargar
+                        }
+                    }
                     currentConfirmAction = null;
-                }
-            });
-
-
+                });
+            }
+            if (domCache.modalCancelLoadCsv) {
+                domCache.modalCancelLoadCsv.addEventListener('click', () => {
+                    hideModal(domCache.confirmLoadCsvModal);
+                    if(domCache.csvFileInput) domCache.csvFileInput.value = ''; // Limpiar input de archivo
+                    currentConfirmAction = null;
+                });
+            }
+            if (domCache.confirmLoadCsvModal) {
+                domCache.confirmLoadCsvModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.confirmLoadCsvModal) {
+                        hideModal(domCache.confirmLoadCsvModal);
+                        if(domCache.csvFileInput) domCache.csvFileInput.value = '';
+                        currentConfirmAction = null;
+                    }
+                });
+            }
+        
+            // Listener para el toggle de autoguardado
             if (domCache.autosaveToggle) {
                 domCache.autosaveToggle.addEventListener('change', (event) => {
                     toggleAutosave(event.target.checked);
                 });
             }
-
+        
+            // Listeners para el modal de ayuda de guardado local
             if (domCache.saveLocalHelpIcon) {
                 domCache.saveLocalHelpIcon.addEventListener('click', () => {
                     showModal(domCache.saveLocalHelpModal);
@@ -2405,11 +2574,30 @@
                     }
                 });
             }
-
-            // Event listeners para los nuevos botones de estadísticas (se añadirán con el JS de estadísticas)
-            setupNewStatisticsEventListeners(); // <--- ESTA ES LA LÍNEA AÑADIDA
-        }
-
+        
+            // Event listeners para la nueva sección de estadísticas (ya deberían estar en tu setupEventListeners original)
+            setupNewStatisticsEventListeners(); // Llama a la función que agrupa los listeners de la nueva sección de estadísticas
+        
+            // --- NUEVOS EVENT LISTENERS PARA EXPORTACIÓN PDF DE ESTADÍSTICAS ---
+            if (domCache.modalConfirmFilenameStatsPdf) {
+                domCache.modalConfirmFilenameStatsPdf.addEventListener('click', handleStatsPdfFilenameConfirm);
+            }
+            if (domCache.modalCancelFilenameStatsPdf) {
+                domCache.modalCancelFilenameStatsPdf.addEventListener('click', hideStatsPdfFilenameModal);
+            }
+            if (domCache.filenameModalStatsPdf) { // Para cerrar el modal si se hace clic fuera del contenido
+                domCache.filenameModalStatsPdf.addEventListener('click', (event) => {
+                    if (event.target === domCache.filenameModalStatsPdf) {
+                        hideStatsPdfFilenameModal();
+                    }
+                });
+            }
+            if (domCache.exportStatsToPdfButton) { // El nuevo botón que añadiste al HTML
+                domCache.exportStatsToPdfButton.addEventListener('click', initiateStatsPdfExport);
+            }
+            // --- FIN DE NUEVOS EVENT LISTENERS ---
+        
+        } // Fin de setupEventListeners
 
 
         // --- INICIALIZACIÓN ---
@@ -2876,6 +3064,9 @@
             const disable = !dataLoaded;
             domCache.exportCsvButton.disabled = disable;
             domCache.downloadImageButton.disabled = disable;
+			if (domCache.exportStatsToPdfButton) {
+				domCache.exportStatsToPdfButton.disabled = !dataLoaded; // O !isDataLoadedForStats() si esa es tu condición preferida
+			}
 
             if (domCache.viewModeButtonsContainer) {
                 domCache.viewModeButtonsContainer.classList.toggle('hidden-by-default', !dataLoaded);
@@ -5720,6 +5911,501 @@
             if(domCache.generalPlantillaStatsSection) domCache.generalPlantillaStatsSection.classList.add('hidden');
         }
 		
+        // --- Funciones Auxiliares ---
+
+        function getSvgCompatibleColors(appColors) {
+            // Transforma currentShiftColors (con .hexBg, .hexText) al formato esperado por el SVG.
+            const svgColors = {};
+            const defaultColor = {
+                bg: '#FFFFFF',
+                text: '#2D3748'
+            }; // Color por defecto para el SVG
+
+            // Itera sobre los tipos de turno relevantes para el PDF (M, T, N, L, V, B, Otro)
+            const relevantShiftTypesForPdf = [...columnOrderPdf.filter(key => key !== 'name' && key !== 'totalWorkDays' && key !== 'weekendsOff'), 'empty']; // 'empty' se usa para 'Otro' si no está definido
+
+            relevantShiftTypesForPdf.forEach(shiftType => {
+                const appColorKey = shiftType === 'Otro' ? 'empty' : shiftType; // 'empty' en currentShiftColors puede mapear a 'Otro'
+                if (appColors[appColorKey] && appColors[appColorKey].hexBg && appColors[appColorKey].hexText) {
+                    svgColors[shiftType] = {
+                        bg: appColors[appColorKey].hexBg,
+                        text: appColors[appColorKey].hexText
+                    };
+                } else {
+                    // Fallback si el color no está definido en currentShiftColors
+                    // Usar colores por defecto del prototipo o unos genéricos
+                    const prototypeColors = {
+                        M: { bg: '#c6f6d5', text: '#276749' },
+                        T: { bg: '#feebc8', text: '#b7791f' },
+                        N: { bg: '#c3dafe', text: '#2c5282' },
+                        L: { bg: '#e2e8f0', text: '#4a5568' },
+                        V: { bg: '#fefcbf', text: '#b7791f' },
+                        B: { bg: '#fed7d7', text: '#c53030' },
+                        Otro: { bg: '#e9d8fd', text: '#6b46c1' },
+                        empty: { bg: '#e9d8fd', text: '#6b46c1' }
+                    };
+                    svgColors[shiftType] = prototypeColors[shiftType] || defaultColor;
+                }
+            });
+
+            // Colores específicos para 'totalWorkDays' y 'weekendsOff' si la tabla SVG los necesita con estilo especial
+            svgColors.totalWorkDays = {
+                bg: '#14b8a64d',
+                text: '#2D3748'
+            };
+            svgColors.weekendsOff = {
+                bg: '#60a5fa4d',
+                text: '#2D3748'
+            };
+
+            return svgColors;
+        }
+
+        function calculateMonthlyStatsForPdf(monthNum, year) {
+            // Calcula las estadísticas para un mes específico.
+            // Esta función es crucial si el usuario quiere exportar el PDF para un solo mes.
+            const monthlyResults = [];
+            if (!employeeNamesOrdered || !scheduleData) {
+                console.error("calculateMonthlyStatsForPdf: employeeNamesOrdered o scheduleData no están definidos.");
+                return monthlyResults;
+            }
+
+            employeeNamesOrdered.forEach(empName => {
+                let stats = {
+                    name: empName, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0
+                };
+                if (scheduleData[empName] && scheduleData[empName][monthNum]) {
+                    const monthSchedule = scheduleData[empName][monthNum];
+                    const daysInMonth = getDaysInMonth(monthNum, year); // Asegúrate que getDaysInMonth exista en tu app principal
+
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const shift = monthSchedule[day];
+                        if (shift === undefined || shift === null || shift === "") continue;
+
+                        let effectiveShift = shift;
+                        let isWorkShift = false;
+
+                        if (shift === 'M' || shift === 'M2') {
+                            effectiveShift = 'M';
+                            isWorkShift = true;
+                        } else if (shift === 'T' || shift === 'T2') {
+                            effectiveShift = 'T';
+                            isWorkShift = true;
+                        } else if (shift === 'N' || shift === 'N2') {
+                            effectiveShift = 'N';
+                            isWorkShift = true;
+                        } else if (['L', 'V', 'B'].includes(shift)) {
+                            effectiveShift = shift;
+                        } else {
+                            effectiveShift = 'Otro';
+                            isWorkShift = true;
+                        }
+
+                        if (stats.hasOwnProperty(effectiveShift)) {
+                            stats[effectiveShift]++;
+                        }
+                        if (isWorkShift) {
+                            stats.totalWorkDays++;
+                        }
+
+                        const currentDate = new Date(year, monthNum - 1, day);
+                        if (currentDate.getDay() === 6) { // Sábado
+                            const nextDayDate = new Date(year, monthNum - 1, day + 1);
+                            if (nextDayDate.getMonth() === monthNum - 1) {
+                                const satShiftOriginal = scheduleData[empName][monthNum][day];
+                                const sunShiftOriginal = scheduleData[empName][monthNum][day + 1];
+                                const isSatFree = (satShiftOriginal === "L" || satShiftOriginal === "V" || satShiftOriginal === "B" || satShiftOriginal === "");
+                                const isSunFree = (sunShiftOriginal === "L" || sunShiftOriginal === "V" || sunShiftOriginal === "B" || sunShiftOriginal === "");
+                                if (isSatFree && isSunFree) {
+                                    stats.weekendsOff++;
+                                }
+                            }
+                        }
+                    }
+                }
+                monthlyResults.push(stats);
+            });
+            return monthlyResults;
+        }
+
+
+        // --- Funciones para el Modal de Nombre de Archivo (Estadísticas PDF) ---
+        function showStatsPdfFilenameModal(title, defaultName, extension, callback) {
+            // Asume que domCache.filenameModalStatsPdf y sus hijos están definidos
+            if (!domCache.filenameModalStatsPdf || !domCache.filenameModalTitleStatsPdf || !domCache.modalFilenameInputStatsPdf || !domCache.filenameModalExtensionStatsPdf) {
+                console.error("Elementos del modal de nombre de archivo para PDF de estadísticas no encontrados en domCache.");
+                showToast("Error interno: No se puede mostrar el diálogo de nombre de archivo.", "error"); // Asegúrate que showToast exista
+                return;
+            }
+            domCache.filenameModalTitleStatsPdf.textContent = title;
+            domCache.modalFilenameInputStatsPdf.value = defaultName;
+            domCache.filenameModalExtensionStatsPdf.textContent = `Extensión: ${extension}`;
+            currentStatsPdfConfirmCallback = callback;
+            currentStatsPdfFileExtension = extension;
+            showModal(domCache.filenameModalStatsPdf, domCache.modalFilenameInputStatsPdf); // Usa tu función showModal existente
+        }
+
+        function hideStatsPdfFilenameModal() {
+            // Asume que domCache.filenameModalStatsPdf está definido
+            if (!domCache.filenameModalStatsPdf) return;
+            hideModal(domCache.filenameModalStatsPdf); // Usa tu función hideModal existente
+            currentStatsPdfConfirmCallback = null;
+            currentStatsPdfFileExtension = '';
+        }
+
+        function handleStatsPdfFilenameConfirm() {
+            // Asume que domCache.modalFilenameInputStatsPdf está definido
+            if (!domCache.modalFilenameInputStatsPdf) return;
+            const filenameBase = domCache.modalFilenameInputStatsPdf.value.trim();
+            if (!filenameBase) {
+                showToast('Por favor, introduce un nombre para el archivo.', 'error'); // Usa tu showToast
+                domCache.modalFilenameInputStatsPdf.focus();
+                return;
+            }
+            if (currentStatsPdfConfirmCallback) {
+                currentStatsPdfConfirmCallback(filenameBase + currentStatsPdfFileExtension);
+            }
+            hideStatsPdfFilenameModal();
+        }
+
+        // --- Lógica Principal de Exportación PDF de Estadísticas ---
+
+        function initiateStatsPdfExport() {
+            if (!isDataLoadedForStats()) { // Usa tu función isDataLoadedForStats existente
+                showToast('No hay datos de estadísticas para exportar.', 'error');
+                return;
+            }
+
+            const period = currentSelectedPeriodForMainStats;
+            const year = yearOfSchedule;
+            let reportSubtitleText;
+            let statsDataForPdf;
+
+            if (period === 'all') {
+                reportSubtitleText = `Periodo: Año Completo ${year}`;
+                statsDataForPdf = currentStatsEmployeeData; // Datos anuales ya agregados
+            } else {
+                const monthNum = parseInt(period);
+                if (monthNum >= 1 && monthNum <= 12) {
+                    reportSubtitleText = `Periodo: ${MONTH_NAMES[monthNum - 1]} ${year}`; // Asegúrate que MONTH_NAMES exista
+                    statsDataForPdf = calculateMonthlyStatsForPdf(monthNum, year);
+                } else {
+                    showToast("Error: Periodo de estadísticas no válido.", "error");
+                    return;
+                }
+            }
+
+            const reportTitleText = "Informe Detallado de Estadísticas";
+            let defaultFilenameBase = `informe_estadisticas_${period === 'all' ? 'anual' : MONTH_NAMES[parseInt(period) - 1].toLowerCase()}_${year}`;
+            defaultFilenameBase = defaultFilenameBase.replace(/\s+/g, '_'); // Reemplazar espacios por guiones bajos
+
+            showStatsPdfFilenameModal(
+                "Nombre del Archivo PDF de Estadísticas",
+                defaultFilenameBase,
+                ".pdf",
+                (finalFilename) => {
+                    generateAndDownloadStatsPdf(finalFilename, statsDataForPdf, reportTitleText, reportSubtitleText);
+                }
+            );
+        }
+
+        async function generateAndDownloadStatsPdf(finalFilename, statsDataForPeriod, reportTitleText, reportSubtitleText) {
+            showToast('Generando PDF de estadísticas, por favor espera...', 'info');
+
+            const colorsForSvg = getSvgCompatibleColors(currentShiftColors); // Asegúrate que currentShiftColors exista
+
+            const svgString = getImpressiveStatsSvgString(
+                statsDataForPeriod,
+                statHeadersPdf,
+                columnOrderPdf,
+                reportTitleText,
+                reportSubtitleText,
+                SVG_GHM_LOGO_SIMPLE,
+                colorsForSvg
+            );
+
+            if (!svgString) {
+                showToast('Error al generar contenido SVG para el PDF.', 'error');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf; // Asegúrate que jsPDF esté disponible globalmente o importado
+                const svgElement = new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement;
+
+                if (svgElement.tagName === "parsererror" || !svgElement || svgElement.querySelector('parsererror')) {
+                    let errorMsg = "Error al parsear SVG.";
+                    const parserErrorContent = svgElement.querySelector('parsererror div');
+                    if (parserErrorContent) {
+                        errorMsg += " Detalles: " + parserErrorContent.textContent.substring(0, 200);
+                    } else if (svgElement.textContent.includes("parsererror")) {
+                        errorMsg += " El SVG contiene errores de parseo no especificados.";
+                    }
+                    console.error("Error de parseo SVG:", svgElement.innerHTML);
+                    throw new Error(errorMsg);
+                }
+
+                const svgWidth = parseFloat(svgElement.getAttribute('width'));
+                const svgHeight = parseFloat(svgElement.getAttribute('height'));
+
+                if (isNaN(svgWidth) || isNaN(svgHeight) || svgWidth <= 0 || svgHeight <= 0) {
+                    console.error("Dimensiones SVG inválidas detectadas:", svgWidth, svgHeight, "SVG:", svgString.substring(0, 500));
+                    throw new Error(`Dimensiones SVG inválidas: ${svgWidth}x${svgHeight}. Verifica la generación del SVG.`);
+                }
+
+                const orientation = svgWidth > svgHeight ? 'l' : 'p';
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: 'px',
+                    format: [svgWidth, svgHeight],
+                    hotfixes: ['px_scaling']
+                });
+
+                await pdf.svg(svgElement, {
+                    x: 0,
+                    y: 0,
+                    width: svgWidth,
+                    height: svgHeight
+                });
+                pdf.save(finalFilename);
+                showToast(`PDF de estadísticas exportado como ${finalFilename}.`, 'success');
+
+            } catch (error) {
+                console.error("Error al generar PDF de estadísticas:", error, error.stack);
+                showToast('Error al generar el PDF: ' + error.message, 'error');
+            }
+        }
+
+        // --- Funciones de Generación de SVG (Adaptadas del Prototipo) ---
+
+        function getImpressiveStatsSvgString(data, headers, order, title, subtitle, logoSvgMarkup, colorsForSvg) {
+		
+		    const headerTextOffsetY = 5; // Ejemplo: 2 píxeles hacia abajo para el texto de la cabecera
+            const cellTextOffsetY = 50;   // Ejemplo: 2 píxeles hacia abajo para el texto de las celdas de datos
+			
+			const pagePadding = 60;
+			const contentWidth = 1200; // El valor que hayas ajustado en el Paso 1.1
+
+			const finalSvgWidth = contentWidth + 2 * pagePadding; 
+
+			const logoHeight = 60; 
+			const titleFontSize = 32;        // ANTES: 28
+			const subtitleFontSize = 18;     // ANTES: 16
+			const sectionTitleFontSize = 22;  // ANTES: 20
+			const tableHeaderFontSize = 13;   // ANTES: 9 (o el valor que tenías)
+			const tableCellFontSize = 10;    // ANTES: 8 (o el valor que tenías)
+			const chartLabelFontSize = 12;  // ANTES: 9.5
+			const chartTitleFontSize = 20;   // ANTES: 18
+
+			const textLineHeight = 1.6; 
+			const sectionSpacing = 50; // Este es un espaciado grande que usaremos más adelante
+
+			const logoRenderWidth = 110; 
+
+			let currentY = pagePadding; // currentY empieza en el margen superior
+
+            let svgElements = [];
+
+            svgElements.push(`<style>
+                text { font-family: 'Inter', sans-serif; }
+                .report-title { font-size: ${titleFontSize}px; font-weight: 700; fill: #1A202C; text-anchor: middle; }
+                .report-subtitle { font-size: ${subtitleFontSize}px; fill: #4A5568; text-anchor: middle; }
+                .section-title { font-size: ${sectionTitleFontSize}px; font-weight: 600; fill: #2C5282; }
+                .table-header-text { font-size: ${tableHeaderFontSize}px; font-weight: bold; fill: #1A202C; text-anchor: middle; dominant-baseline: middle; }
+                .table-cell-text { font-size: ${tableCellFontSize}px; fill: #2D3748; text-anchor: middle; dominant-baseline: middle; font-weight: bold; }
+                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; }
+                .table-header-rect { fill: #EBF4FF; stroke: #BEE3F8; stroke-width: 1; } 
+                .table-cell-rect { stroke: #E2E8F0; stroke-width: 1; }
+                .chart-title { font-size: ${chartTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle; }
+                .chart-label { font-size: ${chartLabelFontSize}px; fill: #4A5568; text-anchor: middle; }
+                .chart-axis-line { stroke: #A0AEC0; stroke-width: 1; }
+                .chart-grid-line { stroke: #E2E8F0; stroke-width: 0.5; stroke-dasharray: 3,3; }
+                .legend-item rect { stroke: #CBD5E0; stroke-width:0.5; } 
+                .legend-item text { font-size: 10px; fill: #2D3748; dominant-baseline: middle; }
+            </style>`);
+
+            const logoX = (finalSvgWidth / 2) - (logoRenderWidth / 2);
+            const titleAreaX = logoX + 120; // Espacio para el logo
+            const titleAreaWidth = contentWidth - 120;
+
+            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${logoSvgMarkup}</g>`);
+            currentY += logoHeight + 20; // Ajuste para que el subtítulo no se solape
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY + logoHeight / 2 + 5 }" class="report-title">${title}</text>`);
+			currentY += titleFontSize + 10; // Espacio: altura de la fuente del título (28px) + 10px de margen.
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY + logoHeight / 2 + subtitleFontSize}" class="report-subtitle">${subtitle}</text>`);
+            currentY += subtitleFontSize + sectionSpacing; 
+
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="section-title" text-anchor="middle"></text>`);
+            currentY += sectionTitleFontSize * textLineHeight + 20;
+
+            const tableCellHeight = tableCellFontSize * textLineHeight * 2.8;
+            const tableHeaderHeight = tableHeaderFontSize * textLineHeight * 2.8;
+
+            const tempSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            document.body.appendChild(tempSvg); // Necesario para getComputedTextLength
+            const colWidths = {};
+            let minNumericColWidth = 85;
+            order.forEach(key => {
+                let maxWidth = 0;
+                const thTest = Object.assign(document.createElementNS("http://www.w3.org/2000/svg", "text"), {
+                    textContent: headers[key] || key,
+                    style: `font-size:${tableHeaderFontSize}px; font-weight:bold; font-family:Inter, sans-serif;`
+                });
+                tempSvg.appendChild(thTest);
+                maxWidth = Math.max(maxWidth, thTest.getComputedTextLength());
+                tempSvg.removeChild(thTest);
+                (data || []).forEach(row => { // Asegurar que data no sea undefined
+                    const tdTest = Object.assign(document.createElementNS("http://www.w3.org/2000/svg", "text"), {
+                        textContent: String(row[key] !== undefined ? row[key] : '-'),
+                        style: `font-size:${tableCellFontSize}px; font-weight:bold; font-family:Inter, sans-serif;`
+                    });
+                    tempSvg.appendChild(tdTest);
+                    maxWidth = Math.max(maxWidth, tdTest.getComputedTextLength());
+                    tempSvg.removeChild(tdTest);
+                });
+                colWidths[key] = Math.max(minNumericColWidth, maxWidth + 45); // Más padding
+                if (key === 'name') colWidths[key] = Math.max(230, colWidths[key]);
+            });
+            document.body.removeChild(tempSvg);
+
+            const tableTotalWidth = order.reduce((sum, key) => sum + colWidths[key], 0);
+            const tableStartX = Math.max(pagePadding, (contentWidth + 2 * pagePadding - tableTotalWidth) / 2);
+
+            let currentTableX = tableStartX;
+            order.forEach(key => {
+                svgElements.push(`<rect x="${currentTableX}" y="${currentY}" width="${colWidths[key]}" height="${tableHeaderHeight}" class="table-header-rect" />`);
+                svgElements.push(`<text x="${currentTableX + colWidths[key] / 2}" y="${currentY + tableHeaderHeight / 2 + headerTextOffsetY}" class="table-header-text">${headers[key] || key}</text>`);
+                currentTableX += colWidths[key];
+            });
+            currentY += tableHeaderHeight;
+
+            (data || []).forEach((row, rowIndex) => { // Asegurar que data no sea undefined
+                currentTableX = tableStartX;
+                order.forEach(key => {
+                    const cellValue = row[key] !== undefined ? String(row[key]) : '-';
+                    let cellFill = (rowIndex % 2 === 0) ? '#FFFFFF' : '#F9FAFB';
+                    let textColor = '#2D3748';
+
+                    const shiftKeyForColor = key === 'Otro' ? 'empty' : key;
+                    if (colorsForSvg[shiftKeyForColor]) {
+                        cellFill = colorsForSvg[shiftKeyForColor].bg;
+                        textColor = colorsForSvg[shiftKeyForColor].text;
+                    } else if (key === 'name') {
+                        textColor = '#1A202C';
+                    }
+
+                    svgElements.push(`<rect x="${currentTableX}" y="${currentY}" width="${colWidths[key]}" height="${tableCellHeight}" class="table-cell-rect" fill="${cellFill}" />`);
+                    const textClass = key === 'name' ? 'table-cell-text name' : 'table-cell-text';
+                    const textX = key === 'name' ? currentTableX + 20 : currentTableX + colWidths[key] / 2;
+                    const textY = currentY + tableCellHeight / 2;
+                    svgElements.push(`<text x="${textX}" y="${textY}" class="${textClass}" fill="${textColor}">${cellValue}</text>`);
+                    currentTableX += colWidths[key];
+                });
+                currentY += tableCellHeight;
+            });
+            currentY += sectionSpacing;
+
+            const chartAreaY = currentY;
+            const chartAreaWidth = contentWidth;
+            const chartHeight = 300;
+
+            svgElements.push(`<text x="${pagePadding + chartAreaWidth / 2}" y="${chartAreaY}" class="chart-title">Distribución General de Turnos por Empleado</text>`);
+            currentY = chartAreaY + chartTitleFontSize * textLineHeight + 20;
+            svgElements.push(drawStackedShiftDistributionBarChartSvg(data, pagePadding, currentY, chartAreaWidth, chartHeight, headers, colorsForSvg));
+            currentY += chartHeight + pagePadding;
+
+            const finalSvgHeight = currentY;
+
+            return `<svg width="${finalSvgWidth}" height="${finalSvgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${svgElements.join('')}</svg>`;
+        }
+
+        function drawStackedShiftDistributionBarChartSvg(allEmployeeData, x, y, width, height, headers, colorsForSvg) {
+            let chartElements = [];
+            if (!allEmployeeData || allEmployeeData.length === 0) return `<text x="${x + width/2}" y="${y + height/2}" class="chart-label">Sin datos para gráfico</text>`;
+
+            const chartDrawAreaHeight = height - 80;
+            const legendItemHeight = 20;
+            const legendSpacing = 10;
+            const xAxisLabelHeight = 40;
+
+            const shiftKeys = ['M', 'T', 'N', 'L', 'V', 'B', 'Otro'];
+
+            let maxTotalShifts = 0;
+            allEmployeeData.forEach(emp => {
+                const total = shiftKeys.reduce((sum, key) => sum + (emp[key] || 0), 0);
+                if (total > maxTotalShifts) maxTotalShifts = total;
+            });
+            maxTotalShifts = maxTotalShifts > 0 ? Math.ceil(maxTotalShifts * 1.30) : 10;
+
+            const numEmployees = allEmployeeData.length;
+            const barGroupSpacing = 35;
+            const totalBarAreaWidth = width - (barGroupSpacing * (numEmployees > 1 ? numEmployees - 1 : 0));
+            const barWidth = Math.max(10, totalBarAreaWidth / numEmployees * 0.30);
+
+            allEmployeeData.forEach((emp, index) => {
+                const groupX = x + index * (barWidth + barGroupSpacing) + ((width - (numEmployees * barWidth + (numEmployees - 1) * barGroupSpacing)) / 2);
+                let currentStackY = y + chartDrawAreaHeight;
+                let totalEmpShifts = 0;
+
+                shiftKeys.forEach(key => {
+                    const count = emp[key] || 0;
+                    if (count > 0) {
+                        const segmentHeight = (count / maxTotalShifts) * chartDrawAreaHeight;
+                        const isTopSegment = (currentStackY - segmentHeight <= y + 1);
+                        const rxValue = isTopSegment ? "3" : "0";
+                        const shiftKeyForColor = key === 'Otro' ? 'empty' : key;
+                        const barColor = colorsForSvg[shiftKeyForColor] ? colorsForSvg[shiftKeyForColor].bg : '#CCCCCC';
+
+                        chartElements.push(`<rect x="${groupX}" y="${currentStackY - segmentHeight}" width="${barWidth}" height="${segmentHeight}" fill="${barColor}" class="chart-bar" rx="${rxValue}" ry="${rxValue}">
+                                                <title>${headers[key] || key}: ${count}</title>
+                                           </rect>`);
+                        currentStackY -= segmentHeight;
+                        totalEmpShifts += count;
+                    }
+                });
+				chartElements.push(`<text x="${groupX + barWidth / 2}" y="${y + chartDrawAreaHeight + 22}" class="chart-label" style="text-anchor:middle; font-weight:500;">${emp.name}</text>`);
+                if (totalEmpShifts > 0 && currentStackY > y + 12) {
+                    chartElements.push(`<text x="${groupX + barWidth / 2}" y="${currentStackY - 8}" class="chart-label" style="font-weight:bold; font-size:9px; text-anchor:middle; fill:#1A202C;">${totalEmpShifts}</text>`);
+                }
+            });
+
+            chartElements.push(`<line x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + chartDrawAreaHeight}" class="chart-axis-line"/>`);
+            chartElements.push(`<line x1="${x}" y1="${y + chartDrawAreaHeight}" x2="${x + width}" y2="${y + chartDrawAreaHeight}" class="chart-axis-line"/>`);
+            const numGridLines = Math.max(4, Math.min(5, Math.floor(maxTotalShifts / 5) || 1));
+            for (let i = 0; i <= numGridLines; i++) {
+                const val = Math.round(maxTotalShifts * (i / numGridLines));
+                const lineY = y + chartDrawAreaHeight - (chartDrawAreaHeight * (i / numGridLines));
+                chartElements.push(`<text x="${x - 12}" y="${lineY + 3}" class="chart-label" style="text-anchor:end;">${val}</text>`);
+                if (i > 0 && i <= numGridLines) chartElements.push(`<line x1="${x}" y1="${lineY}" x2="${x + width}" y2="${lineY}" class="chart-grid-line"/>`);
+            }
+
+            let legendX = x;
+            let legendY = y + chartDrawAreaHeight + xAxisLabelHeight + 15;
+            const legendItemsPerRow = Math.floor(width / 120);
+            let itemsInCurrentRow = 0;
+            const legendItemWidthEstimate = 120;
+
+            shiftKeys.forEach(key => {
+                if (allEmployeeData.some(emp => emp[key] > 0)) {
+                    if (itemsInCurrentRow >= legendItemsPerRow && legendItemsPerRow > 0) {
+                        legendX = x;
+                        legendY += legendItemHeight + legendSpacing;
+                        itemsInCurrentRow = 0;
+                    }
+                    const shiftKeyForColor = key === 'Otro' ? 'empty' : key;
+                    const legendColor = colorsForSvg[shiftKeyForColor] ? colorsForSvg[shiftKeyForColor].bg : '#CCCCCC';
+
+                    chartElements.push(`<g class="legend-item">`);
+                    chartElements.push(`<rect x="${legendX}" y="${legendY}" width="12" height="12" fill="${legendColor}" rx="3" ry="3"/>`);
+                    chartElements.push(`<text x="${legendX + 18}" y="${legendY + 9}">${headers[key] || key}</text>`);
+                    chartElements.push(`</g>`);
+                    legendX += legendItemWidthEstimate;
+                    itemsInCurrentRow++;
+                }
+            });
+            return chartElements.join('');
+        }
+
 
     </script>
 </body>
