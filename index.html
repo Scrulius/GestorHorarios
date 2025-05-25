@@ -885,6 +885,61 @@
         }
         /* === FIN: ESTILOS DEL PROTOTIPO DE ESTADÍSTICAS === */
 
+/* === INICIO: ESTILOS PARA ADAPTACIÓN MÓVIL DE TABLAS === */
+		@media (max-width: 767px) {
+
+			/* --- Tabla de Estadísticas (#stats-table-head, #tbody-idea1-expanded) --- */
+			/* .table-wrapper para la tabla de estadísticas ya tiene overflow-x: auto */
+
+			#stats-table-head th {
+				font-size: 0.7rem; /* Reducido */
+				padding: 0.5rem 0.4rem; /* Reducido */
+				white-space: normal; /* Permitir que el texto de la cabecera se ajuste */
+				text-align: center; /* Centrar cabeceras para ahorrar espacio */
+				line-height: 1.1;
+			}
+			#stats-table-head th:first-child { /* Cabecera "Empleado" de la tabla de stats */
+				text-align: left; /* Mantener alineación izquierda para el nombre */
+				padding-left: 0.5rem;
+				min-width: 90px; /* Ancho mínimo para la columna de empleado */
+			}
+
+			#tbody-idea1-expanded td {
+				font-size: 0.75rem; /* Reducido */
+				padding: 0.4rem 0.3rem; /* Reducido */
+				line-height: 1.3;
+			}
+
+			#tbody-idea1-expanded td.employee-name-cell { /* Celda de nombre en tabla de stats */
+				font-size: 0.75rem;
+				padding-left: 0.5rem;
+				max-width: 90px; /* Limitar ancho del nombre del empleado */
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			/* --- Ajustes específicos para la Vista Anual en Móvil --- */
+			/* La clase 'annual-view-active' se añade al body mediante JavaScript */
+			body.annual-view-active #schedule-table .shift-cell {
+				font-size: 0.6rem; /* Aún más pequeño para la densa vista anual */
+				padding: 0.3rem 0.1rem; /* Padding mínimo */
+				min-width: 28px; /* Ancho mínimo muy ajustado */
+			}
+			body.annual-view-active #schedule-table-head .day-header-date,
+			body.annual-view-active #schedule-table-head .day-header-weekday {
+				font-size: 0.55rem; /* Fuentes de cabecera muy pequeñas */
+			}
+			body.annual-view-active #schedule-table-head .sticky-col-header,
+			body.annual-view-active #schedule-table .employee-name-cell {
+				font-size: 0.7rem; /* Nombre de empleado ligeramente más pequeño en anual */
+			}
+			body.annual-view-active #schedule-table .employee-name-cell .employee-name-display {
+				max-width: 70px; /* Aún más corto para nombres en vista anual */
+			}
+		}
+		/* === FIN: ESTILOS PARA ADAPTACIÓN MÓVIL DE TABLAS === */
+
     </style>
 </head>
 <body class="p-4 md:p-8">
