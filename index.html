@@ -5496,36 +5496,77 @@
             if (!container) { console.error("Contenedor KPI no encontrado."); return; }
             container.innerHTML = '';
 
-            let dataForKPIs = { ...empData };
+            let dataForKPIs; // Declarada aquí para que tenga el scope correcto
+
             if (monthContext !== 'all') {
                 const selectedMonthNum = parseInt(monthContext);
-                dataForKPIs = { name: empData.name, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0, M2:0, T2:0, N2:0 };
+                // Inicializa dataForKPIs para el cálculo mensual específico, sin M2, T2, N2 por separado
+                dataForKPIs = { name: empData.name, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0 };
+                
                 if (scheduleData[empData.name] && scheduleData[empData.name][selectedMonthNum]) {
                     const monthSchedule = scheduleData[empData.name][selectedMonthNum];
                     const daysInMonth = getDaysInMonth(selectedMonthNum, yearOfSchedule);
                     for (let day = 1; day <= daysInMonth; day++) {
                         const shift = monthSchedule[day];
-                        if (shift && SHIFT_TYPES.includes(shift)) {
-                            dataForKPIs[shift] = (dataForKPIs[shift] || 0) + 1;
-                            if (['M', 'M2', 'T', 'T2', 'N', 'N2'].includes(shift)) dataForKPIs.totalWorkDays++;
-                        } else if (shift && shift !== "") {
-                            dataForKPIs.Otro = (dataForKPIs.Otro || 0) + 1;
-                            dataForKPIs.totalWorkDays++;
+                        if (shift && shift !== "") { // Solo procesar si hay un turno asignado
+                            let isWorkShiftForTotal = false;
+
+                            if (shift === 'M' || shift === 'M2') {
+                                dataForKPIs.M = (dataForKPIs.M || 0) + 1;
+                                isWorkShiftForTotal = true;
+                            } else if (shift === 'T' || shift === 'T2') {
+                                dataForKPIs.T = (dataForKPIs.T || 0) + 1;
+                                isWorkShiftForTotal = true;
+                            } else if (shift === 'N' || shift === 'N2') {
+                                dataForKPIs.N = (dataForKPIs.N || 0) + 1;
+                                isWorkShiftForTotal = true;
+                            } else if (shift === 'L') {
+                                dataForKPIs.L = (dataForKPIs.L || 0) + 1;
+                            } else if (shift === 'V') {
+                                dataForKPIs.V = (dataForKPIs.V || 0) + 1;
+                            } else if (shift === 'B') {
+                                dataForKPIs.B = (dataForKPIs.B || 0) + 1;
+                            } else { // Turnos personalizados o no estándar que no son L, V, B
+                                dataForKPIs.Otro = (dataForKPIs.Otro || 0) + 1;
+                                isWorkShiftForTotal = true; // Asumimos que turnos "Otro" son laborables
+                            }
+
+                            if (isWorkShiftForTotal) {
+                                dataForKPIs.totalWorkDays = (dataForKPIs.totalWorkDays || 0) + 1;
+                            }
                         }
+                        // Lógica de weekendsOff
                         const currentDate = new Date(yearOfSchedule, selectedMonthNum - 1, day);
-                        if (currentDate.getDay() === 6) { 
+                        if (currentDate.getDay() === 6) { // Sábado
                             const nextDayDate = new Date(yearOfSchedule, selectedMonthNum - 1, day + 1);
-                            if (nextDayDate.getMonth() === selectedMonthNum - 1) {
-                                const satShift = scheduleData[empData.name][selectedMonthNum][day];
-                                const sunShift = scheduleData[empData.name][selectedMonthNum][day + 1];
-                                if ((satShift === "L" || satShift === "V" || satShift === "B" || satShift === "") &&
-                                    (sunShift === "L" || sunShift === "V" || sunShift === "B" || sunShift === "")) {
+                            if (nextDayDate.getMonth() === selectedMonthNum - 1) { // Asegurar que el domingo esté en el mismo mes
+                                const satShiftOriginal = scheduleData[empData.name]?.[selectedMonthNum]?.[day];
+                                const sunShiftOriginal = scheduleData[empData.name]?.[selectedMonthNum]?.[day + 1];
+                                const isSatFree = (satShiftOriginal === "L" || satShiftOriginal === "V" || satShiftOriginal === "B" || satShiftOriginal === "" || !satShiftOriginal);
+                                const isSunFree = (sunShiftOriginal === "L" || sunShiftOriginal === "V" || sunShiftOriginal === "B" || sunShiftOriginal === "" || !sunShiftOriginal);
+                                if (isSatFree && isSunFree) {
                                     dataForKPIs.weekendsOff = (dataForKPIs.weekendsOff || 0) + 1;
                                 }
                             }
                         }
                     }
                 }
+            } else {
+                // Para el contexto anual ('all'), usamos los datos ya agregados de empData
+                // que vienen de calculateAllEmployeeStatsForNewUI
+                // Aseguramos que M, T, N incluyan M2, T2, N2 si empData los tiene separados.
+                dataForKPIs = {
+                    name: empData.name,
+                    M: (empData.M || 0) + (empData.M2 || 0),
+                    T: (empData.T || 0) + (empData.T2 || 0),
+                    N: (empData.N || 0) + (empData.N2 || 0),
+                    L: empData.L || 0,
+                    V: empData.V || 0,
+                    B: empData.B || 0,
+                    Otro: empData.Otro || 0,
+                    totalWorkDays: empData.totalWorkDays || 0,
+                    weekendsOff: empData.weekendsOff || 0
+                };
             }
 
             const kpiMetrics = [
@@ -5537,7 +5578,7 @@
 
             kpiMetrics.forEach(metric => {
                 const card = createElement('div', { className: 'kpi-card' });
-                const value = dataForKPIs[metric.key] || 0;
+                const value = dataForKPIs[metric.key] || 0; // Usar el dataForKPIs calculado
                 const textColor = getShiftTextColor(metric.key); 
                 card.innerHTML = `
                     <div class="kpi-value" style="color: ${textColor};">${value}</div>
@@ -5546,6 +5587,7 @@
                 container.appendChild(card);
             });
         }
+
 
         // --- Renderizado de Gráficos Generales de Plantilla ---
         function renderGeneralStackedBarChart() {
