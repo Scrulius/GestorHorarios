@@ -1110,10 +1110,11 @@
 
                     <section class="stats-section hidden" id="individual-employee-charts-section">
                         <div class="flex flex-wrap justify-between items-center mb-1">
-                            <h2 class="!text-xl !font-semibold !mb-0 !pb-0 !border-0 section-main-title w-full sm:w-auto mb-2 sm:mb-0">
-                                Detalles para <span id="selected-month-year-display-details" class="text-gray-700"></span>:
-                                <span id="selected-employee-name" class="text-indigo-600"></span>
-                            </h2>
+							<h2 class="!text-xl !font-semibold !mb-0 !pb-0 !border-0 section-main-title w-full sm:w-auto mb-2 sm:mb-0">
+								Detalles para <span id="selected-month-year-display-details" class="text-gray-700"></span>:
+								<span id="details-employee-name-placeholder" class="text-indigo-600 font-semibold">
+									</span>
+							</h2>
                             <div class="details-header-controls w-full sm:w-auto justify-end">
                                  <div class="month-dropdown-container" id="details-month-dropdown-container">
                                     <button id="details-month-dropdown-btn" class="month-dropdown-button text-sm">
@@ -1927,7 +1928,10 @@
 			domCache.donutChartWrapper = document.getElementById('donut-chart-wrapper');
 			domCache.calendarHeatmapWrapper = document.getElementById('calendar-heatmap-wrapper');
 			domCache.donutCalendarGrid = document.getElementById('donut-calendar-grid');
-
+			// --- NUEVO ELEMENTO PARA EL SELECTOR DE EMPLEADO EN DETALLES ---
+			domCache.detailsEmployeeSelectContainer = document.getElementById('selected-employee-name-container'); 
+			// --- CONTENEDOR PARA EL SELECTOR DE EMPLEADO EN DETALLES ---
+			domCache.detailsEmployeeNamePlaceholder = document.getElementById('details-employee-name-placeholder');
             // Sección de estadísticas generales de la plantilla
             domCache.generalPlantillaStatsSection = document.getElementById('general-plantilla-stats-section');
             domCache.closeGeneralStatsBtn = document.getElementById('close-general-stats-btn'); // Botón para cerrar las estadísticas generales
@@ -5231,67 +5235,79 @@
         }
 
         // --- Lógica para Mostrar/Ocultar Secciones de Estadísticas ---
-		function showIndividualEmployeeCharts(employeeData, monthContextForCharts) {
-			// Asegúrate de que los elementos del DOM estén cacheados y existan
-			if (!domCache.individualChartsSection || !domCache.mainStatsTableSection ||
-				!domCache.generalPlantillaStatsSection || !domCache.donutChartWrapper ||
-				!domCache.calendarHeatmapWrapper || !domCache.donutCalendarGrid ||
-				!domCache.selectedMonthYearDisplayDetails || !domCache.selectedEmployeeName) {
-				console.error("Error: Faltan elementos del DOM cacheados para la vista individual de estadísticas.");
-				return;
-			}
+        function showIndividualEmployeeCharts(employeeData, monthContextForCharts) {
+            if (!domCache.individualChartsSection || !domCache.mainStatsTableSection ||
+                !domCache.generalPlantillaStatsSection || !domCache.donutChartWrapper ||
+                !domCache.calendarHeatmapWrapper || !domCache.donutCalendarGrid ||
+                !domCache.selectedMonthYearDisplayDetails || !domCache.detailsEmployeeNamePlaceholder) { // Usar el nuevo placeholder
+                console.error("Error: Faltan elementos del DOM cacheados para la vista individual de estadísticas.");
+                return;
+            }
 
-			// Actualizar cabecera de la sección
-			domCache.selectedMonthYearDisplayDetails.textContent = monthContextForCharts === 'all' ?
-				`Año ${yearOfSchedule}` :
-				`${MONTH_NAMES[parseInt(monthContextForCharts) - 1]} ${yearOfSchedule}`;
-			domCache.selectedEmployeeName.textContent = employeeData.name;
+            currentSelectedEmployeeForDetails = employeeData.name; // Actualizar el empleado seleccionado globalmente para esta vista
 
-			// Mostrar la sección de detalles individuales y ocultar las otras
-			domCache.individualChartsSection.classList.remove('hidden');
-			domCache.mainStatsTableSection.classList.add('hidden');
-			domCache.generalPlantillaStatsSection.classList.add('hidden');
+            // Actualizar cabecera de la sección (período)
+            domCache.selectedMonthYearDisplayDetails.textContent = monthContextForCharts === 'all' ?
+                `Año ${yearOfSchedule}` :
+                `${MONTH_NAMES[parseInt(monthContextForCharts) - 1]} ${yearOfSchedule}`;
 
-			// Lógica para mostrar/ocultar calendario y ajustar layout del grid
-			if (monthContextForCharts === 'all') {
-				// VISTA ANUAL: Ocultar calendario, donut ocupa todo el ancho del grid
-				domCache.calendarHeatmapWrapper.classList.add('hidden'); // Oculta el contenedor del calendario
+            // --- INICIO: Lógica para crear y poblar el selector de empleados ---
+            domCache.detailsEmployeeNamePlaceholder.innerHTML = ''; // Limpiar el placeholder
 
-				// Hacer que el donut ocupe las dos columnas del grid (si el grid es de 2 columnas)
-				// o asegurarse de que el grid se ajuste a una sola columna.
-				domCache.donutChartWrapper.classList.remove('md:col-span-1');
-				domCache.donutChartWrapper.classList.add('md:col-span-2'); // Que ocupe 2 columnas
+            const employeeSelect = createElement('select', {
+                id: 'details-employee-select', // Asignar un ID para poder añadirle un listener
+                className: 'p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm text-indigo-600 font-semibold bg-white'
+            });
 
-				domCache.donutCalendarGrid.classList.remove('md:grid-cols-2');
-				domCache.donutCalendarGrid.classList.add('md:grid-cols-1'); // El grid ahora es de 1 columna
+            employeeNamesOrdered.forEach(name => {
+                const option = createElement('option', {
+                    textContent: name,
+                    attributes: { value: name }
+                });
+                if (name === employeeData.name) {
+                    option.selected = true;
+                }
+                employeeSelect.appendChild(option);
+            });
 
-			} else {
-				// VISTA MENSUAL: Mostrar calendario, donut y calendario comparten espacio
-				domCache.calendarHeatmapWrapper.classList.remove('hidden'); // Muestra el contenedor del calendario
+            // Añadir el listener al nuevo select (solo si no se ha añadido antes o si se recrea el select)
+            // Para simplificar, lo removemos y añadimos cada vez. Considerar optimizar si hay problemas de rendimiento.
+            employeeSelect.removeEventListener('change', handleDetailsEmployeeChange); // Prevenir duplicados si se llama múltiples veces
+            employeeSelect.addEventListener('change', handleDetailsEmployeeChange);
 
-				// Restaurar para que cada uno ocupe una columna
-				domCache.donutChartWrapper.classList.remove('md:col-span-2');
-				domCache.donutChartWrapper.classList.add('md:col-span-1'); // Ocupa 1 columna
+            domCache.detailsEmployeeNamePlaceholder.appendChild(employeeSelect);
+            // --- FIN: Lógica para crear y poblar el selector de empleados ---
 
-				domCache.calendarHeatmapWrapper.classList.remove('md:col-span-2'); // Asegurar por si acaso
-				domCache.calendarHeatmapWrapper.classList.add('md:col-span-1'); // Ocupa 1 columna
+            // Mostrar la sección de detalles individuales y ocultar las otras
+            domCache.individualChartsSection.classList.remove('hidden');
+            domCache.mainStatsTableSection.classList.add('hidden');
+            domCache.generalPlantillaStatsSection.classList.add('hidden');
 
-				domCache.donutCalendarGrid.classList.remove('md:grid-cols-1');
-				domCache.donutCalendarGrid.classList.add('md:grid-cols-2'); // El grid vuelve a ser de 2 columnas
-			}
+            // Lógica para mostrar/ocultar calendario y ajustar layout del grid
+            if (monthContextForCharts === 'all') {
+                domCache.calendarHeatmapWrapper.classList.add('hidden');
+                domCache.donutChartWrapper.classList.remove('md:col-span-1');
+                domCache.donutChartWrapper.classList.add('md:col-span-2');
+                domCache.donutCalendarGrid.classList.remove('md:grid-cols-2');
+                domCache.donutCalendarGrid.classList.add('md:grid-cols-1');
+            } else {
+                domCache.calendarHeatmapWrapper.classList.remove('hidden');
+                domCache.donutChartWrapper.classList.remove('md:col-span-2');
+                domCache.donutChartWrapper.classList.add('md:col-span-1');
+                domCache.calendarHeatmapWrapper.classList.remove('md:col-span-2');
+                domCache.calendarHeatmapWrapper.classList.add('md:col-span-1');
+                domCache.donutCalendarGrid.classList.remove('md:grid-cols-1');
+                domCache.donutCalendarGrid.classList.add('md:grid-cols-2');
+            }
 
-			// Renderizar los gráficos (después de que el DOM esté visible y ajustado)
-			requestAnimationFrame(() => {
-				renderDonutChartForEmployee(employeeData, monthContextForCharts);
-
-				// Solo renderizar el calendario si NO es "Año Completo" (vista mensual)
-				if (monthContextForCharts !== 'all') {
-					renderMiniCalendarHeatmapForEmployee(employeeData, monthContextForCharts);
-				}
-				// Los KPIs siempre se renderizan si la sección individual está visible
-				renderKpiSummaryCardsForEmployee(employeeData, monthContextForCharts);
-			});
-		}
+            requestAnimationFrame(() => {
+                renderDonutChartForEmployee(employeeData, monthContextForCharts);
+                if (monthContextForCharts !== 'all') {
+                    renderMiniCalendarHeatmapForEmployee(employeeData, monthContextForCharts);
+                }
+                renderKpiSummaryCardsForEmployee(employeeData, monthContextForCharts);
+            });
+        }
 
         function showGeneralPlantillaStatsCharts() {
             if (!domCache.generalPlantillaStatsSection || !domCache.mainStatsTableSection || !domCache.individualChartsSection) {
@@ -6454,6 +6470,24 @@
                 }
             });
             return chartElements.join('');
+        }
+
+        function handleDetailsEmployeeChange(event) {
+            const newEmployeeName = event.target.value;
+            if (!newEmployeeName || newEmployeeName === currentSelectedEmployeeForDetails) {
+                return; // No hacer nada si no hay selección o es el mismo empleado
+            }
+
+            const newEmployeeData = currentStatsEmployeeData.find(e => e.name === newEmployeeName);
+            if (newEmployeeData) {
+                // `currentSelectedPeriodForDetailsStats` ya debería tener el período correcto
+                // porque fue establecido cuando se abrió la vista de detalles por primera vez
+                // o cuando se cambió el período en el dropdown de período de esta sección.
+                showIndividualEmployeeCharts(newEmployeeData, currentSelectedPeriodForDetailsStats);
+            } else {
+                console.error(`No se encontraron datos para el empleado: ${newEmployeeName}`);
+                showToast(`Error al cargar detalles para ${newEmployeeName}.`, 'error');
+            }
         }
 
 
