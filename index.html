@@ -180,13 +180,13 @@
             font-size: 0.85rem;
         }
         .color-palette-popup {
-            position: absolute;
+            position: fixed;
             background-color: white;
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             padding: 0.75rem;
-            z-index: 50;
+            z-index: 1050;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             gap: 0.375rem;
@@ -968,8 +968,141 @@
 		}
 		/* === FIN: ESTILOS PARA ADAPTACIÓN MÓVIL DE LA BARRA DE TURNOS === */
 
+            /* Estilos para los botones que abren los modales */
+            .action-button-modal-trigger {
+                /* Hereda algunos estilos de .action-button si quieres, o define aquí */
+                padding: 0.375rem 0.75rem; /* ajusta el padding para que sean más pequeños */
+                font-size: 0.75rem; /* texto más pequeño */
+                font-weight: 500;
+                border-radius: 0.375rem;
+                transition: all 0.2s ease-in-out;
+                box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+            .action-button-modal-trigger:hover {
+                opacity: 0.9;
+                box-shadow: 0 2px 4px -1px rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.04);
+            }
+            .action-button-modal-trigger:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            
+            /* Ajustes para el contenido del modal de leyenda si es necesario */
+            #legend-colors-modal-body .section-title { /* Si mantuviste el título original dentro del cuerpo */
+                font-size: 1.125rem; /* Un poco más pequeño para el modal */
+                margin-bottom: 1rem;
+            }
+            #legend-colors-modal-body #legend-items-container {
+                /* Ajusta el grid si es necesario para el ancho del modal */
+                /* grid-template-columns: repeat(2, 1fr); /* Ejemplo: 2 columnas en modal */
+            }
+            
+            /* Ajustes para el modal de normas */
+            #rules-modal-body .rule-block {
+                padding: 1rem;
+                background-color: #f9fafb; /* bg-gray-50 */
+                border: 1px solid #e5e7eb; /* border-gray-200 */
+                border-radius: 0.5rem; /* rounded-lg */
+                margin-bottom: 1.5rem; /* mb-6 */
+            }
+            #rules-modal-body .rule-title {
+                font-size: 1.125rem; /* text-lg */
+                font-weight: 600; /* font-semibold */
+                color: #1f2937; /* text-gray-800 */
+                margin-bottom: 0.75rem; /* mb-3 */
+                display: flex;
+                align-items: center;
+            }
+            #rules-modal-body .rule-title .rule-status-indicator {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                margin-left: 0.75rem; /* ml-3 */
+                background-color: #d1d5db; /* bg-gray-300 por defecto (desactivado) */
+            }
+            #rules-modal-body .rule-title .rule-status-indicator.active {
+                background-color: #10b981; /* bg-green-500 (activado) */
+            }
+            #rules-modal-body .rule-config-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1rem; /* gap-4 */
+            }
+            #rules-modal-body .rule-config-grid label {
+                font-size: 0.875rem; /* text-sm */
+                font-weight: 500; /* font-medium */
+                color: #374151; /* text-gray-700 */
+                display: block;
+                margin-bottom: 0.25rem; /* mb-1 */
+            }
+            #rules-modal-body .rule-config-grid input[type="number"] {
+                width: 100%;
+                padding: 0.5rem; /* p-2 */
+                border: 1px solid #d1d5db; /* border-gray-300 */
+                border-radius: 0.375rem; /* rounded-md */
+                font-size: 0.875rem; /* text-sm */
+            }
+            /* Estilo para el toggle de activar/desactivar norma */
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 44px; /* Ajustado para ser más pequeño */
+                height: 24px; /* Ajustado */
+            }
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 24px; /* Ajustado */
+            }
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 18px; /* Ajustado */
+                width: 18px; /* Ajustado */
+                left: 3px; /* Ajustado */
+                bottom: 3px; /* Ajustado */
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+            input:checked + .slider {
+                background-color: #4f46e5; /* indigo-600 */
+            }
+            input:focus + .slider {
+                box-shadow: 0 0 1px #4f46e5;
+            }
+            input:checked + .slider:before {
+                transform: translateX(20px); /* Ajustado (width - left*2 - ball_width) = 44 - 6 - 18 = 20 */
+            }
+            
+            /* Indicador de violación en la tabla */
+            .day-rule-violation .day-number-wrapper { /* Aplicar al span interno */
+                border: 2px solid #ef4444; /* red-500 */
+                border-radius: 50%;
+                padding: 1px 3px;
+                display: inline-block;
+                line-height: 1;
+                color: #ef4444; /* red-500 */
+                background-color: #fee2e2; /* red-100 */
+            }
+
     </style>
 </head>
+
 <body class="p-4 md:p-8">
 
     <div class="container mx-auto max-w-full">
@@ -1040,7 +1173,7 @@
                     </div>
                 </label>
             </div>
-            </section>
+        </section>
 
         <section id="welcome-message" class="my-8 p-8 bg-indigo-50 text-indigo-700 rounded-xl shadow-lg text-center">
             <i class="fas fa-info-circle fa-2x mb-3"></i>
@@ -1049,13 +1182,22 @@
         </section>
 
         <main id="schedule-display-section" class="hidden-by-default">
-             <div id="month-tabs-container" class="month-tabs-container">
-                </div>
+            <div id="month-tabs-container" class="month-tabs-container">
+            </div>
 
             <section id="schedule-table-section" class="bg-white rounded-xl shadow-xl overflow-hidden">
                 <h2 id="current-month-year-display" class="text-2xl font-bold text-gray-800 p-5 border-b border-gray-200 bg-gray-50 rounded-t-xl relative">
                     <span id="current-month-year-text">Horario para [Mes Año]</span>
                     <span id="unsaved-indicator-table" class="unsaved-dot hidden-by-default" title="Hay cambios sin guardar"></span>
+                    
+                    <div id="modal-triggers-container" class="absolute top-0 right-0 mr-16 mt-3 flex gap-2 hidden-by-default">
+                        <button id="open-legend-colors-modal-button" class="action-button-modal-trigger bg-teal-500 hover:bg-teal-600 text-white text-xs px-3 py-1.5 rounded-md shadow-sm" title="Abrir Leyenda y Colores">
+                            <i class="fas fa-palette mr-1"></i> Leyenda
+                        </button>
+                        <button id="open-rules-modal-button" class="action-button-modal-trigger bg-sky-500 hover:bg-sky-600 text-white text-xs px-3 py-1.5 rounded-md shadow-sm" title="Abrir Configuración de Normas">
+                            <i class="fas fa-gavel mr-1"></i> Normas
+                        </button>
+                    </div>
                     <span id="help-icon-container" class="absolute top-0 right-0 p-3 cursor-pointer" title="Mostrar Consejos Útiles">
                         <i class="fas fa-lightbulb text-gray-500 text-2xl"></i>
                     </span>
@@ -1094,13 +1236,14 @@
                         <div class="table-wrapper">
                             <table class="min-w-full">
                                 <thead id="stats-table-head">
-                                    </thead>
+                                </thead>
                                 <tbody id="tbody-idea1-expanded">
-                                    </tbody>
+                                </tbody>
                             </table>
                         </div>
                          <div class="mt-4 text-sm text-gray-600">
-                            <span id="pagination-info"></span> </div>
+                            <span id="pagination-info"></span> 
+                        </div>
                         <div class="mt-8 text-center">
                             <button id="show-general-stats-btn" class="px-8 py-3 bg-teal-600 text-white font-semibold rounded-lg shadow-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75 transition-all duration-150 ease-in-out transform hover:scale-105">
                                 <i class="fas fa-chart-bar mr-2"></i>Ver Estadísticas Generales de la Plantilla
@@ -1113,7 +1256,7 @@
 							<h2 class="!text-xl !font-semibold !mb-0 !pb-0 !border-0 section-main-title w-full sm:w-auto mb-2 sm:mb-0">
 								Detalles para <span id="selected-month-year-display-details" class="text-gray-700"></span>:
 								<span id="details-employee-name-placeholder" class="text-indigo-600 font-semibold">
-									</span>
+								</span>
 							</h2>
                             <div class="details-header-controls w-full sm:w-auto justify-end">
                                  <div class="month-dropdown-container" id="details-month-dropdown-container">
@@ -1122,7 +1265,7 @@
                                         <i class="fas fa-chevron-down text-xs"></i>
                                     </button>
                                     <div id="details-month-dropdown-options" class="month-dropdown-content">
-                                        </div>
+                                    </div>
                                 </div>
                                 <button id="close-individual-charts" class="close-details-button">
                                     <i class="fas fa-times"></i>Cerrar
@@ -1146,6 +1289,7 @@
 
 						<div class="mt-6" id="kpi-section-wrapper"> <h3 class="chart-title mb-3">Resumen Clave Detallado</h3>
 							<div id="kpi-summary-card-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
+                            </div>
                         </div>
                     </section>
 
@@ -1179,51 +1323,33 @@
                             </div>
                         </div>
                     </section>
+                </section> <div class="lg:col-span-4 grid grid-cols-1 lg:grid-cols-2 gap-8"> 
+                    <section id="history-section" class="lg:col-span-1">
+                        <div class="flex justify-between items-center mb-3 border-b border-gray-200 pb-3">
+                            <h3 class="section-title !mb-0 !border-b-0 !pb-0 flex-grow">
+                                <i class="fas fa-history"></i>Historial de Cambios
+                            </h3>
+                            <div class="flex-shrink-0">
+                                <button id="undo-button" title="Deshacer (Ctrl+Z)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5 mr-2" disabled>
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                                <button id="redo-button" title="Rehacer (Ctrl+Y)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5" disabled>
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="change-history-list-container">
+                            <ul id="change-history-list">
+                                <li class="text-center text-gray-400">No hay cambios recientes.</li>
+                            </ul>
+                        </div>
                     </section>
-                <section id="legend-section" class="lg:col-span-3 mt-0">
-                    <div class="flex flex-wrap justify-between items-center mb-3 border-b border-gray-200 pb-3">
-                        <h3 class="section-title flex-grow mb-0 border-b-0 pb-0 !mb-0"><i class="fas fa-palette mr-2 text-gray-400"></i>Leyenda, Colores y Horarios</h3>
-                        <div class="flex-shrink-0">
-                            <button id="apply-colors-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 text-xs px-3 py-1.5 mr-2" disabled>
-                                <i class="fas fa-check"></i>Aplicar
-                            </button>
-                            <button id="reset-colors-button" class="action-button bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-400 text-xs px-3 py-1.5" disabled>
-                                <i class="fas fa-undo"></i>Restaurar
-                            </button>
-                        </div>
-                    </div>
-                    <div id="legend-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
-                    </div>
-                </section>
-
-
-                <section id="history-section" class="lg:col-span-1 mt-0">
-                    <div class="flex justify-between items-center mb-3 border-b border-gray-200 pb-3">
-                        <h3 class="section-title !mb-0 !border-b-0 !pb-0 flex-grow">
-                            <i class="fas fa-history"></i>Historial de Cambios
-                        </h3>
-                        <div class="flex-shrink-0">
-                            <button id="undo-button" title="Deshacer (Ctrl+Z)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5 mr-2" disabled>
-                                <i class="fas fa-undo"></i>
-                            </button>
-                            <button id="redo-button" title="Rehacer (Ctrl+Y)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5" disabled>
-                                <i class="fas fa-redo"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div id="change-history-list-container">
-                        <ul id="change-history-list">
-                            <li class="text-center text-gray-400">No hay cambios recientes.</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section id="notes-section" class="lg:col-span-4">
-                    <h3 class="section-title"><i class="fas fa-pencil-alt"></i>Notas Generales</h3>
-                    <textarea id="general-notes" class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm notes-textarea" placeholder="Añade comentarios o recordatorios aquí..."></textarea>
-                </section>
-            </div>
-        </main>
+        
+                    <section id="notes-section" class="lg:col-span-1">
+                        <h3 class="section-title"><i class="fas fa-pencil-alt"></i>Notas Generales</h3>
+                        <textarea id="general-notes" class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm notes-textarea" placeholder="Añade comentarios o recordatorios aquí..."></textarea>
+                    </section>
+                </div> </div> </main>
 
 		<footer class="mt-16 text-center text-sm text-gray-500 relative pb-4 md:pb-2 px-4 md:px-2">
 			<p id="footer-text" class="mb-2 md:mb-0">Gestor de Horarios. Creado por <span id="creator-name" class="footer-name">Nefi Badillo</span> con <i id="footer-heart" class="fas fa-heart text-red-500 footer-name"></i>.</p>
@@ -1240,9 +1366,8 @@
     </div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
-    <div id="color-palette-popup-container"></div>
-    <div id="multiselect-toolbar" class="hidden-by-default">
-        </div>
+    <div id="color-palette-popup-container"></div> <div id="multiselect-toolbar" class="hidden-by-default">
+    </div>
 
     <div id="add-employee-modal" class="modal hidden-by-default">
         <div class="modal-content">
@@ -1272,7 +1397,6 @@
             </div>
         </div>
     </div>
-
     <div id="filename-modal" class="modal hidden-by-default">
         <div class="modal-content">
             <h3 id="filename-modal-title" class="text-xl font-bold text-gray-900 mb-2">Nombre del Archivo</h3>
@@ -1287,14 +1411,13 @@
             </div>
         </div>
     </div>
-
     <div id="export-calendar-modal" class="modal hidden-by-default">
         <div class="modal-content">
             <h3 class="text-xl font-bold text-gray-900 mb-4">Exportar Mes a Calendar</h3>
             <div class="mb-4">
                 <label for="modal-calendar-employee-select" class="block text-sm font-medium text-gray-700 mb-1">Selecciona Empleado:</label>
                 <select id="modal-calendar-employee-select" class="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                    </select>
+                </select>
             </div>
             <div class="mt-6 flex justify-end space-x-3">
                 <button id="modal-cancel-export-calendar" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
@@ -1302,52 +1425,16 @@
             </div>
         </div>
     </div>
-
     <div id="tips-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-lg bg-gray-50 p-6 rounded-lg shadow-xl"> <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
+        <div class="modal-content max-w-lg bg-gray-50 p-6 rounded-lg shadow-xl">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
                 <h3 class="text-2xl font-bold text-indigo-700"><i class="fas fa-lightbulb text-yellow-400 mr-3"></i>Consejos Útiles</h3>
                 <button id="close-tips-modal" class="text-gray-500 hover:text-gray-800 transition-colors">
                     <i class="fas fa-times fa-lg"></i>
                 </button>
             </div>
-
             <div class="space-y-4 text-gray-700 text-sm">
-                <div>
-                    <h4 class="font-semibold text-indigo-600 mb-1">Seleccionar/Deseleccionar Celdas (Clic):</h4>
-                    <ul class="list-disc list-inside pl-4 space-y-1">
-                        <li><strong>PC/Mac:</strong> Usa <code>Ctrl/Cmd + Clic</code>.</li>
-                        <li><strong>Móvil:</strong> Realiza una pulsación sobre la celda.</li>
-                        <li><strong>Seleccionar Rango (PC/Mac):</strong> Haz clic en la celda de inicio, luego mantén presionada la tecla <code>Shift</code> y haz clic en la celda final.</li>
-                    </ul>
                 </div>
-
-                <div>
-                    <h4 class="font-semibold text-indigo-600 mb-1">Seleccionar Múltiples Celdas (Arrastrando):</h4>
-                     <ul class="list-disc list-inside pl-4 space-y-1">
-                        <li><strong>PC/Mac:</strong> Haz clic en una celda, luego vuelve a hacer clic en la misma y, sin soltar, arrastra el cursor para seleccionar un bloque.</li>
-                        <li><strong>Móvil:</strong> Toca una celda, mantén pulsado y arrastra el dedo para expandir la selección a celdas adyacentes.</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-indigo-600 mb-1">Reordenar Empleados:</h4>
-                    <p class="pl-4">Arrastra y suelta el nombre del empleado en la tabla para cambiar su posición.</p>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-indigo-600 mb-1">Editar Texto en Celdas:</h4>
-                     <ul class="list-disc list-inside pl-4 space-y-1">
-                        <li><strong>Nombres de Empleado:</strong> Doble clic (PC/Mac) o pulsación larga (Móvil) sobre el nombre.</li>
-                        <li><strong>Turnos Personalizados:</strong> Doble clic (PC/Mac) o pulsación larga (Móvil) sobre una celda que ya contenga texto personalizado (solo sirve si el turno es "Otro"). Si el texto contiene una coma (,) no se guardará.</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-indigo-600 mb-1">Barra de Acciones Rápida:</h4>
-                    <p class="pl-4">Tras seleccionar una o más celdas, aparecerá una barra de acciones en la parte inferior de la pantalla. Úsala para asignar rápidamente turnos estándar (M, T, N, L, V, B) o para limpiar la celda (botón "Otro", que asigna un valor vacío, permitiendo luego escribir texto personalizado si se desea).</p>
-                </div>
-            </div>
-
             <div class="mt-8 text-right">
                 <button id="ok-tips-modal" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-6 py-2 rounded-lg">
                     Entendido
@@ -1355,7 +1442,6 @@
             </div>
         </div>
     </div>
-
     <div id="custom-event-modal" class="modal hidden-by-default">
         <div class="modal-content">
             <h3 id="custom-event-modal-title" class="text-xl font-bold text-gray-900 mb-4">Editar Evento</h3>
@@ -1368,7 +1454,6 @@
             </div>
         </div>
     </div>
-
     <div id="confirm-load-csv-modal" class="modal hidden-by-default">
         <div class="modal-content">
             <h3 class="text-xl font-bold text-gray-900 mb-2">Confirmar Carga de Nuevo Horario</h3>
@@ -1379,26 +1464,21 @@
             </div>
         </div>
     </div>
-
     <div id="save-local-help-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-md"> <div class="flex justify-between items-center mb-4">
+        <div class="modal-content max-w-md">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-900">Información sobre Guardado Local</h3>
                 <button id="close-save-local-help-modal-icon" class="text-gray-500 hover:text-gray-800">
                     <i class="fas fa-times fa-lg"></i>
                 </button>
             </div>
             <div class="text-sm text-gray-700 space-y-3">
-                <p>La función 'Guardar Local' almacena el estado actual de tu horario (incluyendo todos los turnos, empleados, el nombre del archivo CSV importado originalmente (si aplica), las notas y las configuraciones de colores) directamente en el almacenamiento de tu navegador web.</p>
-                <p>Esto te permite cerrar la aplicación y, al volver a abrirla en el mismo navegador y ordenador, cargar tus datos guardados para continuar tu trabajo.</p>
-                <p class="font-semibold text-indigo-700">Importante: Esta acción <strong class="text-red-600">NO modifica ni sobrescribe el archivo CSV original</strong> que pudiste haber importado desde tu ordenador. Los navegadores web, por razones de seguridad, no permiten que las páginas web editen archivos directamente en tu disco duro.</p>
-                <p>Para obtener una copia de tu horario actual como un archivo CSV en tu ordenador (para guardarlo o compartirlo), debes usar la función '<strong class="text-blue-600">Exportar CSV</strong>'. Esto descargará un nuevo archivo con los datos más recientes.</p>
-            </div>
+                </div>
             <div class="mt-6 text-right">
                 <button id="close-save-local-help-modal-button" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">Entendido</button>
             </div>
         </div>
     </div>
-
 	<div id="filename-modal-stats-pdf" class="modal hidden-by-default">
 		<div class="modal-content">
 			<h3 id="filename-modal-title-stats-pdf" class="text-lg font-semibold mb-3">Nombre del Archivo PDF</h3>
@@ -1410,6 +1490,62 @@
 			</div>
 		</div>
 	</div>
+	
+    <div id="legend-colors-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-3xl">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
+                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-palette mr-2 text-teal-500"></i>Leyenda, Colores y Horarios de Turno</h3>
+                <button id="close-legend-colors-modal-button" class="text-gray-500 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <div id="legend-colors-modal-body">
+                <div class="flex flex-wrap justify-between items-center mb-3">
+                    <h3 class="section-title flex-grow mb-0 border-b-0 pb-0 !mb-0"><i class="fas fa-palette mr-2 text-gray-400"></i>Leyenda, Colores y Horarios</h3>
+                </div>
+                <div id="legend-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
+                    </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="modal-apply-colors-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 px-4 py-2" disabled>
+                    <i class="fas fa-check mr-2"></i>Aplicar Cambios
+                </button>
+                <button id="modal-reset-colors-button" class="action-button bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-400 px-4 py-2" disabled>
+                    <i class="fas fa-undo mr-2"></i>Restaurar Defecto
+                </button>
+                <button id="modal-ok-legend-colors-button" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="rules-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
+                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-gavel mr-2 text-sky-500"></i>Configuración de Normas del Horario</h3>
+                <button id="close-rules-modal-button" class="text-gray-500 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <div id="rules-modal-body" class="space-y-6">
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-semibold text-gray-700 mb-3">Resumen de Violaciones de Normas:</h4>
+                    <div id="rule-violations-summary" class="text-sm text-gray-600 max-h-40 overflow-y-auto">
+                        <p>No se han detectado violaciones o las normas están desactivadas.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="save-rules-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 px-4 py-2" disabled>
+                    <i class="fas fa-save mr-2"></i>Guardar Normas
+                </button>
+                <button id="modal-ok-rules-button" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // --- CONSTANTES Y CONFIGURACIÓN ---
@@ -1799,165 +1935,162 @@
             domCache.footerTextElement = document.getElementById('footer-text');
             domCache.creatorNameElement = document.getElementById('creator-name');
             domCache.footerHeartElement = document.getElementById('footer-heart');
-
+        
             // --- Controles de Importación, Año y Guardado/Exportación Principal ---
             domCache.csvFileInput = document.getElementById('csv-file-input');
             domCache.yearInput = document.getElementById('year-input');
             domCache.saveLocalButton = document.getElementById('save-local-button');
             domCache.exportCsvButton = document.getElementById('export-csv-button');
             domCache.createEmptyCsvButton = document.getElementById('create-empty-csv-button');
-            domCache.downloadImageButton = document.getElementById('download-image-button'); // Para PDF mensual/anual
-            domCache.downloadWeeklySvgButton = document.getElementById('download-weekly-svg-button'); // Para PDF semanal
+            domCache.downloadImageButton = document.getElementById('download-image-button');
+            domCache.downloadWeeklySvgButton = document.getElementById('download-weekly-svg-button');
             domCache.exportMonthCalendarButton = document.getElementById('export-month-calendar-button');
             domCache.autosaveToggle = document.getElementById('autosave-toggle');
             domCache.saveLocalHelpIcon = document.getElementById('save-local-help-icon');
-
+        
             // --- Controles de Vista y Navegación del Horario Principal ---
             domCache.viewMonthlyButton = document.getElementById('view-monthly-button');
             domCache.viewAnnualButton = document.getElementById('view-annual-button');
             domCache.viewModeButtonsContainer = document.getElementById('view-mode-buttons-container');
             domCache.monthTabsContainer = document.getElementById('month-tabs-container');
-
+        
             // --- Secciones Principales de la UI ---
             domCache.welcomeMessage = document.getElementById('welcome-message');
             domCache.scheduleDisplaySection = document.getElementById('schedule-display-section');
-            domCache.scheduleTableSection = document.getElementById('schedule-table-section'); // Contenedor de la tabla de horario
-            domCache.notesSection = document.getElementById('notes-section'); // Sección de notas generales
-            domCache.legendSection = document.getElementById('legend-section'); // Sección de leyenda
-            domCache.historySection = document.getElementById('history-section'); // Sección de historial
-
+            domCache.scheduleTableSection = document.getElementById('schedule-table-section');
+            // domCache.notesSection = document.getElementById('notes-section'); // Ya no existe como sección principal
+            // domCache.legendSection = document.getElementById('legend-section'); // Ya no existe como sección principal
+            domCache.historySection = document.getElementById('history-section');
+        
             // --- Elementos de la Tabla de Horario Principal ---
-            domCache.currentMonthYearDisplay = document.getElementById('current-month-year-display'); // Cabecera h2 de la tabla
-            domCache.currentMonthYearText = document.getElementById('current-month-year-text'); // Span con Mes Año
+            domCache.currentMonthYearDisplay = document.getElementById('current-month-year-display');
+            domCache.currentMonthYearText = document.getElementById('current-month-year-text');
             domCache.unsavedIndicatorTable = document.getElementById('unsaved-indicator-table');
             domCache.scheduleTableHead = document.getElementById('schedule-table-head');
             domCache.scheduleTableBody = document.getElementById('schedule-table-body');
-            domCache.noDataMessage = document.getElementById('no-data-message'); // Mensaje si no hay datos en tabla horario
-
+            domCache.noDataMessage = document.getElementById('no-data-message');
+        
             // --- Barra de Herramientas de Multiselección y Paleta de Colores ---
             domCache.multiselectToolbar = document.getElementById('multiselect-toolbar');
             domCache.colorPalettePopupContainer = document.getElementById('color-palette-popup-container');
-
-            // --- Leyenda y Controles de Color/Horarios ---
-            domCache.legendItemsContainer = document.getElementById('legend-items-container');
-            domCache.applyColorsButton = document.getElementById('apply-colors-button');
-            domCache.resetColorsButton = document.getElementById('reset-colors-button');
-
+        
+            // --- Leyenda (ahora dentro del modal) ---
+            domCache.legendItemsContainer = document.getElementById('legend-items-container'); // Sigue siendo el mismo ID, pero ahora está en el modal
+        
             // --- Historial de Cambios y Notas ---
             domCache.changeHistoryList = document.getElementById('change-history-list');
-            domCache.generalNotesTextarea = document.getElementById('general-notes');
+            domCache.generalNotesTextarea = document.getElementById('general-notes'); // Asumo que la sección de notas sigue existiendo
             domCache.undoButton = document.getElementById('undo-button');
             domCache.redoButton = document.getElementById('redo-button');
-
-            // --- Modales ---
+        
+            // --- Modales Existentes ---
             domCache.addEmployeeModal = document.getElementById('add-employee-modal');
             domCache.modalEmployeeNameInput = document.getElementById('modal-employee-name-input');
             domCache.modalConfirmAddEmployee = document.getElementById('modal-confirm-add-employee');
             domCache.modalCancelAddEmployee = document.getElementById('modal-cancel-add-employee');
-
+        
             domCache.deleteEmployeeModal = document.getElementById('delete-employee-modal');
             domCache.employeeNameToDeleteSpan = document.getElementById('employee-name-to-delete');
             domCache.deleteCountdownMessageSpan = document.getElementById('delete-countdown-message');
             domCache.modalConfirmDeleteEmployee = document.getElementById('modal-confirm-delete-employee');
             domCache.modalCancelDeleteEmployee = document.getElementById('modal-cancel-delete-employee');
-
+        
             domCache.filenameModal = document.getElementById('filename-modal');
             domCache.filenameModalTitle = document.getElementById('filename-modal-title');
             domCache.filenameModalDescription = document.getElementById('filename-modal-description');
             domCache.modalFilenameInput = document.getElementById('modal-filename-input');
             domCache.modalConfirmFilename = document.getElementById('modal-confirm-filename');
             domCache.modalCancelFilename = document.getElementById('modal-cancel-filename');
-
+        
             domCache.exportCalendarModal = document.getElementById('export-calendar-modal');
             domCache.modalCalendarEmployeeSelect = document.getElementById('modal-calendar-employee-select');
             domCache.modalConfirmExportCalendar = document.getElementById('modal-confirm-export-calendar');
             domCache.modalCancelExportCalendar = document.getElementById('modal-cancel-export-calendar');
-
+        
             domCache.tipsModal = document.getElementById('tips-modal');
-            domCache.helpIconContainer = document.getElementById('help-icon-container'); // Icono de la bombilla
-            domCache.closeTipsModalButton = document.getElementById('close-tips-modal'); // Botón 'x' en modal de consejos
-            domCache.okTipsModalButton = document.getElementById('ok-tips-modal');     // Botón 'Entendido' en modal de consejos
-
+            domCache.helpIconContainer = document.getElementById('help-icon-container');
+            domCache.closeTipsModalButton = document.getElementById('close-tips-modal');
+            domCache.okTipsModalButton = document.getElementById('ok-tips-modal');
+        
             domCache.customEventModal = document.getElementById('custom-event-modal');
             domCache.customEventModalTitle = document.getElementById('custom-event-modal-title');
             domCache.modalCustomEventInput = document.getElementById('modal-custom-event-input');
             domCache.modalConfirmCustomEvent = document.getElementById('modal-confirm-custom-event');
             domCache.modalCancelCustomEvent = document.getElementById('modal-cancel-custom-event');
-
+        
             domCache.confirmLoadCsvModal = document.getElementById('confirm-load-csv-modal');
             domCache.confirmLoadCsvMessage = document.getElementById('confirm-load-csv-message');
             domCache.modalCancelLoadCsv = document.getElementById('modal-cancel-load-csv');
             domCache.modalConfirmLoadCsv = document.getElementById('modal-confirm-load-csv');
-
+        
             domCache.saveLocalHelpModal = document.getElementById('save-local-help-modal');
             domCache.closeSaveLocalHelpModalIcon = document.getElementById('close-save-local-help-modal-icon');
             domCache.closeSaveLocalHelpModalButton = document.getElementById('close-save-local-help-modal-button');
-            domCache.statisticsSectionReformed = document.getElementById('statistics-section'); 
-            
-            // Sección de la tabla principal de estadísticas (dentro de statisticsSectionReformed)
+        
+            // --- Elementos de Estadísticas (sin cambios en este paso, pero listados por completitud) ---
+            domCache.statisticsSectionReformed = document.getElementById('statistics-section');
             domCache.mainStatsTableSection = document.getElementById('idea1-table-improved-expanded');
-            domCache.statsTableHead = document.getElementById('stats-table-head'); // Thead de la nueva tabla de estadísticas
-            domCache.statsTableBody = document.getElementById('tbody-idea1-expanded'); // Tbody de la nueva tabla de estadísticas
-            domCache.paginationInfo = document.getElementById('pagination-info'); // Para mostrar info de conteo de empleados
-
-            // Dropdown de mes/año principal para la nueva tabla de estadísticas
+            domCache.statsTableHead = document.getElementById('stats-table-head');
+            domCache.statsTableBody = document.getElementById('tbody-idea1-expanded');
+            domCache.paginationInfo = document.getElementById('pagination-info');
             domCache.mainMonthDropdownContainer = document.getElementById('main-month-dropdown-container');
-            domCache.mainMonthDropdownBtn = document.getElementById('month-dropdown-btn'); // Botón que abre el dropdown principal
-            domCache.selectedMonthText = document.getElementById('selected-month-text'); // Span que muestra el mes/año seleccionado en el botón principal
-            domCache.mainMonthDropdownOptions = document.getElementById('month-dropdown-options'); 
-
-            // Botón para ver estadísticas generales de la plantilla
+            domCache.mainMonthDropdownBtn = document.getElementById('month-dropdown-btn');
+            domCache.selectedMonthText = document.getElementById('selected-month-text');
+            domCache.mainMonthDropdownOptions = document.getElementById('month-dropdown-options');
             domCache.showGeneralStatsBtn = document.getElementById('show-general-stats-btn');
-
-            // Sección de detalles individuales del empleado
             domCache.individualChartsSection = document.getElementById('individual-employee-charts-section');
-            domCache.selectedMonthYearDisplayDetails = document.getElementById('selected-month-year-display-details'); // Span para mostrar "Mes Año" en la cabecera de detalles
-            domCache.selectedEmployeeName = document.getElementById('selected-employee-name'); // Span para mostrar el nombre del empleado en detalles
-            domCache.detailsMonthDropdownContainer = document.getElementById('details-month-dropdown-container'); // Contenedor del dropdown en detalles
-            domCache.detailsMonthDropdownBtn = document.getElementById('details-month-dropdown-btn'); // Botón del dropdown en detalles
-            domCache.detailsSelectedMonthText = document.getElementById('details-selected-month-text'); // Span para mes/año en el botón de dropdown de detalles
-            domCache.detailsMonthDropdownOptions = document.getElementById('details-month-dropdown-options'); // Opciones del dropdown en detalles
-            domCache.closeIndividualChartsBtn = document.getElementById('close-individual-charts'); // Botón para cerrar la vista de detalles individuales
-
-            // Canvas para gráficos individuales
+            domCache.selectedMonthYearDisplayDetails = document.getElementById('selected-month-year-display-details');
+            domCache.detailsEmployeeNamePlaceholder = document.getElementById('details-employee-name-placeholder');
+            domCache.detailsMonthDropdownContainer = document.getElementById('details-month-dropdown-container');
+            domCache.detailsMonthDropdownBtn = document.getElementById('details-month-dropdown-btn');
+            domCache.detailsSelectedMonthText = document.getElementById('details-selected-month-text');
+            domCache.detailsMonthDropdownOptions = document.getElementById('details-month-dropdown-options');
+            domCache.closeIndividualChartsBtn = document.getElementById('close-individual-charts');
             domCache.donutChartCanvas = document.getElementById('donutChartCanvas');
-            domCache.donutChartMessage = document.getElementById('donutChartMessage'); // Div para mensajes si el donut chart no tiene datos
-            domCache.calendarHeatmapTitle = document.getElementById('calendar-heatmap-title'); // Título del mini calendario
+            domCache.donutChartMessage = document.getElementById('donutChartMessage');
+            domCache.calendarHeatmapTitle = document.getElementById('calendar-heatmap-title');
             domCache.miniCalendarHeatmapContainer = document.getElementById('mini-calendar-heatmap-container');
-            domCache.kpiSummaryCardContainer = document.getElementById('kpi-summary-card-container'); // Contenedor para las tarjetas KPI
-			domCache.donutChartWrapper = document.getElementById('donut-chart-wrapper');
-			domCache.calendarHeatmapWrapper = document.getElementById('calendar-heatmap-wrapper');
-			domCache.donutCalendarGrid = document.getElementById('donut-calendar-grid');
-			// --- NUEVO ELEMENTO PARA EL SELECTOR DE EMPLEADO EN DETALLES ---
-			domCache.detailsEmployeeSelectContainer = document.getElementById('selected-employee-name-container'); 
-			// --- CONTENEDOR PARA EL SELECTOR DE EMPLEADO EN DETALLES ---
-			domCache.detailsEmployeeNamePlaceholder = document.getElementById('details-employee-name-placeholder');
-            // Sección de estadísticas generales de la plantilla
+            domCache.kpiSummaryCardContainer = document.getElementById('kpi-summary-card-container');
+            domCache.donutChartWrapper = document.getElementById('donut-chart-wrapper');
+            domCache.calendarHeatmapWrapper = document.getElementById('calendar-heatmap-wrapper');
+            domCache.donutCalendarGrid = document.getElementById('donut-calendar-grid');
             domCache.generalPlantillaStatsSection = document.getElementById('general-plantilla-stats-section');
-            domCache.closeGeneralStatsBtn = document.getElementById('close-general-stats-btn'); // Botón para cerrar las estadísticas generales
-			domCache.generalStatsMonthDropdownContainer = document.getElementById('general-stats-month-dropdown-container');
-			domCache.generalStatsMonthDropdownBtn = document.getElementById('general-stats-month-dropdown-btn');
-			domCache.generalStatsSelectedMonthText = document.getElementById('general-stats-selected-month-text');
-			domCache.generalStatsMonthDropdownOptions = document.getElementById('general-stats-month-dropdown-options');
-
-            // Canvas para gráficos generales
+            domCache.closeGeneralStatsBtn = document.getElementById('close-general-stats-btn');
+            domCache.generalStatsMonthDropdownContainer = document.getElementById('general-stats-month-dropdown-container');
+            domCache.generalStatsMonthDropdownBtn = document.getElementById('general-stats-month-dropdown-btn');
+            domCache.generalStatsSelectedMonthText = document.getElementById('general-stats-selected-month-text');
+            domCache.generalStatsMonthDropdownOptions = document.getElementById('general-stats-month-dropdown-options');
             domCache.generalStackedBarCanvas = document.getElementById('generalStackedBarCanvas');
             domCache.generalGroupedBarCanvas = document.getElementById('generalGroupedBarCanvas');
-            
-			// --- DOM Cache para el nuevo modal (asegúrate de que estos IDs coincidan con tu HTML) ---
-			domCache.filenameModalStatsPdf = document.getElementById('filename-modal-stats-pdf');
-			domCache.filenameModalTitleStatsPdf = document.getElementById('filename-modal-title-stats-pdf');
-			domCache.modalFilenameInputStatsPdf = document.getElementById('modal-filename-input-stats-pdf');
-			domCache.filenameModalExtensionStatsPdf = document.getElementById('filename-modal-extension-stats-pdf');
-			domCache.modalCancelFilenameStatsPdf = document.getElementById('modal-cancel-filename-stats-pdf');
-			domCache.modalConfirmFilenameStatsPdf = document.getElementById('modal-confirm-filename-stats-pdf');
-			domCache.exportStatsToPdfButton = document.getElementById('export-stats-to-pdf-button'); // El nuevo botón
-			let currentStatsPdfConfirmCallback = null;
-			let currentStatsPdfFileExtension = '';
-
-            // Placeholder para cuando no hay datos en la nueva sección de estadísticas (si decides usar uno específico)
-            // domCache.statsPlaceholderReformed = document.getElementById('stats-placeholder-reformed'); // Descomentar y crear el div si es necesario
-
+            domCache.filenameModalStatsPdf = document.getElementById('filename-modal-stats-pdf');
+            domCache.filenameModalTitleStatsPdf = document.getElementById('filename-modal-title-stats-pdf');
+            domCache.modalFilenameInputStatsPdf = document.getElementById('modal-filename-input-stats-pdf');
+            domCache.filenameModalExtensionStatsPdf = document.getElementById('filename-modal-extension-stats-pdf');
+            domCache.modalCancelFilenameStatsPdf = document.getElementById('modal-cancel-filename-stats-pdf');
+            domCache.modalConfirmFilenameStatsPdf = document.getElementById('modal-confirm-filename-stats-pdf');
+            domCache.exportStatsToPdfButton = document.getElementById('export-stats-to-pdf-button');
+        
+            // --- NUEVOS ELEMENTOS PARA MODALES DE LEYENDA Y NORMAS ---
+            domCache.modalTriggersContainer = document.getElementById('modal-triggers-container');
+            domCache.openLegendColorsModalButton = document.getElementById('open-legend-colors-modal-button');
+            domCache.openRulesModalButton = document.getElementById('open-rules-modal-button');
+        
+            // Modal de Leyenda y Colores
+            domCache.legendColorsModal = document.getElementById('legend-colors-modal');
+            domCache.legendColorsModalBody = document.getElementById('legend-colors-modal-body');
+            domCache.closeLegendColorsModalButton = document.getElementById('close-legend-colors-modal-button');
+            domCache.modalApplyColorsButton = document.getElementById('modal-apply-colors-button');
+            domCache.modalResetColorsButton = document.getElementById('modal-reset-colors-button');
+            domCache.modalOkLegendColorsButton = document.getElementById('modal-ok-legend-colors-button');
+            // domCache.legendItemsContainer ya está cacheado arriba, se mantiene.
+        
+            // Modal de Normas
+            domCache.rulesModal = document.getElementById('rules-modal');
+            domCache.rulesModalBody = document.getElementById('rules-modal-body');
+            domCache.closeRulesModalButton = document.getElementById('close-rules-modal-button');
+            domCache.saveRulesButton = document.getElementById('save-rules-button');
+            domCache.modalOkRulesButton = document.getElementById('modal-ok-rules-button');
+            domCache.ruleViolationsSummary = document.getElementById('rule-violations-summary');
         }
 
         // --- MANEJO DE EVENTOS DE SELECCIÓN DE CELDAS ---
@@ -2192,8 +2325,8 @@
 
         // --- CONFIGURACIÓN DE EVENT LISTENERS ---
         
-		        function setupEventListeners() {
-            // --- Listeners Existentes (basado en el análisis previo de GestorHorarios-4.55.html) ---
+        function setupEventListeners() {
+            // --- Listeners Existentes (basado en el análisis previo de GestorHorarios-EstadisticasTerminadas.html) ---
             if (domCache.csvFileInput) {
                 domCache.csvFileInput.addEventListener('change', handleFileUpload);
             }
@@ -2236,26 +2369,20 @@
         
                 // Listeners para selección con mouse
                 domCache.scheduleTableBody.addEventListener('mousedown', handleCellMouseDown);
-                // Estos listeners de mousemove y mouseup se añaden al 'document'
-                // y ya deberían estar en tu código original si seguiste el plan.
                 document.addEventListener('mousemove', handleDocumentMouseMove);
                 document.addEventListener('mouseup', handleDocumentMouseUp);
         
-        
                 // Listeners para selección táctil
                 domCache.scheduleTableBody.addEventListener('touchstart', handleCellTouchStart, { passive: false });
-                // Estos listeners de touchmove y touchend se añaden al 'document'
-                // y ya deberían estar en tu código original si seguiste el plan.
                 document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
                 document.addEventListener('touchend', handleDocumentTouchEnd);
         
-        
                 domCache.scheduleTableBody.addEventListener('contextmenu', (event) => {
-                    if (event.target.closest('td.shift-cell') && wasLongPress) { // wasLongPress es una variable global de tu app
+                    if (event.target.closest('td.shift-cell') && wasLongPress) {
                         const cellInfo = getCellInfoFromElement(event.target.closest('td.shift-cell'));
                         if (cellInfo) {
                             const currentValue = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
-                            if (!SHIFT_TYPES.includes(currentValue)) { // SHIFT_TYPES es una constante global de tu app
+                            if (!SHIFT_TYPES.includes(currentValue)) {
                                 event.preventDefault();
                             }
                         }
@@ -2270,25 +2397,22 @@
                 }
                 const isClickOnTableBody = event.target.closest('#schedule-table-body');
                 const isClickOnToolbar = event.target.closest('#multiselect-toolbar');
-                const isClickOnModal = event.target.closest('.modal-content'); // Genérico para cualquier modal
-                const isClickOnLegendItem = event.target.closest('.legend-item-container');
-                const isClickOnControls = event.target.closest('#controls-section');
+                const isClickOnModalContent = event.target.closest('.modal-content'); // Genérico para cualquier modal
+                const isClickOnLegendItem = event.target.closest('.legend-item-container'); // Ahora dentro del modal de leyenda
+                const isClickOnControlsSection = event.target.closest('#controls-section');
                 const isClickOnNewStatsSection = event.target.closest('#statistics-section');
+                const isClickOnModalTriggerButtons = event.target.closest('#modal-triggers-container');
         
         
-                if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModal && !isClickOnLegendItem && !isClickOnControls && !isClickOnNewStatsSection && selectedCells.length > 0) {
+                if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModalContent && !isClickOnLegendItem && !isClickOnControlsSection && !isClickOnNewStatsSection && !isClickOnModalTriggerButtons && selectedCells.length > 0) {
                     clearSelection();
                 }
             });
         
         
-            // Listeners para leyenda y notas
-            if (domCache.applyColorsButton) {
-                domCache.applyColorsButton.addEventListener('click', applyAndSaveColorsAndTimes);
-            }
-            if (domCache.resetColorsButton) {
-                domCache.resetColorsButton.addEventListener('click', resetColorsAndTimes);
-            }
+            // Listeners para leyenda y notas (los de leyenda ahora son para los botones del modal)
+            // Los listeners para domCache.applyColorsButton y domCache.resetColorsButton originales se eliminan
+            // ya que esos botones se quitaron. Ahora usamos los del modal.
             if (domCache.generalNotesTextarea) {
                 domCache.generalNotesTextarea.addEventListener('input', () => {
                     hasUnsavedChanges = true;
@@ -2296,17 +2420,18 @@
                     if (Object.keys(scheduleData).length > 0 || domCache.generalNotesTextarea.value.trim()) {
                         if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = false;
                     }
-                    clearTimeout(notesDebounceTimer); // notesDebounceTimer es una variable global de tu app
+                    clearTimeout(notesDebounceTimer);
                     notesDebounceTimer = setTimeout(() => {
-                        const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null; // undoStack es global
+                        const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
                         if (!lastUndoState || lastUndoState.generalNotes !== domCache.generalNotesTextarea.value) {
-                            // saveStateForUndo("Notas generales modificadas."); // saveStateForUndo es global
+                            // saveStateForUndo("Notas generales modificadas."); // Descomentar si se quiere guardar cada cambio de nota
                         }
                     }, 1500);
                 });
             }
         
-            // Listeners para modales existentes
+            // Listeners para modales existentes (add, delete, filename, export calendar, tips, custom event, confirm load, save local help)
+            // Estos deberían seguir igual, ya que sus IDs no han cambiado.
             if (domCache.modalConfirmAddEmployee) {
                 domCache.modalConfirmAddEmployee.addEventListener('click', handleAddEmployeeFromModal);
             }
@@ -2324,8 +2449,8 @@
             }
             if (domCache.modalCancelDeleteEmployee) {
                 domCache.modalCancelDeleteEmployee.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
-                    if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); // deleteCountdownInterval es global
-                    employeeToDeleteName = null; // employeeToDeleteName es global
+                    if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
+                    employeeToDeleteName = null;
                 }));
             }
             if (domCache.deleteEmployeeModal) {
@@ -2337,13 +2462,13 @@
                 });
             }
         
-            if (domCache.modalConfirmFilename) { // Modal de nombre de archivo genérico
+            if (domCache.modalConfirmFilename) {
                 domCache.modalConfirmFilename.addEventListener('click', handleFilenameConfirm);
             }
             if (domCache.modalCancelFilename) {
                 domCache.modalCancelFilename.addEventListener('click', () => hideModal(domCache.filenameModal, () => {
-                    currentFilenameConfirmCallback = null; // currentFilenameConfirmCallback es global
-                    currentFilenameExtension = ''; // currentFilenameExtension es global
+                    currentFilenameConfirmCallback = null;
+                    currentFilenameExtension = '';
                     if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = '';
                 }));
             }
@@ -2380,68 +2505,6 @@
                 });
             }
         
-            if (domCache.footerHeartElement) {
-                domCache.footerHeartElement.addEventListener('click', handleFooterHeartClick);
-            }
-        
-            window.addEventListener('beforeunload', (event) => {
-                if (hasUnsavedChanges) { // hasUnsavedChanges es global
-                    event.preventDefault();
-                    event.returnValue = '';
-                }
-            });
-        
-            // Listeners para Deshacer/Rehacer
-            if (domCache.undoButton) {
-                domCache.undoButton.addEventListener('click', undoChange);
-            }
-            if (domCache.redoButton) {
-                domCache.redoButton.addEventListener('click', redoChange);
-            }
-        
-            // Listener de teclado para Deshacer/Rehacer y Escape
-            document.addEventListener('keydown', (event) => {
-                if (event.ctrlKey || event.metaKey) {
-                    if (event.key === 'z' || event.key === 'Z') {
-                        event.preventDefault();
-                        if (domCache.undoButton && !domCache.undoButton.disabled) undoChange();
-                    } else if (event.key === 'y' || event.key === 'Y') {
-                        event.preventDefault();
-                        if (domCache.redoButton && !domCache.redoButton.disabled) redoChange();
-                    }
-                } else if (event.key === 'Escape') {
-                    if (selectedCells.length > 0) clearSelection(); // selectedCells es global
-                    if (domCache.addEmployeeModal && !domCache.addEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.addEmployeeModal);
-                    if (domCache.deleteEmployeeModal && !domCache.deleteEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.deleteEmployeeModal, () => { if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); employeeToDeleteName = null; });
-                    if (domCache.filenameModal && !domCache.filenameModal.classList.contains('hidden-by-default')) hideModal(domCache.filenameModal, () => { currentFilenameConfirmCallback = null; currentFilenameExtension = ''; if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = ''; });
-                    if (domCache.exportCalendarModal && !domCache.exportCalendarModal.classList.contains('hidden-by-default')) hideModal(domCache.exportCalendarModal, () => { if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = ''; });
-                    if (domCache.tipsModal && !domCache.tipsModal.classList.contains('hidden-by-default')) hideModal(domCache.tipsModal);
-                    if (domCache.customEventModal && !domCache.customEventModal.classList.contains('hidden-by-default')) hideCustomEventModal();
-                    if (domCache.confirmLoadCsvModal && !domCache.confirmLoadCsvModal.classList.contains('hidden-by-default')) {
-                        hideModal(domCache.confirmLoadCsvModal);
-                        if(domCache.csvFileInput) domCache.csvFileInput.value = ''; // Limpiar input de archivo
-                        currentConfirmAction = null; // currentConfirmAction es global
-                    }
-                    if (domCache.saveLocalHelpModal && !domCache.saveLocalHelpModal.classList.contains('hidden-by-default')) {
-                        hideModal(domCache.saveLocalHelpModal);
-                    }
-                    // Cerrar vistas de estadísticas nuevas si están abiertas
-                    if (domCache.individualChartsSection && !domCache.individualChartsSection.classList.contains('hidden')) {
-                        domCache.individualChartsSection.classList.add('hidden');
-                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
-                    }
-                    if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
-                        domCache.generalPlantillaStatsSection.classList.add('hidden');
-                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
-                    }
-                    // Cerrar el nuevo modal de PDF de estadísticas si está abierto
-                    if (domCache.filenameModalStatsPdf && !domCache.filenameModalStatsPdf.classList.contains('hidden-by-default')) {
-                        hideStatsPdfFilenameModal();
-                    }
-                }
-            });
-        
-            // Listeners para el modal de Consejos
             if (domCache.helpIconContainer) {
                 domCache.helpIconContainer.addEventListener('click', () => {
                     showModal(domCache.tipsModal);
@@ -2465,7 +2528,6 @@
                 });
             }
         
-            // Listeners para el modal de evento personalizado
             if (domCache.modalConfirmCustomEvent) {
                 domCache.modalConfirmCustomEvent.addEventListener('click', handleConfirmCustomEvent);
             }
@@ -2480,13 +2542,12 @@
                 });
             }
         
-            // Listeners para el modal de confirmación de carga de CSV
             if (domCache.modalConfirmLoadCsv) {
                 domCache.modalConfirmLoadCsv.addEventListener('click', () => {
                     hideModal(domCache.confirmLoadCsvModal);
                     if (currentConfirmAction === 'applyEmptyTemplate') {
                         applyEmptyScheduleTemplate();
-                    } else { // Asume 'loadFile'
+                    } else { 
                         const fileInput = domCache.csvFileInput;
                         if (fileInput && fileInput.files.length > 0) {
                             const file = fileInput.files[0];
@@ -2525,7 +2586,7 @@
                             };
                             reader.readAsText(file, 'UTF-8');
                         } else if (currentConfirmAction !== 'applyEmptyTemplate' && domCache.csvFileInput && domCache.csvFileInput.value) {
-                             domCache.csvFileInput.value = ''; // Limpiar si no hay archivo pero se intentó cargar
+                             domCache.csvFileInput.value = ''; 
                         }
                     }
                     currentConfirmAction = null;
@@ -2534,7 +2595,7 @@
             if (domCache.modalCancelLoadCsv) {
                 domCache.modalCancelLoadCsv.addEventListener('click', () => {
                     hideModal(domCache.confirmLoadCsvModal);
-                    if(domCache.csvFileInput) domCache.csvFileInput.value = ''; // Limpiar input de archivo
+                    if(domCache.csvFileInput) domCache.csvFileInput.value = '';
                     currentConfirmAction = null;
                 });
             }
@@ -2548,14 +2609,6 @@
                 });
             }
         
-            // Listener para el toggle de autoguardado
-            if (domCache.autosaveToggle) {
-                domCache.autosaveToggle.addEventListener('change', (event) => {
-                    toggleAutosave(event.target.checked);
-                });
-            }
-        
-            // Listeners para el modal de ayuda de guardado local
             if (domCache.saveLocalHelpIcon) {
                 domCache.saveLocalHelpIcon.addEventListener('click', () => {
                     showModal(domCache.saveLocalHelpModal);
@@ -2579,29 +2632,149 @@
                 });
             }
         
-            // Event listeners para la nueva sección de estadísticas (ya deberían estar en tu setupEventListeners original)
-            setupNewStatisticsEventListeners(); // Llama a la función que agrupa los listeners de la nueva sección de estadísticas
+            // Event listeners para la nueva sección de estadísticas
+            setupNewStatisticsEventListeners();
         
-            // --- NUEVOS EVENT LISTENERS PARA EXPORTACIÓN PDF DE ESTADÍSTICAS ---
             if (domCache.modalConfirmFilenameStatsPdf) {
                 domCache.modalConfirmFilenameStatsPdf.addEventListener('click', handleStatsPdfFilenameConfirm);
             }
             if (domCache.modalCancelFilenameStatsPdf) {
                 domCache.modalCancelFilenameStatsPdf.addEventListener('click', hideStatsPdfFilenameModal);
             }
-            if (domCache.filenameModalStatsPdf) { // Para cerrar el modal si se hace clic fuera del contenido
+            if (domCache.filenameModalStatsPdf) {
                 domCache.filenameModalStatsPdf.addEventListener('click', (event) => {
                     if (event.target === domCache.filenameModalStatsPdf) {
                         hideStatsPdfFilenameModal();
                     }
                 });
             }
-            if (domCache.exportStatsToPdfButton) { // El nuevo botón que añadiste al HTML
+            if (domCache.exportStatsToPdfButton) {
                 domCache.exportStatsToPdfButton.addEventListener('click', initiateStatsPdfExport);
             }
-            // --- FIN DE NUEVOS EVENT LISTENERS ---
         
-        } // Fin de setupEventListeners
+            if (domCache.footerHeartElement) {
+                domCache.footerHeartElement.addEventListener('click', handleFooterHeartClick);
+            }
+        
+            window.addEventListener('beforeunload', (event) => {
+                if (hasUnsavedChanges) {
+                    event.preventDefault();
+                    event.returnValue = '';
+                }
+            });
+        
+            if (domCache.undoButton) {
+                domCache.undoButton.addEventListener('click', undoChange);
+            }
+            if (domCache.redoButton) {
+                domCache.redoButton.addEventListener('click', redoChange);
+            }
+            if (domCache.autosaveToggle) {
+                domCache.autosaveToggle.addEventListener('change', (event) => {
+                    toggleAutosave(event.target.checked);
+                });
+            }
+        
+            // --- NUEVOS LISTENERS PARA LOS MODALES DE LEYENDA Y NORMAS ---
+            if (domCache.openLegendColorsModalButton) {
+                domCache.openLegendColorsModalButton.addEventListener('click', () => {
+                    updateLegend(); 
+                    const legendChanged = JSON.stringify(currentShiftColors) !== JSON.stringify(DEFAULT_SHIFT_COLORS) ||
+                                          JSON.stringify(currentUserShiftTimes) !== JSON.stringify(DEFAULT_SHIFT_TIMES);
+                    if(domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = !legendChanged;
+                    if(domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = !legendChanged; // Se habilita si hay cambios respecto a los defecto
+                    showModal(domCache.legendColorsModal);
+                });
+            }
+            if (domCache.openRulesModalButton) {
+                domCache.openRulesModalButton.addEventListener('click', () => {
+                    renderRulesModal(); 
+                    validateAndDisplayRuleViolations(); 
+                    showModal(domCache.rulesModal);
+                });
+            }
+        
+            if (domCache.closeLegendColorsModalButton) {
+                domCache.closeLegendColorsModalButton.addEventListener('click', () => hideModal(domCache.legendColorsModal));
+            }
+            if (domCache.modalOkLegendColorsButton) { 
+                domCache.modalOkLegendColorsButton.addEventListener('click', () => hideModal(domCache.legendColorsModal));
+            }
+            if (domCache.legendColorsModal) { 
+                domCache.legendColorsModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.legendColorsModal) hideModal(domCache.legendColorsModal);
+                });
+            }
+        
+            if (domCache.closeRulesModalButton) {
+                domCache.closeRulesModalButton.addEventListener('click', () => hideModal(domCache.rulesModal));
+            }
+            if (domCache.modalOkRulesButton) { 
+                domCache.modalOkRulesButton.addEventListener('click', () => hideModal(domCache.rulesModal));
+            }
+            if (domCache.rulesModal) { 
+                domCache.rulesModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.rulesModal) hideModal(domCache.rulesModal);
+                });
+            }
+        
+            // Listeners para los botones "Aplicar" y "Restaurar" DENTRO del modal de leyenda
+            if (domCache.modalApplyColorsButton) {
+                domCache.modalApplyColorsButton.addEventListener('click', applyAndSaveColorsAndTimes);
+            }
+            if (domCache.modalResetColorsButton) {
+                domCache.modalResetColorsButton.addEventListener('click', resetColorsAndTimes);
+            }
+            // --- FIN DE NUEVOS LISTENERS PARA MODALES ---
+        
+            // Listener de teclado para Deshacer/Rehacer y Escape
+            document.addEventListener('keydown', (event) => {
+                if (event.ctrlKey || event.metaKey) {
+                    if (event.key === 'z' || event.key === 'Z') {
+                        event.preventDefault();
+                        if (domCache.undoButton && !domCache.undoButton.disabled) undoChange();
+                    } else if (event.key === 'y' || event.key === 'Y') {
+                        event.preventDefault();
+                        if (domCache.redoButton && !domCache.redoButton.disabled) redoChange();
+                    }
+                } else if (event.key === 'Escape') {
+                    if (selectedCells.length > 0) clearSelection();
+                    if (domCache.addEmployeeModal && !domCache.addEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.addEmployeeModal);
+                    if (domCache.deleteEmployeeModal && !domCache.deleteEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.deleteEmployeeModal, () => { if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); employeeToDeleteName = null; });
+                    if (domCache.filenameModal && !domCache.filenameModal.classList.contains('hidden-by-default')) hideModal(domCache.filenameModal, () => { currentFilenameConfirmCallback = null; currentFilenameExtension = ''; if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = ''; });
+                    if (domCache.exportCalendarModal && !domCache.exportCalendarModal.classList.contains('hidden-by-default')) hideModal(domCache.exportCalendarModal, () => { if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = ''; });
+                    if (domCache.tipsModal && !domCache.tipsModal.classList.contains('hidden-by-default')) hideModal(domCache.tipsModal);
+                    if (domCache.customEventModal && !domCache.customEventModal.classList.contains('hidden-by-default')) hideCustomEventModal();
+                    if (domCache.confirmLoadCsvModal && !domCache.confirmLoadCsvModal.classList.contains('hidden-by-default')) {
+                        hideModal(domCache.confirmLoadCsvModal);
+                        if(domCache.csvFileInput) domCache.csvFileInput.value = ''; 
+                        currentConfirmAction = null; 
+                    }
+                    if (domCache.saveLocalHelpModal && !domCache.saveLocalHelpModal.classList.contains('hidden-by-default')) {
+                        hideModal(domCache.saveLocalHelpModal);
+                    }
+                    // Cerrar vistas de estadísticas nuevas si están abiertas
+                    if (domCache.individualChartsSection && !domCache.individualChartsSection.classList.contains('hidden')) {
+                        domCache.individualChartsSection.classList.add('hidden');
+                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
+                    }
+                    if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
+                        domCache.generalPlantillaStatsSection.classList.add('hidden');
+                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
+                    }
+                    if (domCache.filenameModalStatsPdf && !domCache.filenameModalStatsPdf.classList.contains('hidden-by-default')) {
+                        hideStatsPdfFilenameModal();
+                    }
+                    // NUEVO: Cerrar modales de leyenda y normas con Escape
+                    if (domCache.legendColorsModal && !domCache.legendColorsModal.classList.contains('hidden-by-default')) {
+                        hideModal(domCache.legendColorsModal);
+                    }
+                    if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
+                        hideModal(domCache.rulesModal);
+                    }
+                }
+            });
+        }
 
 
         // --- INICIALIZACIÓN ---
@@ -2876,45 +3049,53 @@
             }
         }
 
-		function applyAndSaveColorsAndTimes() {
-			localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
-			localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
+        function applyAndSaveColorsAndTimes() {
+            localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
+            localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
+        
+            // Efecto visual flash (opcional, pero estaba en tu código)
+            if (domCache.legendItemsContainer) { // Verificar que el contenedor exista
+                const legendItems = domCache.legendItemsContainer.querySelectorAll('.legend-item-container');
+                legendItems.forEach(item => {
+                    item.classList.add('legend-item-flash');
+                    setTimeout(() => item.classList.remove('legend-item-flash'), 700);
+                });
+            }
+        
+            updateLegend(); // Re-renderiza la leyenda con los nuevos colores/tiempos aplicados
+            handleViewChange(); // Re-renderiza la tabla de horario para reflejar los cambios de color
+            initializeAndRenderNewStatistics(); // Re-renderiza estadísticas que puedan depender de colores/tiempos
+            showToast('Colores y horarios de turno aplicados y guardados.', 'success');
+        
+            if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = true;
+            // El botón de restaurar se habilita porque ahora los colores/tiempos son diferentes de los defecto (o podrían serlo)
+            if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = false;
+        
+            hasUnsavedChanges = true; // Los cambios en leyenda/colores cuentan como cambios no guardados
+            updateUnsavedChangesIndicator();
+            saveStateForUndo("Colores y horarios de leyenda modificados.");
+        }
 
-			const legendItems = domCache.legendItemsContainer.querySelectorAll('.legend-item-container');
-			legendItems.forEach(item => {
-				item.classList.add('legend-item-flash');
-				setTimeout(() => item.classList.remove('legend-item-flash'), 700);
-			});
-
-			updateLegend(); 
-			handleViewChange(); 
-			initializeAndRenderNewStatistics(); 
-			showToast('Colores y horarios de turno aplicados y guardados.', 'success');
-
-			if (domCache.applyColorsButton) domCache.applyColorsButton.disabled = true;
-			if (domCache.resetColorsButton) domCache.resetColorsButton.disabled = false; 
-
-			hasUnsavedChanges = true; 
-			updateUnsavedChangesIndicator();
-		}
-
-		function resetColorsAndTimes() {
-			currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
-			currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
-			localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS); 
-			localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES); 
-
-			updateLegend(); 
-			handleViewChange(); 
-			initializeAndRenderNewStatistics();
-			showToast('Colores y horarios de turno restaurados a los valores por defecto.', 'info');
-
-			if (domCache.applyColorsButton) domCache.applyColorsButton.disabled = false; 
-			if (domCache.resetColorsButton) domCache.resetColorsButton.disabled = true;
-
-			hasUnsavedChanges = true; 
-			updateUnsavedChangesIndicator();
-		}
+        function resetColorsAndTimes() {
+            currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
+            currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
+            localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS); 
+            localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES); 
+        
+            updateLegend(); 
+            handleViewChange(); 
+            initializeAndRenderNewStatistics();
+            showToast('Colores y horarios de turno restaurados a los valores por defecto.', 'info');
+        
+            // Después de restaurar, no hay cambios pendientes respecto a los defecto para "Aplicar"
+            if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = true; 
+            // Y como son los defecto, el botón "Restaurar" también se deshabilita
+            if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = true;
+        
+            hasUnsavedChanges = true; 
+            updateUnsavedChangesIndicator();
+            saveStateForUndo("Colores y horarios de leyenda restaurados a defecto.");
+        }
 
 
         function formatTimeForInput(hours, minutes) {
@@ -2922,38 +3103,38 @@
         }
 
         function updateLegend() {
+            if (!domCache.legendItemsContainer) return; // Comprobación de seguridad
             domCache.legendItemsContainer.innerHTML = '';
             const relevantShiftTypesForTimeInput = ['M', 'T', 'N', 'M2', 'T2', 'N2'];
-
             const legendOrder = ['M', 'T', 'N', 'M2', 'T2', 'N2', 'L', 'V', 'B', 'empty'];
-
+        
             legendOrder.forEach(type => {
                 const colorInfo = currentShiftColors[type];
                 if (!colorInfo) {
                     console.warn(`Color configuration for shift type "${type}" not found in currentShiftColors.`);
                     return;
                 }
-
+        
                 const legendItemDiv = createElement('div', { className: 'legend-item-container' });
-
+        
                 const swatch = createElement('span', {
                     className: `legend-color-swatch ${colorInfo.bg}`,
                     dataset: { shiftType: type },
                     title: `Cambiar color para ${type === 'empty' ? 'Otro' : (SHIFT_TYPE_FULL_NAMES[type] || type)}`
                 });
                 swatch.addEventListener('click', (event) => openColorPalette(event, type));
-
+        
                 const labelText = type === 'empty' ? 'Otro' : `${SHIFT_TYPE_FULL_NAMES[type] || type} (${type === 'empty' ? '' : type})`;
-                const label = createElement('span', { textContent: labelText, className: 'mr-2' });
-
+                const label = createElement('span', { textContent: labelText, className: 'mr-2 text-sm' }); // Asegúrate que la clase text-sm esté si la quieres
+        
                 legendItemDiv.appendChild(swatch);
                 legendItemDiv.appendChild(label);
-
+        
                 if (relevantShiftTypesForTimeInput.includes(type)) {
                     const timeConfig = currentUserShiftTimes[type] || DEFAULT_SHIFT_TIMES[type];
                     if (timeConfig && timeConfig.start && timeConfig.end) {
                         const timeInputsDiv = createElement('div', { className: 'legend-time-inputs' });
-
+        
                         const startTimeInput = createElement('input', {
                             attributes: { type: 'time', value: formatTimeForInput(timeConfig.start[0], timeConfig.start[1])},
                             dataset: { shiftType: type, timeType: 'start' }
@@ -2962,10 +3143,10 @@
                             attributes: { type: 'time', value: formatTimeForInput(timeConfig.end[0], timeConfig.end[1])},
                             dataset: { shiftType: type, timeType: 'end' }
                         });
-
+        
                         startTimeInput.addEventListener('change', handleShiftTimeChangeInLegend);
                         endTimeInput.addEventListener('change', handleShiftTimeChangeInLegend);
-
+        
                         timeInputsDiv.appendChild(startTimeInput);
                         timeInputsDiv.appendChild(createElement('span', {textContent: '-', className: 'mx-1'}));
                         timeInputsDiv.appendChild(endTimeInput);
@@ -2979,21 +3160,45 @@
         }
 
         function handleShiftTimeChangeInLegend(event) {
-            domCache.applyColorsButton.disabled = false;
-            domCache.resetColorsButton.disabled = false;
+            const input = event.target;
+            const shiftType = input.dataset.shiftType;
+            const timeType = input.dataset.timeType; // 'start' o 'end'
+            const [hours, minutes] = input.value.split(':').map(Number);
+        
+            if (!currentUserShiftTimes[shiftType]) {
+                // Si por alguna razón no existe, inicializarlo desde los defaults
+                currentUserShiftTimes[shiftType] = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES[shiftType] || { start: [0,0], end: [0,0], nextDayEnd: false }));
+            }
+        
+            if (timeType === 'start') {
+                currentUserShiftTimes[shiftType].start = [hours, minutes];
+            } else { // 'end'
+                currentUserShiftTimes[shiftType].end = [hours, minutes];
+            }
+        
+            // Lógica simple para nextDayEnd: si la hora de fin es menor que la de inicio, asumir que es del día siguiente.
+            const startTimeInMinutes = currentUserShiftTimes[shiftType].start[0] * 60 + currentUserShiftTimes[shiftType].start[1];
+            const endTimeInMinutes = currentUserShiftTimes[shiftType].end[0] * 60 + currentUserShiftTimes[shiftType].end[1];
+            currentUserShiftTimes[shiftType].nextDayEnd = endTimeInMinutes < startTimeInMinutes;
+        
+            // Habilitar botones en el modal ya que ha habido un cambio
+            if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = false;
+            if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = false;
+            // No marcamos hasUnsavedChanges aquí, se hará al pulsar "Aplicar Cambios".
         }
 
 
+        let currentPaletteScrollListener = null; // Variable global para guardar la referencia al listener
+        
         function openColorPalette(event, shiftTypeToEdit) {
             event.stopPropagation();
-            closeColorPalette();
-
-            const swatchElement = event.target;
-            const swatchRect = swatchElement.getBoundingClientRect();
-
+            closeColorPalette(); 
+        
+            const swatchElement = event.target; 
+            const swatchRect = swatchElement.getBoundingClientRect(); // Coordenadas relativas al viewport
             activeColorPalette = createElement('div', { className: 'color-palette-popup' });
-            document.body.appendChild(activeColorPalette);
-
+            // El CSS ahora tiene position: fixed para .color-palette-popup
+        
             AVAILABLE_COLORS.forEach((colorOption) => {
                 const paletteSwatch = createElement('div', {
                     className: `palette-color-swatch ${colorOption.bg}`,
@@ -3009,31 +3214,65 @@
                     };
                     swatchElement.className = `legend-color-swatch ${colorOption.bg}`;
                     closeColorPalette();
-                    domCache.applyColorsButton.disabled = false;
-                    domCache.resetColorsButton.disabled = false;
+                    if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = false;
+                    if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = false;
                 });
                 activeColorPalette.appendChild(paletteSwatch);
             });
-
-            let top = swatchRect.bottom + window.scrollY + 5;
-            let left = swatchRect.left + window.scrollX;
-            const paletteRect = activeColorPalette.getBoundingClientRect();
-
-            if (left + paletteRect.width > window.innerWidth) {
+        
+            if (domCache.colorPalettePopupContainer) {
+                domCache.colorPalettePopupContainer.innerHTML = ''; 
+                domCache.colorPalettePopupContainer.appendChild(activeColorPalette);
+            } else {
+                document.body.appendChild(activeColorPalette); // Fallback
+                console.warn("domCache.colorPalettePopupContainer no encontrado, paleta añadida a document.body.");
+            }
+        
+            const paletteRect = activeColorPalette.getBoundingClientRect(); 
+            // *** INICIO: CORRECCIÓN DE POSICIONAMIENTO para position:fixed ***
+            // Usar swatchRect directamente ya que son relativas al viewport
+            let top = swatchRect.bottom + 5; // 5px de espacio debajo del swatch
+            let left = swatchRect.left;
+            // *** FIN: CORRECCIÓN DE POSICIONAMIENTO ***
+        
+            // Ajustar si se sale de la pantalla (esto sigue siendo útil)
+            if (left + paletteRect.width > window.innerWidth - 10) { 
                 left = window.innerWidth - paletteRect.width - 10;
             }
-            if (top + paletteRect.height > window.innerHeight) {
-                top = swatchRect.top + window.scrollY - paletteRect.height - 5;
+            if (top + paletteRect.height > window.innerHeight - 10) {
+                // Si se sale por abajo, intentar ponerla encima del swatch
+                top = swatchRect.top - paletteRect.height - 5; 
             }
-            activeColorPalette.style.top = `${Math.max(0,top)}px`;
-            activeColorPalette.style.left = `${Math.max(0,left)}px`;
+            // Asegurarse que no se salga por arriba
+            top = Math.max(5, top); // 5px de margen superior mínimo
+            left = Math.max(5, left); // 5px de margen izquierdo mínimo
+        
+            activeColorPalette.style.top = `${top}px`;
+            activeColorPalette.style.left = `${left}px`;
+        
+            // Listener para el scroll DENTRO DEL MODAL
+            if (domCache.legendColorsModal) {
+                currentPaletteScrollListener = () => {
+                    if (activeColorPalette) { 
+                        closeColorPalette();
+                    }
+                };
+                domCache.legendColorsModal.addEventListener('scroll', currentPaletteScrollListener, { once: true });
+            }
         }
+        
 
         function closeColorPalette() {
             if (activeColorPalette) {
                 activeColorPalette.remove();
                 activeColorPalette = null;
             }
+            // *** INICIO: Corrección para el scroll de la paleta ***
+            if (domCache.legendColorsModal && currentPaletteScrollListener) {
+                domCache.legendColorsModal.removeEventListener('scroll', currentPaletteScrollListener);
+                currentPaletteScrollListener = null; // Limpiar la referencia
+            }
+            // *** FIN: Corrección para el scroll de la paleta ***
         }
 
         function tailwindColorToHex(twClass, isTextClass = false) {
@@ -3066,34 +3305,45 @@
 
         function enableControls(dataLoaded = true) {
             const disable = !dataLoaded;
-            domCache.exportCsvButton.disabled = disable;
-            domCache.downloadImageButton.disabled = disable;
-			if (domCache.exportStatsToPdfButton) {
-				domCache.exportStatsToPdfButton.disabled = !dataLoaded; // O !isDataLoadedForStats() si esa es tu condición preferida
-			}
-
+            if(domCache.exportCsvButton) domCache.exportCsvButton.disabled = disable;
+            if(domCache.downloadImageButton) domCache.downloadImageButton.disabled = disable;
+            if (domCache.exportStatsToPdfButton) {
+                domCache.exportStatsToPdfButton.disabled = !dataLoaded; 
+            }
+        
             if (domCache.viewModeButtonsContainer) {
                 domCache.viewModeButtonsContainer.classList.toggle('hidden-by-default', !dataLoaded);
             }
-            domCache.viewMonthlyButton.disabled = disable;
-            domCache.viewAnnualButton.disabled = disable;
-            domCache.saveLocalButton.disabled = !dataLoaded || !hasUnsavedChanges;
-
-            updateCalendarExportButtonsState();
-
+            if(domCache.viewMonthlyButton) domCache.viewMonthlyButton.disabled = disable;
+            if(domCache.viewAnnualButton) domCache.viewAnnualButton.disabled = disable;
+            if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = !dataLoaded || !hasUnsavedChanges;
+        
+            updateCalendarExportButtonsState(); // Esta función ya debería existir y funcionar
+        
             if (dataLoaded) {
-                domCache.welcomeMessage.classList.add('hidden-by-default');
-                domCache.scheduleDisplaySection.classList.remove('hidden-by-default');
-                domCache.noDataMessage.classList.add('hidden-by-default');
-                domCache.monthTabsContainer.style.display = currentViewMode === 'monthly' ? 'flex' : 'none';
+                if(domCache.welcomeMessage) domCache.welcomeMessage.classList.add('hidden-by-default');
+                if(domCache.scheduleDisplaySection) domCache.scheduleDisplaySection.classList.remove('hidden-by-default');
+                if(domCache.noDataMessage) domCache.noDataMessage.classList.add('hidden-by-default');
+                if(domCache.monthTabsContainer) domCache.monthTabsContainer.style.display = currentViewMode === 'monthly' ? 'flex' : 'none';
             } else {
-                domCache.welcomeMessage.classList.remove('hidden-by-default');
-                domCache.scheduleDisplaySection.classList.add('hidden-by-default');
-                domCache.noDataMessage.classList.remove('hidden-by-default');
-                domCache.monthTabsContainer.style.display = 'none';
+                if(domCache.welcomeMessage) domCache.welcomeMessage.classList.remove('hidden-by-default');
+                if(domCache.scheduleDisplaySection) domCache.scheduleDisplaySection.classList.add('hidden-by-default');
+                if(domCache.noDataMessage) domCache.noDataMessage.classList.remove('hidden-by-default');
+                if(domCache.monthTabsContainer) domCache.monthTabsContainer.style.display = 'none';
                 if (domCache.viewModeButtonsContainer) {
                     domCache.viewModeButtonsContainer.classList.add('hidden-by-default');
                 }
+            }
+        
+            // NUEVO: Controlar visibilidad y estado de los botones de trigger de modal
+            if (domCache.modalTriggersContainer) {
+                domCache.modalTriggersContainer.classList.toggle('hidden-by-default', !dataLoaded);
+            }
+            if (domCache.openLegendColorsModalButton) {
+                domCache.openLegendColorsModalButton.disabled = !dataLoaded;
+            }
+            if (domCache.openRulesModalButton) {
+                domCache.openRulesModalButton.disabled = !dataLoaded;
             }
         }
 
