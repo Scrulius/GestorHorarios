@@ -4230,16 +4230,21 @@
                 for (let m = 1; m <= 12; m++) {
                     const daysInThisMonth = getDaysInMonth(m, year);
                     for (let day = 1; day <= daysInThisMonth; day++) {
-                        // --- MODIFICACIÓN AQUÍ para el wrapper del número del día ---
+                        // --- INICIO DE LA MODIFICACIÓN PARA VISTA ANUAL ---
                         const dayNumberWrapper = createElement('span', { className: 'day-number-wrapper', textContent: day });
-                        const dayHeaderContent = createElement('div'); // Contenedor para el número y el nombre del mes
+                        const dayHeaderContent = createElement('div'); // Contenedor para el número del día y la inicial de la semana
+                        
                         dayHeaderContent.appendChild(dayNumberWrapper);
-                        dayHeaderContent.appendChild(createElement('span', { className: 'day-header-weekday', textContent: SHORT_MONTH_NAMES[m-1] }));
-        
+                        // Aquí usamos getWeekDayInitial, igual que en la vista mensual
+                        dayHeaderContent.appendChild(createElement('span', {
+                        className: 'day-header-weekday', // Puedes usar la misma clase que la mensual
+                        textContent: getWeekDayInitial(year, m, day) // 'm' es el mes actual en el bucle anual
+                        }));
+                        
                         headerRow.appendChild(createElement('th', {
-                            className: 'py-3 px-1.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[50px]',
-                        }, [dayHeaderContent])); 
-                        // --- FIN DE MODIFICACIÓN ---
+                        className: 'py-3 px-1.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[50px]',
+                        }, [dayHeaderContent]));
+                        // --- FIN DE LA MODIFICACIÓN PARA VISTA ANUAL ---
                     }
                 }
             }
