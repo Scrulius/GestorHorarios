@@ -48,7 +48,7 @@
             position: -webkit-sticky;
             position: sticky;
             left: 0;
-	    top: 0; /* ASEGÚRATE DE QUE top: 0; ESTÉ PRESENTE AQUÍ */
+			top: 0; /* ASEGÚRATE DE QUE top: 0; ESTÉ PRESENTE AQUÍ */
             z-index: 30;
             background-color: #f9fafb; /* gray-50 */
         }
@@ -4398,42 +4398,45 @@
         
         function handleDrop(event) {
             event.preventDefault();
-            removeDragOverIndicator(); // Llama a la función para quitarlo del DOM
-            dragOverIndicator = null;  // IMPORTANTE: resetear la variable global
-        
+            removeDragOverIndicator(); 
+            dragOverIndicator = null;  
+
             if (!draggedRow) return;
-        
-            saveStateForUndo("Empleados reordenados.");
-        
+
+            saveStateForUndo("Empleados reordenados."); 
+
             const originalIndex = parseInt(draggedRow.dataset.rowIndex);
             const afterElement = getDragAfterElement(domCache.scheduleTableBody, event.clientY);
             let newIndex;
-        
+
             if (afterElement) {
                 newIndex = parseInt(afterElement.dataset.rowIndex);
             } else {
                 newIndex = employeeNamesOrdered.length;
             }
-        
-            // Evitar operaciones innecesarias si la posición no cambia significativamente
+
             if (originalIndex === newIndex || (originalIndex < newIndex && originalIndex === newIndex -1) || (originalIndex > newIndex && originalIndex === newIndex) ) {
                  if(draggedRow) draggedRow.classList.remove('dragging');
-                 draggedRow = null; // Resetear draggedRow
+                 draggedRow = null; 
                  return;
             }
-        
+
             const [draggedEmployeeName] = employeeNamesOrdered.splice(originalIndex, 1);
-        
+
             if (originalIndex < newIndex) {
                 employeeNamesOrdered.splice(newIndex - 1, 0, draggedEmployeeName);
             } else {
                 employeeNamesOrdered.splice(newIndex, 0, draggedEmployeeName);
             }
-        
-            handleViewChange(); // Esto re-renderiza la tabla con el nuevo orden
-        
+
+            handleViewChange(); // Re-renderiza la tabla de horarios
+
+            // === INICIO DE LA MODIFICACIÓN ===
+            initializeAndRenderNewStatistics(); // Actualiza y re-renderiza las estadísticas
+            // === FIN DE LA MODIFICACIÓN ===
+
             if(draggedRow) draggedRow.classList.remove('dragging');
-            draggedRow = null; // Resetear draggedRow
+            draggedRow = null; 
         }
 
         function handleDragEnd(event) {
