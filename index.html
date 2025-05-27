@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/svg2pdf.js@2.2.1/dist/svg2pdf.umd.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script> 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" referrerpolicy="no-referrer"></script>
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -798,6 +799,24 @@
         .consecutive-workday-violation-cell.is-last-in-sequence {
             border-right: 3px solid #ef4444 !important;
         }
+
+        
+        @keyframes palpitar {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .corazon-palpitando {
+            animation: palpitar 0.5s ease-in-out;
+        }
+		
+		#footer-heart {
+			-webkit-user-select: none; /* Safari */
+			-moz-user-select: none;    /* Firefox */
+			-ms-user-select: none;     /* IE10+/Edge */
+			user-select: none;         /* Estándar */
+			cursor: pointer; /* Para mantener la indicación de que es clickeable */
         
 
     </style>
@@ -2810,18 +2829,76 @@
         // --- OTRAS FUNCIONES DE UI ---
         function handleFooterHeartClick() {
             footerHeartClicks++;
+        
+            // 1. Animación de palpitar al corazón
+            if (domCache.footerHeartElement) {
+                domCache.footerHeartElement.classList.add('corazon-palpitando');
+                // Quitar la clase después de que la animación termine para permitirla de nuevo
+                setTimeout(() => {
+                    if (domCache.footerHeartElement) { // Comprobar si todavía existe
+                        domCache.footerHeartElement.classList.remove('corazon-palpitando');
+                    }
+                }, 500); // 0.5s es la duración de la animación
+            }
+        
+            // 2. Lógica del Easter Egg (cambio de nombre y confeti)
             if (footerHeartClicks === 10) {
                 if (domCache.creatorNameElement) {
                     domCache.creatorNameElement.classList.add('hidden-name');
                     setTimeout(() => {
-                        domCache.creatorNameElement.textContent = 'Scrulius';
-                        domCache.creatorNameElement.classList.remove('hidden-name');
-                        domCache.creatorNameElement.classList.add('visible-name');
+                        if (domCache.creatorNameElement) { // Comprobar si todavía existe
+                            domCache.creatorNameElement.textContent = 'Scrulius';
+                            domCache.creatorNameElement.classList.remove('hidden-name');
+                            domCache.creatorNameElement.classList.add('visible-name');
+                        }
                         showToast('✨ ¡Easter egg activado! ✨', 'success');
+        
+                        // === INICIO DE LA MODIFICACIÓN: Usar canvas-confetti ===
+                        if (typeof confetti === 'function') {
+                            confetti({
+                                particleCount: 1500, // Cantidad de partículas
+                                spread: 100,        // Qué tanto se dispersan horizontalmente
+                                origin: { y: 0.6 }, // Origen del confeti (0.6 es un poco abajo del centro vertical)
+                                angle: 90,          // Ángulo de lanzamiento (90 es hacia arriba)
+                                startVelocity: 45,  // Velocidad inicial
+                                zIndex: 9999        // Asegurar que esté por encima
+                            });
+        
+                            // Puedes añadir más efectos si quieres, por ejemplo, desde los lados:
+                            confetti({
+                                particleCount: 70,
+                                angle: 60,
+                                spread: 55,
+                                origin: { x: 0, y: 0.7 }, // Desde la izquierda
+                                zIndex: 9999
+                            });
+                            confetti({
+                                particleCount: 70,
+                                angle: 120,
+                                spread: 55,
+                                origin: { x: 1, y: 0.7 }, // Desde la derecha
+                                zIndex: 9999
+                            });
+                        }
+                        // === FIN DE LA MODIFICACIÓN ===
+        
                     }, 500);
+                }
+            } else if (footerHeartClicks > 10) {
+                // Opcional: si quieres que el confeti se lance cada vez que se hace clic después de activado
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 50,
+                        spread: 100,
+                        origin: { y: Math.random() * 0.4 + 0.3 }, // Origen Y aleatorio
+                        angle: Math.random() * 60 + 60,        // Ángulo aleatorio
+                        startVelocity: 30,
+                        zIndex: 9999
+                    });
                 }
             }
         }
+        
 
         function loadYearFromLocalStorage() {
             const savedYear = localStorage.getItem(LOCAL_STORAGE_KEY_YEAR);
