@@ -970,7 +970,7 @@
         								<div id="month-dropdown-options" class="month-dropdown-content">
         								</div>
         							</div>
-        							<button id="export-stats-to-pdf-button" class="action-button bg-red-600 text-white hover:bg-red-700">
+        							<button id="export-stats-to-pdf-button" class="action-button bg-blue-500 text-white hover:bg-blue-700">
         								<i class="fas fa-file-pdf mr-2"></i>Exportar Estadísticas PDF
         							</button>
         						</div>
@@ -1099,13 +1099,18 @@
 
         <footer class="mt-16 text-center text-sm text-gray-500 relative pb-4 md:pb-2 px-4 md:px-2">
             <p id="footer-text" class="mb-2 md:mb-0">Gestor de Horarios. Creado por <span id="creator-name" class="footer-name">Daniel Fernández</span> con <i id="footer-heart" class="fas fa-heart text-red-500 footer-name"></i>.</p>
-            <div class="absolute bottom-1 left-1 md:bottom-2 md:left-2">
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-3">
                 <a id="download-test-csv-link"
-                href="https://drive.usercontent.google.com/u/0/uc?id=1tgKrFfdCjyLj7ARzUhXybqyrtt15liYx&export=download"  download="csv_prueba.csv"
-                title="Descargar CSV de prueba"
-                class="inline-block px-2 py-1 bg-gray-200 text-gray-600 hover:bg-gray-300 text-xs rounded-md shadow-sm transition-colors no-underline">
+                   href="https://drive.usercontent.google.com/u/0/uc?id=1tgKrFfdCjyLj7ARzUhXybqyrtt15liYx&export=download" download="csv_prueba.csv"
+                   title="Descargar CSV de prueba"
+                   class="inline-block px-2 py-1 bg-gray-200 text-gray-600 hover:bg-gray-300 text-xs rounded-md shadow-sm transition-colors no-underline">
                     Prueba CSV
                 </a>
+                <button id="clear-local-storage-button"
+                        title="Borrar todos los datos guardados localmente por esta aplicación."
+                        class="action-button bg-gray-400 text-white hover:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-xs px-3 py-1.5">
+                    <i class="fas fa-trash-alt mr-1"></i>Borrar Datos Locales
+                </button>
             </div>
         </footer>
     </div>
@@ -1392,6 +1397,23 @@
             </div>
         </div>
     </div>
+	
+	
+	    <div id="confirm-clear-local-storage-modal" class="modal hidden-by-default">
+        <div class="modal-content">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold text-red-600 mb-2">¡ATENCIÓN!</h3>
+                <p class="text-gray-700 mb-4">Estás a punto de borrar <strong class="font-semibold">TODOS los datos locales</strong> de esta aplicación (horarios, notas, colores, historial, normas, etc.).</p>
+                <p class="text-sm text-gray-500 mb-1">Esta acción es <strong class="text-red-700">PERMANENTE</strong> y no se podrá deshacer.</p>
+                <p id="clear-local-storage-countdown-message" class="text-red-500 font-semibold mb-4"></p>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button id="modal-cancel-clear-local-storage" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
+                    <button id="modal-confirm-clear-local-storage" class="action-button bg-red-600 text-white hover:bg-red-700 px-4 py-2" disabled>Confirmar Borrado</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // --- CONSTANTES Y CONFIGURACIÓN ---
@@ -1487,7 +1509,8 @@
 		// INICIO: AÑADIR ESTA NUEVA VARIABLE GLOBAL
 		let activeRuleViolations = {}; // Objeto para almacenar violaciones: { "año-mes-día": ["mensaje1"] }
 		let activeConsecutiveDayViolations = {}; // Formato: { "employeeName": [{ startDay, endDay, count, month, year }, ...], ... }
-
+        let clearLocalStorageCountdownInterval = null;
+		
         const LONG_PRESS_DURATION = 500;
         const MAX_TOUCH_MOVE_THRESHOLD = 10;
         let dragOverIndicator = null;
@@ -1642,6 +1665,22 @@
         const AUTOSAVE_INTERVAL_MS = 30000;
 
         const domCache = {};
+		
+        const ALL_LOCAL_STORAGE_KEYS = [
+            LOCAL_STORAGE_KEY_SCHEDULE,
+            LOCAL_STORAGE_KEY_NOTES,
+            LOCAL_STORAGE_KEY_VIEW,
+            LOCAL_STORAGE_KEY_COLORS,
+            LOCAL_STORAGE_KEY_HISTORY,
+            LOCAL_STORAGE_KEY_YEAR,
+            LOCAL_STORAGE_KEY_SHIFT_TIMES,
+            LOCAL_STORAGE_KEY_AUTOSAVE,
+            LOCAL_STORAGE_KEY_UNDO_STACK,
+            LOCAL_STORAGE_KEY_REDO_STACK,
+            LOCAL_STORAGE_KEY_RULES
+            // IMPORTANTE: Añade aquí CUALQUIER OTRA CLAVE que tu aplicación utilice.
+        ];
+        
 
         // INICIO: Nuevas Variables Globales para Normas
         let rulesConfig = {
@@ -2007,6 +2046,16 @@
 			domCache.personsAfternoonMax = document.getElementById('persons-afternoon-max');
 			domCache.personsNightMin = document.getElementById('persons-night-min');
 			domCache.personsNightMax = document.getElementById('persons-night-max');
+			
+			
+			// Botón del Footer para borrar datos locales
+			domCache.clearLocalStorageButton = document.getElementById('clear-local-storage-button');
+
+			// Elementos del Modal de Confirmación de Borrado de LocalStorage
+			domCache.confirmClearLocalStorageModal = document.getElementById('confirm-clear-local-storage-modal');
+			domCache.clearLocalStorageCountdownMessage = document.getElementById('clear-local-storage-countdown-message');
+			domCache.modalCancelClearLocalStorage = document.getElementById('modal-cancel-clear-local-storage');
+			domCache.modalConfirmClearLocalStorage = document.getElementById('modal-confirm-clear-local-storage');
         }
 
         // --- MANEJO DE EVENTOS DE SELECCIÓN DE CELDAS ---
@@ -2243,10 +2292,8 @@
         
         // Dentro de tu archivo JavaScript
         
-        
-        // DENTRO DE TU SCRIPT, ESTA ES LA FUNCIÓN COMPLETA
         function setupEventListeners() {
-            // --- Listeners Existentes ---
+            // --- Listeners Existentes (DEBES MANTENER LOS QUE YA TENÍAS Y FUNCIONABAN) ---
             if (domCache.csvFileInput) {
                 domCache.csvFileInput.addEventListener('change', handleFileUpload);
             }
@@ -2277,7 +2324,17 @@
             if (domCache.viewAnnualButton) {
                 domCache.viewAnnualButton.addEventListener('click', () => switchViewMode('annual'));
             }
-        
+            if (domCache.autosaveToggle) { // Asegúrate de que domCache.autosaveToggle esté definido
+                domCache.autosaveToggle.addEventListener('change', (event) => {
+                    toggleAutosave(event.target.checked);
+                });
+            }
+            if (domCache.saveLocalHelpIcon) { // Asegúrate de que domCache.saveLocalHelpIcon esté definido
+                domCache.saveLocalHelpIcon.addEventListener('click', () => {
+                    showModal(domCache.saveLocalHelpModal);
+                });
+            }
+            
             // Listeners de la tabla de horario principal
             if (domCache.scheduleTableBody) {
                 domCache.scheduleTableBody.addEventListener('dblclick', handleTableDblClick);
@@ -2288,12 +2345,12 @@
                 domCache.scheduleTableBody.addEventListener('dragend', handleDragEnd);
         
                 domCache.scheduleTableBody.addEventListener('mousedown', handleCellMouseDown);
-                document.addEventListener('mousemove', handleDocumentMouseMove);
-                document.addEventListener('mouseup', handleDocumentMouseUp);
+                // Nota: los listeners para mousemove y mouseup en 'document' se añaden una vez y no necesitan estar en domCache.
+                // Ya los tienes en la guía original, asegúrate de que estén fuera de esta función si se añaden directamente a 'document'.
+                // Si estaban dentro, mantenlos aquí. Para este ejemplo, asumo que se añaden una vez globalmente.
         
                 domCache.scheduleTableBody.addEventListener('touchstart', handleCellTouchStart, { passive: false });
-                document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
-                document.addEventListener('touchend', handleDocumentTouchEnd);
+                // Similarmente para touchmove y touchend en 'document'.
         
                 domCache.scheduleTableBody.addEventListener('contextmenu', (event) => {
                     const targetCell = event.target.closest('td.shift-cell');
@@ -2303,36 +2360,35 @@
                         showToast('Selección limpiada.', 'info', 1500);
                         return;
                     }
-                    if (targetCell && wasLongPress) {
-                        const cellInfo = getCellInfoFromElement(targetCell);
-                        if (cellInfo) {
-                            const currentValue = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
-                            if (!SHIFT_TYPES.includes(currentValue)) {
-                                // Consider if event.preventDefault() is needed here for long-press edit
-                            }
-                        }
-                    }
+                    // La lógica de wasLongPress para contextmenu puede ser compleja y propensa a errores,
+                    // considera si es estrictamente necesaria o si el doble clic/pulsación larga es suficiente.
                 });
             }
         
+            // Listener global para clics fuera de elementos (para cerrar paleta, limpiar selección)
             document.addEventListener('mousedown', (event) => {
                 if (activeColorPalette && !activeColorPalette.contains(event.target) &&
                     !event.target.closest('.legend-color-swatch')) {
                     closeColorPalette();
                 }
+                // Lógica para limpiar selección si se hace clic fuera de la tabla/toolbar/modales
                 const isClickOnTableBody = event.target.closest('#schedule-table-body');
                 const isClickOnToolbar = event.target.closest('#multiselect-toolbar');
-                const isClickOnModalContent = event.target.closest('.modal-content');
-                const isClickOnLegendItem = event.target.closest('.legend-item-container');
+                const isClickOnModalContent = event.target.closest('.modal-content'); // Clase genérica para tus modales
+                const isClickOnLegendItem = event.target.closest('.legend-item-container'); // En el modal de leyenda
                 const isClickOnControlsSection = event.target.closest('#controls-section');
                 const isClickOnNewStatsSection = event.target.closest('#statistics-section');
-                const isClickOnViewModeButtonsGroup = event.target.closest('#view-mode-buttons-group');
+                const isClickOnViewModeButtonsGroup = event.target.closest('#view-mode-buttons-group'); // Contenedor de botones de vista/leyenda/normas
+                const isClickOnFooterButton = event.target.closest('#clear-local-storage-button'); // El nuevo botón
         
-                if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModalContent && !isClickOnLegendItem && !isClickOnControlsSection && !isClickOnNewStatsSection && !isClickOnViewModeButtonsGroup && selectedCells.length > 0) {
+                if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModalContent && 
+                    !isClickOnLegendItem && !isClickOnControlsSection && !isClickOnNewStatsSection &&
+                    !isClickOnViewModeButtonsGroup && !isClickOnFooterButton && selectedCells.length > 0) {
                     clearSelection();
                 }
             });
-        
+            
+            // Listener para notas generales
             if (domCache.generalNotesTextarea) {
                 domCache.generalNotesTextarea.addEventListener('input', () => {
                     hasUnsavedChanges = true;
@@ -2344,14 +2400,13 @@
                     notesDebounceTimer = setTimeout(() => {
                         const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
                         if (!lastUndoState || lastUndoState.generalNotes !== domCache.generalNotesTextarea.value) {
-                            // saveStateForUndo("Notas generales modificadas.");
+                            // saveStateForUndo("Notas generales modificadas."); // Descomenta si quieres que cada cambio en notas sea un estado de deshacer
                         }
                     }, 1500);
                 });
             }
         
             // --- Listeners para el modal de Normas ---
-            // Para la norma "Personas por Turno"
             if (domCache.personsPerShiftEnabledToggle) {
                 domCache.personsPerShiftEnabledToggle.addEventListener('change', (event) => {
                     if (domCache.personsPerShiftSettingsInputs) {
@@ -2360,37 +2415,31 @@
                     handleRuleInputChange();
                 });
             }
-        
-            // --- INICIO: Listener para el toggle de la NUEVA NORMA "Máximo Días Consecutivos" ---
             if (domCache.maxConsecutiveDaysEnabledToggle) {
                 domCache.maxConsecutiveDaysEnabledToggle.addEventListener('change', (event) => {
                     if (domCache.maxConsecutiveDaysSettingsInputs) {
                         domCache.maxConsecutiveDaysSettingsInputs.classList.toggle('hidden-by-default', !event.target.checked);
                     }
-                    handleRuleInputChange(); // Llama a esto para habilitar el botón de guardar
+                    handleRuleInputChange();
                 });
             }
-            // --- FIN: Listener para el toggle de la NUEVA NORMA ---
-        
-            // Inputs para ambas normas
             const ruleInputs = [
                 domCache.personsMorningMin, domCache.personsMorningMax,
                 domCache.personsAfternoonMin, domCache.personsAfternoonMax,
                 domCache.personsNightMin, domCache.personsNightMax,
-                domCache.maxConsecutiveDaysInput // Input de la nueva norma añadido aquí
+                domCache.maxConsecutiveDaysInput
             ];
             ruleInputs.forEach(input => {
                 if (input) {
                     input.addEventListener('input', handleRuleInputChange);
                 }
             });
-        
             if (domCache.saveRulesButton) {
                 domCache.saveRulesButton.addEventListener('click', saveRulesConfigFromModal);
             }
-            // --- Fin Listeners para el modal de Normas ---
         
-        
+            // --- Listeners para Modales (Añadir Empleado, Borrar Empleado, Nombre de Archivo, etc.) ---
+            // (Asegúrate de que estos IDs y la lógica coincidan con tu implementación actual)
             if (domCache.modalConfirmAddEmployee) {
                 domCache.modalConfirmAddEmployee.addEventListener('click', handleAddEmployeeFromModal);
             }
@@ -2409,7 +2458,7 @@
             if (domCache.modalCancelDeleteEmployee) {
                 domCache.modalCancelDeleteEmployee.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
                     if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
-                    employeeToDeleteName = null;
+                    employeeToDeleteName = null; // Asegúrate de que employeeToDeleteName esté definido globalmente
                 }));
             }
             if (domCache.deleteEmployeeModal) {
@@ -2436,7 +2485,7 @@
                     });
                 });
             }
-        
+            
             if (domCache.modalConfirmExportCalendar) {
                 domCache.modalConfirmExportCalendar.addEventListener('click', () => {
                     const selectedEmployee = domCache.modalCalendarEmployeeSelect.value;
@@ -2500,9 +2549,10 @@
             if (domCache.modalConfirmLoadCsv) {
                 domCache.modalConfirmLoadCsv.addEventListener('click', () => {
                     hideModal(domCache.confirmLoadCsvModal);
-                    if (currentConfirmAction === 'applyEmptyTemplate') {
+                    if (currentConfirmAction === 'applyEmptyTemplate') { // currentConfirmAction debe estar definido globalmente
                         applyEmptyScheduleTemplate();
                     } else {
+                        // Lógica para cargar archivo CSV (ya la tienes)
                         const fileInput = domCache.csvFileInput;
                         if (fileInput && fileInput.files.length > 0) {
                             const file = fileInput.files[0];
@@ -2564,30 +2614,26 @@
                 });
             }
         
-            if (domCache.saveLocalHelpIcon) {
-                domCache.saveLocalHelpIcon.addEventListener('click', () => {
-                    showModal(domCache.saveLocalHelpModal);
-                });
-            }
-            if (domCache.closeSaveLocalHelpModalIcon) {
+            if (domCache.closeSaveLocalHelpModalIcon) { // Asegúrate de que domCache.closeSaveLocalHelpModalIcon esté definido
                 domCache.closeSaveLocalHelpModalIcon.addEventListener('click', () => {
                     hideModal(domCache.saveLocalHelpModal);
                 });
             }
-            if (domCache.closeSaveLocalHelpModalButton) {
+            if (domCache.closeSaveLocalHelpModalButton) { // Asegúrate de que domCache.closeSaveLocalHelpModalButton esté definido
                 domCache.closeSaveLocalHelpModalButton.addEventListener('click', () => {
                     hideModal(domCache.saveLocalHelpModal);
                 });
             }
-            if (domCache.saveLocalHelpModal) {
+            if (domCache.saveLocalHelpModal) { // Asegúrate de que domCache.saveLocalHelpModal esté definido
                 domCache.saveLocalHelpModal.addEventListener('click', (event) => {
                     if (event.target === domCache.saveLocalHelpModal) {
                         hideModal(domCache.saveLocalHelpModal);
                     }
                 });
             }
-        
-            setupNewStatisticsEventListeners();
+            
+            // Listeners para la sección de estadísticas (ya los tienes en setupNewStatisticsEventListeners)
+            setupNewStatisticsEventListeners(); // Llama a tu función existente
         
             if (domCache.modalConfirmFilenameStatsPdf) {
                 domCache.modalConfirmFilenameStatsPdf.addEventListener('click', handleStatsPdfFilenameConfirm);
@@ -2623,15 +2669,11 @@
             if (domCache.redoButton) {
                 domCache.redoButton.addEventListener('click', redoChange);
             }
-            if (domCache.autosaveToggle) {
-                domCache.autosaveToggle.addEventListener('change', (event) => {
-                    toggleAutosave(event.target.checked);
-                });
-            }
-        
+            
+            // Listeners para los botones de abrir modales de Leyenda y Normas (los que están en la barra de navegación)
             if (domCache.openLegendColorsModalButton) { 
                 domCache.openLegendColorsModalButton.addEventListener('click', () => {
-                    updateLegend();
+                    updateLegend(); // Actualiza el contenido del modal de leyenda antes de mostrarlo
                     const legendChanged = JSON.stringify(currentShiftColors) !== JSON.stringify(DEFAULT_SHIFT_COLORS) ||
                                           JSON.stringify(currentUserShiftTimes) !== JSON.stringify(DEFAULT_SHIFT_TIMES);
                     if(domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = !legendChanged;
@@ -2641,19 +2683,20 @@
             }
             if (domCache.openRulesModalButton) { 
                 domCache.openRulesModalButton.addEventListener('click', () => {
-                    renderRulesModal();
-                    validateAndDisplayRuleViolations();
+                    renderRulesModal(); // Actualiza el contenido del modal de normas antes de mostrarlo
+                    validateAndDisplayRuleViolations(); // Muestra las violaciones actuales
                     showModal(domCache.rulesModal);
                 });
             }
         
+            // Listeners para los botones DENTRO del modal de Leyenda y Colores
             if (domCache.closeLegendColorsModalButton) {
                 domCache.closeLegendColorsModalButton.addEventListener('click', () => hideModal(domCache.legendColorsModal));
             }
-            if (domCache.modalOkLegendColorsButton) {
+            if (domCache.modalOkLegendColorsButton) { // El botón "Cerrar" del modal de leyenda
                 domCache.modalOkLegendColorsButton.addEventListener('click', () => hideModal(domCache.legendColorsModal));
             }
-            if (domCache.legendColorsModal) {
+            if (domCache.legendColorsModal) { // Para cerrar al hacer clic fuera
                 domCache.legendColorsModal.addEventListener('click', (event) => {
                     if (event.target === domCache.legendColorsModal) hideModal(domCache.legendColorsModal);
                 });
@@ -2665,18 +2708,21 @@
                 domCache.modalResetColorsButton.addEventListener('click', resetColorsAndTimes);
             }
         
+            // Listeners para los botones DENTRO del modal de Normas
             if (domCache.closeRulesModalButton) {
                 domCache.closeRulesModalButton.addEventListener('click', () => hideModal(domCache.rulesModal));
             }
-            if (domCache.modalOkRulesButton) {
+            if (domCache.modalOkRulesButton) { // El botón "Cerrar" del modal de normas
                 domCache.modalOkRulesButton.addEventListener('click', () => hideModal(domCache.rulesModal));
             }
-            if (domCache.rulesModal) {
+            if (domCache.rulesModal) { // Para cerrar al hacer clic fuera
                 domCache.rulesModal.addEventListener('click', (event) => {
                     if (event.target === domCache.rulesModal) hideModal(domCache.rulesModal);
                 });
             }
+            // El listener para domCache.saveRulesButton ya está añadido arriba con los inputs de las normas.
         
+            // Listener global para teclas (Deshacer, Rehacer, Escape)
             document.addEventListener('keydown', (event) => {
                 if (event.ctrlKey || event.metaKey) {
                     if (event.key === 'z' || event.key === 'Z') {
@@ -2687,42 +2733,61 @@
                         if (domCache.redoButton && !domCache.redoButton.disabled) redoChange();
                     }
                 } else if (event.key === 'Escape') {
+                    // Cierra el modal activo. Esta lógica debe ser robusta para manejar cualquier modal abierto.
+                    // Ejemplo:
                     if (selectedCells.length > 0) clearSelection();
-                    if (domCache.addEmployeeModal && !domCache.addEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.addEmployeeModal);
-                    if (domCache.deleteEmployeeModal && !domCache.deleteEmployeeModal.classList.contains('hidden-by-default')) hideModal(domCache.deleteEmployeeModal, () => { if (deleteCountdownInterval) clearInterval(deleteCountdownInterval); employeeToDeleteName = null; });
-                    if (domCache.filenameModal && !domCache.filenameModal.classList.contains('hidden-by-default')) hideModal(domCache.filenameModal, () => { currentFilenameConfirmCallback = null; currentFilenameExtension = ''; if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = ''; });
-                    if (domCache.exportCalendarModal && !domCache.exportCalendarModal.classList.contains('hidden-by-default')) hideModal(domCache.exportCalendarModal, () => { if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = ''; });
-                    if (domCache.tipsModal && !domCache.tipsModal.classList.contains('hidden-by-default')) hideModal(domCache.tipsModal);
-                    if (domCache.customEventModal && !domCache.customEventModal.classList.contains('hidden-by-default')) hideCustomEventModal();
-                    if (domCache.confirmLoadCsvModal && !domCache.confirmLoadCsvModal.classList.contains('hidden-by-default')) {
-                        hideModal(domCache.confirmLoadCsvModal);
-                        if(domCache.csvFileInput) domCache.csvFileInput.value = '';
-                        currentConfirmAction = null;
-                    }
-                    if (domCache.saveLocalHelpModal && !domCache.saveLocalHelpModal.classList.contains('hidden-by-default')) {
-                        hideModal(domCache.saveLocalHelpModal);
-                    }
-                    if (domCache.individualChartsSection && !domCache.individualChartsSection.classList.contains('hidden')) {
-                        domCache.individualChartsSection.classList.add('hidden');
-                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
-                    }
-                    if (domCache.generalPlantillaStatsSection && !domCache.generalPlantillaStatsSection.classList.contains('hidden')) {
-                        domCache.generalPlantillaStatsSection.classList.add('hidden');
-                        if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.remove('hidden');
-                    }
-                    if (domCache.filenameModalStatsPdf && !domCache.filenameModalStatsPdf.classList.contains('hidden-by-default')) {
-                        hideStatsPdfFilenameModal();
-                    }
-                    if (domCache.legendColorsModal && !domCache.legendColorsModal.classList.contains('hidden-by-default')) {
-                        hideModal(domCache.legendColorsModal);
-                    }
-                    if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
-                        hideModal(domCache.rulesModal);
+                    
+                    const activeModals = document.querySelectorAll('.modal:not(.hidden-by-default)');
+                    if (activeModals.length > 0) {
+                        const topModal = activeModals[activeModals.length - 1]; // Cierra el más visible
+                        hideModal(topModal);
+                        // Limpieza específica si es el modal de borrado con cuenta atrás
+                        if (topModal.id === 'confirm-clear-local-storage-modal' && clearLocalStorageCountdownInterval) {
+                            clearInterval(clearLocalStorageCountdownInterval);
+                            clearLocalStorageCountdownInterval = null;
+                        }
+                        if (topModal.id === 'delete-employee-modal' && deleteCountdownInterval) {
+                             clearInterval(deleteCountdownInterval);
+                             employeeToDeleteName = null;
+                        }
+                        // Añade aquí cualquier otra limpieza específica de intervalo para otros modales si es necesario
                     }
                 }
             });
-        }
         
+            // --- NUEVOS LISTENERS PARA EL BOTÓN DE BORRAR DATOS LOCALES ---
+            if (domCache.clearLocalStorageButton) {
+                domCache.clearLocalStorageButton.addEventListener('click', showConfirmClearLocalStorageModal);
+            }
+            if (domCache.modalConfirmClearLocalStorage) {
+                domCache.modalConfirmClearLocalStorage.addEventListener('click', handleConfirmClearLocalStorage);
+            }
+            if (domCache.modalCancelClearLocalStorage) {
+                domCache.modalCancelClearLocalStorage.addEventListener('click', () => {
+                    hideModal(domCache.confirmClearLocalStorageModal);
+                    if (clearLocalStorageCountdownInterval) {
+                        clearInterval(clearLocalStorageCountdownInterval);
+                        clearLocalStorageCountdownInterval = null;
+                    }
+                });
+            }
+            if (domCache.confirmClearLocalStorageModal) {
+                domCache.confirmClearLocalStorageModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.confirmClearLocalStorageModal) {
+                        hideModal(domCache.confirmClearLocalStorageModal);
+                        if (clearLocalStorageCountdownInterval) {
+                            clearInterval(clearLocalStorageCountdownInterval);
+                            clearLocalStorageCountdownInterval = null;
+                        }
+                    }
+                });
+            }
+            // El listener para Escape ya debería cubrir el nuevo modal si usas la lógica de `activeModals`.
+             document.addEventListener('mousemove', handleDocumentMouseMove);
+             document.addEventListener('mouseup', handleDocumentMouseUp);
+             document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
+             document.addEventListener('touchend', handleDocumentTouchEnd);
+        }
         
 
 
@@ -3526,55 +3591,85 @@
             }
         }
 
+        /**
+         * Resetea el estado de la aplicación en memoria y la interfaz de usuario a un estado inicial.
+         * NO borra localStorage aquí, ya que se asume que eso se maneja antes de llamar a esta función
+         * en el contexto de "Borrar Datos Locales".
+         * @param {boolean} keepNotes - Si es true, las notas generales no se borran del textarea.
+         */
         function resetToInitialState(keepNotes = false) {
-            undoStack = []; redoStack = [];
-            localStorage.removeItem(LOCAL_STORAGE_KEY_UNDO_STACK);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_REDO_STACK);
-            updateUndoRedoButtonsState();
-
-            scheduleData = {}; employeeNamesOrdered = [];
-            hasUnsavedChanges = false; updateUnsavedChangesIndicator();
+            // Resetear pilas de Deshacer/Rehacer
+            undoStack = [];
+            redoStack = [];
+            updateUndoRedoButtonsState(); // Actualiza la UI de los botones
+        
+            // Resetear datos principales del horario
+            scheduleData = {};
+            employeeNamesOrdered = [];
+            hasUnsavedChanges = false;
+            updateUnsavedChangesIndicator();
+        
+            // Resetear vista y año
             currentSelectedMonth = new Date().getMonth() + 1;
             yearOfSchedule = new Date().getFullYear();
-            domCache.yearInput.value = yearOfSchedule;
-            clearSelection();
-            if (domCache.csvFileInput) {
-                 domCache.csvFileInput.value = '';
+            if (domCache.yearInput) { // Comprobar si el elemento existe antes de usarlo
+                domCache.yearInput.value = yearOfSchedule;
+            }
+            
+            clearSelection(); // Limpia cualquier celda seleccionada
+        
+            if (domCache.csvFileInput) { // Comprobar si el elemento existe
+                 domCache.csvFileInput.value = ''; // Limpiar el input de archivo
                  delete domCache.csvFileInput.dataset.uploadedFileName;
             }
-
-            enableControls(false);
-            domCache.monthTabsContainer.innerHTML = '';
-            domCache.scheduleTableHead.innerHTML = ''; domCache.scheduleTableBody.innerHTML = '';
-            if(domCache.currentMonthYearText) domCache.currentMonthYearText.textContent = 'Horario para [Mes Año]';
-
-            if (!keepNotes) domCache.generalNotesTextarea.value = '';
-
+        
+            // Actualizar UI general (deshabilitar controles, mostrar mensaje de bienvenida)
+            enableControls(false); // Esta función debería manejar la visibilidad de secciones
+        
+            // Limpiar elementos específicos de la UI del horario
+            if (domCache.monthTabsContainer) domCache.monthTabsContainer.innerHTML = '';
+            if (domCache.scheduleTableHead) domCache.scheduleTableHead.innerHTML = ''; 
+            if (domCache.scheduleTableBody) domCache.scheduleTableBody.innerHTML = '';
+            if (domCache.currentMonthYearText) domCache.currentMonthYearText.textContent = 'Horario para [Mes Año]';
+        
+            // Resetear notas si no se indica mantenerlas
+            if (!keepNotes && domCache.generalNotesTextarea) {
+                domCache.generalNotesTextarea.value = '';
+            }
+        
+            // Resetear configuración de colores y tiempos de turno a los por defecto
             currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
             currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
-            updateLegend();
-            domCache.applyColorsButton.disabled = true;
-            domCache.resetColorsButton.disabled = true;
-
-            localStorage.removeItem(LOCAL_STORAGE_KEY_SCHEDULE);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_NOTES);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_VIEW);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_HISTORY);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_YEAR);
-            localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES);
-			
-			initializeAndRenderNewStatistics(); 
-
-            renderAddEmployeeButtonInTable();
-            if (domCache.viewModeButtonsContainer) {
-                domCache.viewModeButtonsContainer.classList.add('hidden-by-default');
+            updateLegend(); // Actualiza la UI de la leyenda
+            // El estado de los botones del modal de leyenda se gestionará cuando se abra.
+        
+            // Resetear configuración de normas a los por defecto
+            rulesConfig = getDefaultRulesConfig(); // Asumiendo que tienes esta función
+            // Si el modal de normas está abierto, podrías querer actualizarlo aquí o al abrirlo.
+            if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
+                renderRulesModal(); // Re-renderiza el modal de normas con los defaults
             }
-            // Ocultar las nuevas secciones de estadísticas también
-            if(domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.add('hidden');
-            if(domCache.individualChartsSection) domCache.individualChartsSection.classList.add('hidden');
-            if(domCache.generalPlantillaStatsSection) domCache.generalPlantillaStatsSection.classList.add('hidden');
+            validateAndDisplayRuleViolations(); // Revalida normas (probablemente no habrá violaciones)
+        
+        
+            // Resetear estadísticas
+            initializeAndRenderNewStatistics(); // Esta función debería manejar el reseteo de la UI de estadísticas
+        
+            // Renderizar el botón de añadir empleado en la tabla vacía
+            renderAddEmployeeButtonInTable();
+        
+            // Asegurarse de que las secciones específicas estén ocultas si enableControls(false) no lo hace todo
+            if (domCache.mainStatsTableSection) domCache.mainStatsTableSection.classList.add('hidden');
+            if (domCache.individualChartsSection) domCache.individualChartsSection.classList.add('hidden');
+            if (domCache.generalPlantillaStatsSection) domCache.generalPlantillaStatsSection.classList.add('hidden');
+        
+            // Mostrar mensaje de bienvenida
+            if (domCache.welcomeMessage) domCache.welcomeMessage.classList.remove('hidden-by-default');
+            if (domCache.scheduleDisplaySection) domCache.scheduleDisplaySection.classList.add('hidden-by-default');
+        
+            console.log("Estado de la aplicación reseteado a inicial (sin borrar localStorage desde esta función).");
         }
+        
 
 
         function parseCSV(csvText) {
@@ -7655,6 +7750,66 @@
                 });
             }
         }
+
+        function showConfirmClearLocalStorageModal() {
+            if (!domCache.confirmClearLocalStorageModal || !domCache.modalConfirmClearLocalStorage || !domCache.clearLocalStorageCountdownMessage) {
+                console.error("Error: Elementos del modal de confirmación de borrado no encontrados en domCache.");
+                showToast("Error al intentar mostrar la confirmación de borrado.", "error");
+                return;
+            }
+        
+            domCache.modalConfirmClearLocalStorage.disabled = true;
+            let countdown = 5; // Segundos para la cuenta atrás
+            domCache.clearLocalStorageCountdownMessage.textContent = `Botón activo en ${countdown}s...`;
+        
+            if (clearLocalStorageCountdownInterval) {
+                clearInterval(clearLocalStorageCountdownInterval);
+            }
+        
+            clearLocalStorageCountdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    domCache.clearLocalStorageCountdownMessage.textContent = `Botón activo en ${countdown}s...`;
+                } else {
+                    clearInterval(clearLocalStorageCountdownInterval);
+                    clearLocalStorageCountdownInterval = null;
+                    domCache.clearLocalStorageCountdownMessage.textContent = '¡Botón de borrado activo!';
+                    domCache.modalConfirmClearLocalStorage.disabled = false;
+                }
+            }, 1000);
+            showModal(domCache.confirmClearLocalStorageModal); // Asumiendo que tienes una función showModal(modalElement)
+        }
+        
+        /**
+         * Maneja la confirmación del borrado de todos los datos locales.
+         * Elimina todas las claves especificadas de localStorage y resetea el estado de la aplicación.
+         */
+        function handleConfirmClearLocalStorage() {
+            try {
+                ALL_LOCAL_STORAGE_KEYS.forEach(key => {
+                    localStorage.removeItem(key);
+                    console.log(`Clave de localStorage eliminada: ${key}`);
+                });
+        
+                showToast('Todos los datos locales han sido borrados.', 'success');
+                
+                // Importante: Resetear el estado de la aplicación a su estado inicial
+                // para que la UI refleje que no hay datos.
+                resetToInitialState(false); // false para borrar también las notas si es parte del reseteo.
+                                            // Esta función debería resetear variables en memoria y la UI.
+        
+            } catch (error) {
+                console.error("Error al borrar datos de localStorage:", error);
+                showToast('Error al intentar borrar los datos locales.', 'error');
+            } finally {
+                hideModal(domCache.confirmClearLocalStorageModal); // Asumiendo que tienes hideModal(modalElement)
+                if (clearLocalStorageCountdownInterval) {
+                    clearInterval(clearLocalStorageCountdownInterval);
+                    clearLocalStorageCountdownInterval = null;
+                }
+            }
+        }
+        
 
     </script>
 </body>
