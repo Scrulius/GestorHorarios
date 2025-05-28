@@ -903,13 +903,11 @@
                     <button id="download-weekly-svg-button" class="action-button w-full bg-teal-500 hover:bg-teal-600 text-white focus:ring-2 focus:ring-teal-300" disabled>
                         <i class="fas fa-file-pdf mr-2"></i>PDF Semanal
                     </button>
-                    <button id="download-image-button" class="action-button w-full bg-cyan-600 hover:bg-cyan-700 text-white focus:ring-2 focus:ring-cyan-400" disabled> {/* Cian más oscuro */}
+                    <button id="download-image-button" class="action-button w-full bg-cyan-600 hover:bg-cyan-700 text-white focus:ring-2 focus:ring-cyan-400" disabled>
                         <i class="fas fa-file-pdf mr-2"></i>PDF Mensual/Anual
                     </button>
                 </div>
-            </div> 
-            
-            <div id="manage-config-modal" class="modal hidden-by-default">
+            </div> <div id="manage-config-modal" class="modal hidden-by-default">
                 <div class="modal-content max-w-lg">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
                         <h3 class="text-xl font-semibold text-gray-800 flex items-center">
@@ -944,6 +942,25 @@
                     </div>
                 </div>
             </div>
+        
+            <div id="confirm-import-app-state-modal" class="modal hidden-by-default">
+                <div class="modal-content max-w-md">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Confirmar Importación</h3>
+                        <p class="text-sm text-gray-600 mb-6">
+                            Importar una nueva configuración de aplicación <strong class="font-semibold">sobrescribirá todos los datos actuales</strong> (horarios, notas, personalizaciones, etc.) y cualquier cambio no guardado se perderá.
+                        </p>
+                        <p class="text-sm text-gray-600 mb-1">¿Estás seguro de que deseas continuar?</p>
+                         <p class="text-xs text-gray-500 mb-6">(Esta acción no se puede deshacer una vez confirmada)</p>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button id="cancel-import-app-state" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 focus:ring-2 focus:ring-gray-400">Cancelar</button>
+                        <button id="confirm-import-app-state-action" class="action-button bg-red-500 hover:bg-red-600 text-white focus:ring-2 focus:ring-red-300">Sí, Importar y Sobrescribir</button>
+                    </div>
+                </div>
+            </div>
+        
         </section>
         
         
@@ -2129,7 +2146,9 @@
 			domCache.modalExportAppConfigButton = document.getElementById('modal-export-app-config-button');
 			domCache.modalImportAppConfigButton = document.getElementById('modal-import-app-config-button');
 			domCache.csvFileInputIcon = document.getElementById('csv-file-input-icon');
-			
+			domCache.confirmImportAppStateModal = document.getElementById('confirm-import-app-state-modal');
+			domCache.cancelImportAppStateButton = document.getElementById('cancel-import-app-state');
+			domCache.confirmImportAppStateActionButton = document.getElementById('confirm-import-app-state-action');
         }
 
         // --- MANEJO DE EVENTOS DE SELECCIÓN DE CELDAS ---
@@ -2368,6 +2387,33 @@
         
         function setupEventListeners() {
             // --- Listeners Existentes (DEBES MANTENER LOS QUE YA TENÍAS Y FUNCIONABAN) ---
+			
+            if (domCache.cancelImportAppStateButton) {
+                domCache.cancelImportAppStateButton.addEventListener('click', () => {
+                    hideModal(domCache.confirmImportAppStateModal);
+                });
+            }
+            
+            if (domCache.confirmImportAppStateActionButton) {
+                domCache.confirmImportAppStateActionButton.addEventListener('click', () => {
+                    hideModal(domCache.confirmImportAppStateModal);
+                    // Ahora, proceder con la lógica de selección de archivo
+                    if (domCache.importAppStateFileInput) {
+                        domCache.importAppStateFileInput.value = null; // Resetear por si se selecciona el mismo archivo
+                        domCache.importAppStateFileInput.click(); // Abrir el diálogo de selección de archivo
+                    }
+                });
+            }
+            
+            // Asegúrate de que el modal de confirmación de importación también se cierre con Escape y clic fuera
+            if (domCache.confirmImportAppStateModal) {
+                domCache.confirmImportAppStateModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.confirmImportAppStateModal) {
+                        hideModal(domCache.confirmImportAppStateModal);
+                    }
+                });
+                // La lógica de Escape en tu listener global de 'keydown' debería cubrirlo si es genérica para '.modal'.
+            }
 			
             if (domCache.exportAppStateButton) {
                 domCache.exportAppStateButton.addEventListener('click', prepareExportApplicationState);
@@ -2840,9 +2886,22 @@
             // Listener para el botón "Importar Configuración desde Archivo" DENTRO DEL MODAL
             if (domCache.modalImportAppConfigButton) {
                 domCache.modalImportAppConfigButton.addEventListener('click', () => {
-                    prepareImportApplicationState(); // Llama a tu función de importación existente (que dispara el input file)
-                    // No cierres el modal aquí inmediatamente, ya que el usuario necesita seleccionar un archivo.
-                    // Podrías cerrarlo en handleImportApplicationStateFile después de una importación exitosa o fallida.
+                    // --- INICIO DE LA NUEVA LÓGICA ---
+                    if (isDataLoadedForSave() || hasUnsavedChanges) {
+                        // Si hay datos o cambios sin guardar, muestra el NUEVO modal de confirmación.
+                        showModal(domCache.confirmImportAppStateModal); 
+                    } else {
+                        // Si no hay datos ni cambios, no es necesario confirmar,
+                        // así que podemos proceder directamente a abrir el diálogo de selección de archivo.
+                        if (domCache.importAppStateFileInput) { // Asegúrate de que el input de archivo exista
+                            domCache.importAppStateFileInput.value = null; // Resetea por si se selecciona el mismo archivo
+                            domCache.importAppStateFileInput.click();    // Simula un clic para abrir el diálogo de archivo
+                        }
+                    }
+                    // Cierra el modal "Gestionar Configuración" porque ya hemos tomado una acción 
+                    // (mostrar otro modal o abrir el diálogo de archivo).
+                    hideModal(domCache.manageConfigModal); 
+                    // --- FIN DE LA NUEVA LÓGICA ---
                 });
             }
             
