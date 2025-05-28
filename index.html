@@ -1495,17 +1495,49 @@
         let employeeToDeleteName = null;
 
         const DEFAULT_SHIFT_COLORS = {
-            M: { bg: 'bg-green-300', text: 'text-green-700', hexBg: '#a7f3d0', hexText: '#047857' },
-            T: { bg: 'bg-orange-300', text: 'text-orange-700', hexBg: '#fed7aa', hexText: '#c2410c' },
-            N: { bg: 'bg-blue-300', text: 'text-blue-700', hexBg: '#bfdbfe', hexText: '#1d4ed8' },
-            M2: { bg: 'bg-green-200', text: 'text-green-800', hexBg: '#86efac', hexText: '#185938' },
-            T2: { bg: 'bg-orange-200', text: 'text-orange-800', hexBg: '#fdba74', hexText: '#9a3412' },
-            N2: { bg: 'bg-blue-200', text: 'text-blue-800', hexBg: '#93c5fd', hexText: '#1e40af' },
+            M: { // Versión OSCURA (ej. Mañana)
+                bg: 'bg-green-300',    // Clase Tailwind para la tabla HTML (verde oscuro)
+                text: 'text-green-700',  // Clase Tailwind para la tabla HTML
+                hexBg: '#86efac',      // HEX para PDF (CORREGIDO para coincidir con bg-green-300)
+                hexText: '#047857'     // HEX para PDF (CORREGIDO para coincidir con text-green-700)
+            },
+            T: { // TURNO TARDE - ¡MODIFICADO! (Más oscuro que T2)
+                bg: 'bg-orange-400',   // Naranja medio
+                text: 'text-orange-900', // Texto naranja muy oscuro para contraste
+                hexBg: '#fa811e',      // HEX correspondiente a bg-orange-400
+                hexText: '#7c2d12'     // HEX correspondiente a text-orange-900
+            },
+            N: { // Versión OSCURA (ej. Noche)
+                bg: 'bg-blue-300',     // Clase Tailwind (azul oscuro)
+                text: 'text-blue-700',   // Clase Tailwind
+                hexBg: '#93c5fd',      // HEX para PDF (CORREGIDO para coincidir con bg-blue-300)
+                hexText: '#1d4ed8'     // HEX para PDF (CORREGIDO para coincidir con text-blue-700)
+            },
+            M2: { // Versión CLARA (ej. Mañana 2)
+                bg: 'bg-green-200',    // Clase Tailwind (verde claro)
+                text: 'text-green-800',  // Clase Tailwind
+                hexBg: '#bbf7d0',      // HEX para PDF (CORREGIDO para coincidir con bg-green-200)
+                hexText: '#065f46'     // HEX para PDF (CORREGIDO para coincidir con text-green-800)
+            },
+            T2: { // Versión CLARA (ej. Tarde 2)
+                bg: 'bg-orange-200',   // Clase Tailwind (naranja claro)
+                text: 'text-orange-800', // Clase Tailwind
+                hexBg: '#fed7aa',      // HEX para PDF (CORREGIDO para coincidir con bg-orange-200)
+                hexText: '#9a3412'     // HEX para PDF (CORREGIDO para coincidir con text-orange-800)
+            },
+            N2: { // Versión CLARA (ej. Azul 2)
+                bg: 'bg-blue-200',     // Clase Tailwind (azul claro)
+                text: 'text-blue-800',   // Clase Tailwind
+                hexBg: '#bfdbfe',      // HEX para PDF (CORREGIDO para coincidir con bg-blue-200)
+                hexText: '#1e40af'     // HEX para PDF (CORREGIDO para coincidir con text-blue-800)
+            },
             L: { bg: 'bg-gray-200', text: 'text-gray-700', hexBg: '#e5e7eb', hexText: '#374151' },
-            V: { bg: 'bg-yellow-300', text: 'text-yellow-700', hexBg: '#fef08a', hexText: '#a16207' },
-            B: { bg: 'bg-red-400', text: 'text-red-800', hexBg: '#fca5a5', hexText: '#991b1b' },
+            V: { bg: 'bg-yellow-300', text: 'text-yellow-700', hexBg: '#fde047', hexText: '#b45309' },
+            B: { bg: 'bg-red-400', text: 'text-red-800', hexBg: '#f87171', hexText: '#991b1b' },
             empty: { bg: 'bg-purple-200', text: 'text-purple-700', hexBg: '#e9d5ff', hexText: '#7e22ce' }
         };
+        
+        
 
         const AVAILABLE_COLORS = [
             { name: 'Blanco', bg: 'bg-white', text: 'text-gray-500', hexBg: '#ffffff', hexText: '#6b7280' }, 
@@ -2982,44 +3014,80 @@
         // --- COMIENZO DE LA FUNCIÓN MODIFICADA loadCustomColors ---
         function loadCustomColors() {
             const compressedColorsString = localStorage.getItem(LOCAL_STORAGE_KEY_COLORS);
-            const parsedColors = decompressData(compressedColorsString, "customColors");
-
-            if (parsedColors) {
-                let valid = true;
-                const keysToValidate = [...SHIFT_TYPES, 'empty']; // SHIFT_TYPES debe estar definido
-                keysToValidate.forEach(type => {
-                    if (!parsedColors[type] || !parsedColors[type].bg || !parsedColors[type].text || !parsedColors[type].hexBg || !parsedColors[type].hexText) {
-                        valid = false;
+            let parsedColors = null;
+            let useDefaults = true; // Asumir que usaremos los por defecto inicialmente
+        
+            if (compressedColorsString) {
+                parsedColors = decompressData(compressedColorsString, "customColors");
+                if (parsedColors) {
+                    let validStructure = true;
+                    const keysToValidate = [...SHIFT_TYPES, 'empty']; // SHIFT_TYPES debe estar definido
+        
+                    for (const type of keysToValidate) {
+                        if (!parsedColors[type] || 
+                            typeof parsedColors[type].bg !== 'string' || 
+                            typeof parsedColors[type].text !== 'string' ||
+                            typeof parsedColors[type].hexBg !== 'string' || 
+                            typeof parsedColors[type].hexText !== 'string') {
+                            validStructure = false;
+                            console.warn(`Estructura de color inválida para el tipo '${type}' en localStorage. Faltan propiedades o tipos incorrectos.`);
+                            break; 
+                        }
                     }
-                });
-
-                if (valid) {
-                    currentShiftColors = parsedColors;
+        
+                    if (validStructure) {
+                        // Comprobación adicional: ¿Los colores para M y M2 están invertidos en lo que se cargó?
+                        // Esto es una heurística basada en el problema que estamos viendo.
+                        // Comparamos si el hexBg de M en localStorage es el hexBg de M2 por defecto, y viceversa.
+                        const mIsActuallyM2 = parsedColors.M && DEFAULT_SHIFT_COLORS.M2 && parsedColors.M.hexBg === DEFAULT_SHIFT_COLORS.M2.hexBg;
+                        const m2IsActuallyM = parsedColors.M2 && DEFAULT_SHIFT_COLORS.M && parsedColors.M2.hexBg === DEFAULT_SHIFT_COLORS.M.hexBg;
+        
+                        if (mIsActuallyM2 && m2IsActuallyM) {
+                            console.warn("Detectada posible inversión de colores M/M2 en localStorage. Forzando colores por defecto.");
+                            // No establecemos useDefaults a false, así que se usarán los por defecto.
+                        } else {
+                            currentShiftColors = parsedColors;
+                            useDefaults = false; // Los datos cargados son válidos y no parecen invertidos
+                            console.log("Colores personalizados cargados y validados desde localStorage.");
+                        }
+                    } else {
+                        console.warn("Formato de colores guardados inválido (post-descompresión), usando por defecto.");
+                        // No establecemos useDefaults a false.
+                    }
                 } else {
-                    console.warn("Formato de colores guardados inválido (post-descompresión), usando por defecto.");
-                    currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS)); // DEFAULT_SHIFT_COLORS debe estar definido
-                    // No eliminamos la clave aquí, ya que el fallback en decompressData ya lo intentó.
-                    // Si llega aquí con 'valid = false', es que el JSON descomprimido no tiene la estructura esperada.
+                    // decompressData devolvió null (error de descompresión/parseo o no había nada)
+                    console.warn("No se encontraron colores personalizados o error al cargar/descomprimir, usando por defecto.");
+                    // No establecemos useDefaults a false.
                 }
-            } else {
-                // Si parsedColors es null (porque no había nada o la descompresión/parseo falló completamente)
-                console.warn("No se encontraron colores personalizados o error al cargar, usando por defecto.");
+            }
+        
+            if (useDefaults) {
+                console.log("Usando DEFAULT_SHIFT_COLORS para inicializar currentShiftColors.");
                 currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
             }
-
-            // Asegurar que todos los colores tengan hexBg y hexText (esta lógica ya la tenías y es buena)
+        
+            // Lógica de fallback para asegurar que todos los colores tengan hexBg y hexText
+            // (esta parte es importante si alguna definición en DEFAULT_SHIFT_COLORS fuera incompleta,
+            // o si se cargara un parsedColors parcial y válido que pasara la validación anterior)
             Object.keys(currentShiftColors).forEach(key => {
-                if (!currentShiftColors[key].hexBg || !currentShiftColors[key].hexText) {
+                if (!currentShiftColors[key] || !currentShiftColors[key].hexBg || !currentShiftColors[key].hexText) {
+                    console.warn(`Color '${key}' en currentShiftColors no tiene hexBg o hexText. Aplicando fallback.`);
                     const defaultColorForKey = DEFAULT_SHIFT_COLORS[key] || DEFAULT_SHIFT_COLORS.empty;
-                    const foundColor = AVAILABLE_COLORS.find(c => c.bg === currentShiftColors[key].bg) ||
+                    const foundColor = AVAILABLE_COLORS.find(c => c.bg === (currentShiftColors[key]?.bg || defaultColorForKey.bg)) ||
                                      AVAILABLE_COLORS.find(c => c.bg === defaultColorForKey.bg) ||
-                                     AVAILABLE_COLORS[0]; // AVAILABLE_COLORS debe estar definido
-                    currentShiftColors[key].hexBg = foundColor.hexBg || '#ffffff';
-                    currentShiftColors[key].hexText = foundColor.hexText || '#000000';
+                                     AVAILABLE_COLORS.find(c => c.hexBg === DEFAULT_SHIFT_COLORS.empty.hexBg) || // Fallback al 'empty' por defecto
+                                     { hexBg: '#ffffff', hexText: '#000000' }; // Último recurso
+        
+                    if (!currentShiftColors[key]) currentShiftColors[key] = {}; // Asegurar que el objeto exista
+                    currentShiftColors[key].hexBg = foundColor.hexBg;
+                    currentShiftColors[key].hexText = foundColor.hexText;
+                    if (!currentShiftColors[key].bg) currentShiftColors[key].bg = foundColor.bg;
+                    if (!currentShiftColors[key].text) currentShiftColors[key].text = foundColor.text;
                 }
             });
+             console.log("Estado final de currentShiftColors después de loadCustomColors:", JSON.parse(JSON.stringify(currentShiftColors)));
         }
-        // --- FIN DE LA FUNCIÓN MODIFICADA loadCustomColors ---
+        
 
         // --- COMIENZO DE LA FUNCIÓN MODIFICADA loadCustomShiftTimes ---
         function loadCustomShiftTimes() {
@@ -4794,10 +4862,10 @@
             const headerHeight = 38; 
             const cellFontSize = 8; // Tamaño de fuente para los turnos
             const employeeNameFontSize = 9; 
-            const headerEmployeeFontSize = 10; // Nuevo: Tamaño para "Empleado" en cabecera
-            const headerDayNumberFontSize = 8; // Nuevo: Tamaño para números de día en cabecera (similar a cellFontSize)
-            const headerWeekdayFontSize = 7;   // Nuevo: Tamaño para letras de día en cabecera
-            const textYAdjust = cellFontSize * 0.35; // Ajuste general para centrado vertical
+            const headerEmployeeFontSize = 10; // Tamaño para "Empleado" en cabecera
+            const headerDayNumberFontSize = 8; // Tamaño para números de día en cabecera
+            const headerWeekdayFontSize = 7;   // Tamaño para letras de día en cabecera
+            const textYAdjust = cellFontSize * 0.35; 
             const safetyBufferBottom = 40; 
         
             let currentY = pagePadding;
@@ -4841,7 +4909,7 @@
             
             // --- Iterar sobre los items (semanas o meses) para esta página ---
             itemsToRender.forEach((itemData, itemIndexInPage) => {
-                if (itemIndexInPage > 0) {
+                if (itemIndexInPage > 0) { // Añadir espacio solo si hay más de una tabla en la página
                     currentY += spaceBetweenTables;
                 }
                 currentY += tableTopMargin; 
@@ -4866,7 +4934,6 @@
                 // --- Lógica de renderizado de la tabla ---
                 let tableHeaderX = pagePadding;
                 svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f3f4f6" stroke="#d1d5db"/>`);
-                // MODIFICACIÓN: Tamaño de fuente para "Empleado"
                 svgElements.push(`<text x="${tableHeaderX + employeeColWidth/2}" y="${currentY + headerHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerEmployeeFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Empleado</text>`);
                 tableHeaderX += employeeColWidth;
         
@@ -4878,19 +4945,17 @@
                         const dayStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit' });
                         const monthStr = SHORT_MONTH_NAMES[dateObj.getMonth()];
                         const dayNameStr = WEEK_DAY_NAMES[dateObj.getDay()].substring(0,3);
-                        // MODIFICACIÓN: Tamaño de fuente para números de día y letras
                         svgElements.push(`<text x="${tableHeaderX + svgCellWidthWeekly/2}" y="${currentY + headerHeight * 0.38 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerDayNumberFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937">${dayStr} ${monthStr}</text>`);
                         svgElements.push(`<text x="${tableHeaderX + svgCellWidthWeekly/2}" y="${currentY + headerHeight * 0.72 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerWeekdayFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563">${dayNameStr}</text>`);
                         tableHeaderX += svgCellWidthWeekly;
                     });
                 } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
                     const monthToRender = itemData;
-                    const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender);
+                    const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender); 
                     const svgCellWidthAnnual = (svgWidth - pagePadding * 2 - employeeColWidth) / 31; 
                     for (let day = 1; day <= daysInCurrentMonth; day++) {
                         svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0"/>`);
                         const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
-                        // MODIFICACIÓN: Tamaño de fuente para números de día y letras
                         svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual/2}" y="${currentY + headerHeight * 0.38 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerDayNumberFontSize}px" font-weight="bold" text-anchor="middle">${day}</text>`);
                         svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual/2}" y="${currentY + headerHeight * 0.72 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerWeekdayFontSize}px" text-anchor="middle">${weekDayInitial}</text>`);
                         tableHeaderX += svgCellWidthAnnual;
@@ -4899,14 +4964,13 @@
                         svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#fdfdff" stroke="#e0e0e0"/>`);
                         tableHeaderX += svgCellWidthAnnual;
                     }
-                } else { 
+                } else { // Vista Mensual individual (type === 'monthlyAnnual' && currentViewMode === 'monthly')
                     const monthToRender = itemData; 
-                    const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender);
+                    const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender); 
                     const svgCellWidthMonthly = (svgWidth - pagePadding * 2 - employeeColWidth) / daysInSelectedMonth;
                     for (let day = 1; day <= daysInSelectedMonth; day++) {
                          svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthMonthly}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0"/>`);
                         const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
-                        // MODIFICACIÓN: Tamaño de fuente para números de día y letras
                         svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly/2}" y="${currentY + headerHeight * 0.38 + textYAdjust * 0.5}" font-family="Inter, sans-serif" font-size="${headerDayNumberFontSize}px" font-weight="bold" text-anchor="middle">${day}</text>`);
                         svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly/2}" y="${currentY + headerHeight * 0.72 + textYAdjust * 0.5}" font-family="Inter, sans-serif" font-size="${headerWeekdayFontSize}px" text-anchor="middle">${weekDayInitial}</text>`);
                         tableHeaderX += svgCellWidthMonthly;
@@ -4918,7 +4982,6 @@
                     const rowY = currentY + rowIndex * cellHeight;
                     let currentCellX = pagePadding;
                     svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#d1d5db"/>`);
-                    // MODIFICACIÓN: Centrar nombre del empleado
                     svgElements.push(`<text x="${currentCellX + employeeColWidth/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${employeeNameFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
                     currentCellX += employeeColWidth;
         
@@ -4929,47 +4992,76 @@
                             const day = dateObj.getDate(); const month = dateObj.getMonth() + 1;
                             let shift = scheduleData[empName]?.[month]?.[day] || "";
                             const shiftTimeConfig = currentUserShiftTimes[shift];
-                            let displayShift = shift;
+                            let displayShift = shift; 
                             if (shiftTimeConfig && (shift === 'M' || shift === 'T' || shift === 'N' || shift === 'M2' || shift === 'T2' || shift === 'N2')) {
                                 displayShift = `${formatTimeForInput(shiftTimeConfig.start[0], shiftTimeConfig.start[1])}-${formatTimeForInput(shiftTimeConfig.end[0], shiftTimeConfig.end[1])}`;
                             } else if (SHIFT_TYPE_FULL_NAMES[shift]) {
                                 displayShift = SHIFT_TYPE_FULL_NAMES[shift];
                             }
+                            
                             const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+        
+                            // ***** INICIO DEL LOG DE DIAGNÓSTICO (SEMANAL) *****
+                            if (shift === 'M' || shift === 'M2' || shift === 'T' || shift === 'T2' || shift === 'N' || shift === 'N2') {
+                                console.log(`PDF Semanal - Empleado: ${empName}, Día: ${day}/${month}, Turno Original: ${shift}, ColorConf Usado:`, JSON.parse(JSON.stringify(colorConf)));
+                            }
+                            // ***** FIN DEL LOG DE DIAGNÓSTICO (SEMANAL) *****
+                            
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
                             if (displayShift) {
                                 svgElements.push(`<text x="${currentCellX + svgCellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize -1}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}">${displayShift}</text>`);
                             }
                             currentCellX += svgCellWidthWeekly;
                         });
+        
                     } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
-                        const monthToRender = itemData;
-                        const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender);
-                         const svgCellWidthAnnual = (svgWidth - pagePadding * 2 - employeeColWidth) / 31;
+                        const monthToRender = itemData; 
+                        const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender); 
+                        const svgCellWidthAnnual = (svgWidth - pagePadding * 2 - employeeColWidth) / 31;
                         const employeeMonthData = scheduleData[empName]?.[monthToRender] || {};
                         for (let day = 1; day <= daysInCurrentMonth; day++) {
                             const shift = employeeMonthData[day] || "";
-                            let dspShift = shift; if(shift==='M2')dspShift='M';else if(shift==='T2')dspShift='T';else if(shift==='N2')dspShift='N';
-                            const cConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-                            svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${cConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
-                            if(dspShift) svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${cConf.hexText||'#000'}">${dspShift}</text>`);
+                            let displayShiftInPdfCell = shift; 
+                            
+                            const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+        
+                            // ***** INICIO DEL LOG DE DIAGNÓSTICO (ANUAL) *****
+                            if (shift === 'M' || shift === 'M2' || shift === 'T' || shift === 'T2' || shift === 'N' || shift === 'N2') {
+                                console.log(`PDF Anual - Empleado: ${empName}, Día: ${day}/${monthToRender}, Turno Original: ${shift}, ColorConf Usado:`, JSON.parse(JSON.stringify(colorConf)));
+                            }
+                            // ***** FIN DEL LOG DE DIAGNÓSTICO (ANUAL) *****
+                            
+                            svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${colorConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
+                            if(displayShiftInPdfCell) { 
+                                svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
+                            }
                             currentCellX += svgCellWidthAnnual;
                         }
-                        for (let day = daysInCurrentMonth + 1; day <= 31; day++) {
+                        for (let day = daysInCurrentMonth + 1; day <= 31; day++) { 
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#fff' : '#f9fafb'}" stroke="#e0e0e0"/>`);
                             currentCellX += svgCellWidthAnnual;
                         }
-                    } else { 
-                         const monthToRender = itemData;
-                         const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender);
+                    } else { // Vista Mensual individual (type === 'monthlyAnnual' && currentViewMode === 'monthly')
+                         const monthToRender = itemData; 
+                         const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender); 
                          const svgCellWidthMonthly = (svgWidth - pagePadding * 2 - employeeColWidth) / daysInSelectedMonth;
                          const employeeMonthData = scheduleData[empName]?.[monthToRender] || {};
                          for (let day = 1; day <= daysInSelectedMonth; day++) {
                             const shift = employeeMonthData[day] || "";
-                            let dspShift = shift; if(shift==='M2')dspShift='M';else if(shift==='T2')dspShift='T';else if(shift==='N2')dspShift='N';
-                            const cConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-                            svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthMonthly}" height="${cellHeight}" fill="${cConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
-                            if(dspShift) svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${cConf.hexText||'#000'}">${dspShift}</text>`);
+                            let displayShiftInPdfCell = shift;
+        
+                            const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+        
+                            // ***** INICIO DEL LOG DE DIAGNÓSTICO (MENSUAL) *****
+                            if (shift === 'M' || shift === 'M2' || shift === 'T' || shift === 'T2' || shift === 'N' || shift === 'N2') {
+                                console.log(`PDF Mensual - Empleado: ${empName}, Día: ${day}/${monthToRender}, Turno Original: ${shift}, ColorConf Usado:`, JSON.parse(JSON.stringify(colorConf)));
+                            }
+                            // ***** FIN DEL LOG DE DIAGNÓSTICO (MENSUAL) *****
+        
+                            svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthMonthly}" height="${cellHeight}" fill="${colorConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
+                            if(displayShiftInPdfCell) {
+                                svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
+                            }
                             currentCellX += svgCellWidthMonthly;
                         }
                     }
@@ -4983,6 +5075,9 @@
             
             return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="font-family: 'Inter', sans-serif;">${svgElements.join('')}</svg>`;
         }
+        
+        
+        
         
         
 
