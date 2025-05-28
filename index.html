@@ -831,63 +831,122 @@
             <h1 id="main-title-text" class="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight inline-block">Gestor de Horarios Laborales</h1>
         </header>
 
-        <section id="controls-section" class="mb-8 p-6 bg-white rounded-xl shadow-xl">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 items-end">
-                <div>
-                    <label for="csv-file-input" class="block text-sm font-medium text-gray-700 mb-1">Importar Horario (CSV):</label>
-                    <input type="file" id="csv-file-input" accept=".csv" class="w-full text-sm text-gray-500
-                        file:mr-4 file:py-2.5 file:px-4 file:cursor-pointer
-                        file:rounded-lg file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-indigo-50 file:text-indigo-700
-                        hover:file:bg-indigo-100 transition-colors
-                    "/>
-                    <button id="create-empty-csv-button" class="action-button w-full mt-2 bg-sky-600 text-white hover:bg-sky-700 focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+        <section id="controls-section" class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+                <div class="bg-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out space-y-4">
+                    <h3 class="text-lg font-semibold text-indigo-600 mb-3 flex items-center">
+                        <i class="fas fa-play-circle mr-2 text-xl"></i>
+                        <span>Cargar o Crear Horario</span>
+                    </h3>
+                    <div>
+                        <label for="csv-file-input" class="block text-sm font-medium text-gray-700 mb-1">Importar CSV:</label>
+                        <div class="relative group">
+                            <input type="file" id="csv-file-input" accept=".csv" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"/>
+                            <div class="action-button w-full bg-gray-100 hover:bg-gray-200 text-indigo-600 border border-gray-300 focus-within:ring-2 focus-within:ring-indigo-400 focus-within:ring-offset-1 flex items-center justify-center !py-2.5 transition-colors duration-200">
+                                <i id="csv-file-input-icon" class="fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3"></i>
+                                <span id="csv-file-input-text" class="text-sm font-medium">Seleccionar archivo...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="create-empty-csv-button" class="action-button w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:ring-2 focus:ring-indigo-300">
                         <i class="fas fa-file-alt mr-2"></i>Nuevo Horario Vacío
                     </button>
                 </div>
-                <div>
-                    <label for="year-input" class="block text-sm font-medium text-gray-700 mb-1">Año del Horario:</label>
-                    <input type="number" id="year-input" value="2026" class="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                </div>
-                <div class="lg:col-start-3 flex flex-col sm:flex-row gap-3 justify-self-start md:justify-self-end mt-4 md:mt-0 w-full">
-                    <div class="flex items-center gap-2 flex-1">
-                        <button id="save-local-button" title="Guarda el horario actual, las notas y la configuración de colores en el almacenamiento local de tu navegador." class="action-button flex-1 bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2" disabled>
-                            <i class="fas fa-save"></i>Guardar Local
+        
+                <div class="bg-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out space-y-4">
+                    <h3 class="text-lg font-semibold text-emerald-600 mb-3 flex items-center">
+                        <i class="fas fa-save mr-2 text-xl"></i>
+                        <span>Guardar y Configuración</span>
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button id="save-local-button" title="Guarda el horario actual, notas y configuración localmente." class="action-button flex-1 bg-emerald-500 hover:bg-emerald-600 text-white focus:ring-2 focus:ring-emerald-300" disabled>
+                            <i class="fas fa-save mr-1.5"></i>Guardar Local
                         </button>
-                        <i id="save-local-help-icon" class="fas fa-question-circle text-gray-500 hover:text-indigo-600 cursor-pointer text-xl" title="Ayuda sobre Guardado Local"></i>
+                        <button id="save-local-help-icon" class="p-2 text-gray-400 hover:text-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 rounded-md" title="Ayuda sobre Guardado Local">
+                             <i class="fas fa-question-circle text-lg"></i>
+                        </button>
                     </div>
-                    <button id="export-csv-button" class="action-button flex-1 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" disabled>
-                        <i class="fas fa-file-csv"></i>Exportar CSV
+                    
+                    <button id="manage-app-config-button" class="action-button group w-full bg-purple-500 hover:bg-purple-600 text-white focus:ring-2 focus:ring-purple-300 transition-transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-cogs mr-2 transition-transform duration-300 ease-in-out group-hover:rotate-45 group-hover:scale-110"></i>
+                        Gestionar Configuración App
+                    </button>
+                    <input type="file" id="import-app-state-file-input" class="hidden" accept=".json"> 
+        
+                    <div class="pt-3 mt-2 border-t border-gray-200">
+                        <label for="autosave-toggle" class="action-button w-full bg-gray-100 hover:bg-gray-200 text-gray-700 focus-within:ring-2 focus-within:ring-indigo-400 focus-within:ring-offset-1 flex items-center justify-between cursor-pointer !py-2.5">
+                            <span class="text-sm font-medium flex items-center">
+                                <i class="fas fa-sync-alt mr-2 text-gray-500"></i>
+                                Autoguardado local (30s)
+                            </span>
+                            <div class="relative">
+                                <input type="checkbox" id="autosave-toggle" class="sr-only peer">
+                                <div class="w-10 h-5 bg-gray-300 rounded-full peer peer-focus:ring-1 peer-focus:ring-offset-1 peer-focus:ring-indigo-400 peer-checked:bg-indigo-500 transition-colors"></div>
+                                <div class="dot absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full shadow-md transition-transform peer-checked:translate-x-full"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+        
+                <div class="bg-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out space-y-4 md:col-span-2 lg:col-span-1">
+                    <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center">
+                        <i class="fas fa-download mr-2 text-xl"></i>
+                        <span>Otras Exportaciones</span>
+                    </h3>
+                    <button id="export-csv-button" class="action-button w-full bg-slate-500 hover:bg-slate-600 text-white focus:ring-2 focus:ring-slate-300" disabled>
+                        <i class="fas fa-file-csv mr-2"></i>Horario a CSV
+                    </button>
+                    <button id="export-month-calendar-button" class="action-button w-full bg-amber-500 hover:bg-amber-600 text-white focus:ring-2 focus:ring-amber-300" disabled>
+                        <i class="fas fa-calendar-plus mr-2"></i>Mes a Calendar (.ics)
+                    </button>
+                    <button id="download-weekly-svg-button" class="action-button w-full bg-teal-500 hover:bg-teal-600 text-white focus:ring-2 focus:ring-teal-300" disabled>
+                        <i class="fas fa-file-pdf mr-2"></i>PDF Semanal
+                    </button>
+                    <button id="download-image-button" class="action-button w-full bg-cyan-600 hover:bg-cyan-700 text-white focus:ring-2 focus:ring-cyan-400" disabled> {/* Cian más oscuro */}
+                        <i class="fas fa-file-pdf mr-2"></i>PDF Mensual/Anual
                     </button>
                 </div>
-            </div>
-        
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 items-end mt-4">
-                <div class="md:col-span-3 flex flex-col sm:flex-row gap-3 justify-self-start md:justify-self-end mt-4 md:mt-0 w-full">
-                    <button id="export-month-calendar-button" class="action-button flex-1 bg-orange-500 text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" disabled>
-                        <i class="fas fa-calendar-plus mr-2"></i>Exportar Mes a Calendar
-                    </button>
-                    <button id="download-weekly-svg-button" class="action-button flex-1 bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2" disabled>
-                        <i class="fas fa-file-pdf mr-2"></i>Descargar Semanal PDF
-                    </button>
-                    <button id="download-image-button" class="action-button flex-1 bg-purple-600 text-white hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" disabled>
-                        <i class="fas fa-file-pdf mr-2"></i>Descargar Calendario PDF
-                    </button>
-                </div>
-            </div>
-        
-            <div class="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-end gap-4">
-                <label for="autosave-toggle" class="flex items-center cursor-pointer">
-                    <span class="mr-3 text-sm font-medium text-gray-700">Autoguardado local (30s):</span>
-                    <div class="relative">
-                        <input type="checkbox" id="autosave-toggle" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-indigo-500 peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-full"></div>
+            </div> 
+            
+            <div id="manage-config-modal" class="modal hidden-by-default">
+                <div class="modal-content max-w-lg">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-shield-alt text-purple-500 mr-3"></i>Gestionar Configuración
+                        </h3>
+                        <button id="close-manage-config-modal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fas fa-times fa-lg"></i>
+                        </button>
                     </div>
-                </label>
+                    <div class="space-y-4">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-database fa-2x text-purple-400 mb-2"></i>
+                            <p class="text-gray-700 leading-relaxed">
+                                Asegura tu trabajo y personalización. Transfiere fácilmente todos tus datos.
+                            </p>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            Con estas herramientas, puedes:
+                        </p>
+                        <ul class="list-disc list-inside text-sm text-gray-600 space-y-1.5 pl-4">
+                            <li><strong>Exportar Configuración:</strong> Genera un archivo de respaldo (<code>.json</code>) con todo: tu horario detallado, la lista de empleados, notas, los colores que has elegido y las reglas personalizadas. ¡Perfecto para tener una copia segura o para llevarte tus datos a otro ordenador!</li>
+                            <li><strong>Importar Configuración:</strong> ¿Tienes un archivo de configuración guardado? Cárgalo aquí para restaurar la aplicación exactamente como la tenías.</li>
+                        </ul>
+                        <div class="mt-6 pt-4 border-t border-gray-100 space-y-3">
+                            <button id="modal-export-app-config-button" class="action-button w-full bg-purple-500 hover:bg-purple-600 text-white focus:ring-2 focus:ring-purple-300 transition-transform hover:scale-105 active:scale-95">
+                                <i class="fas fa-cloud-download-alt mr-2"></i>Exportar Configuración Actual
+                            </button>
+                            <button id="modal-import-app-config-button" class="action-button w-full bg-sky-500 hover:bg-sky-600 text-white focus:ring-2 focus:ring-sky-300 transition-transform hover:scale-105 active:scale-95">
+                                <i class="fas fa-cloud-upload-alt mr-2"></i>Importar desde Archivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+        
+        
 
         <section id="welcome-message" class="my-8 p-8 bg-indigo-50 text-indigo-700 rounded-xl shadow-lg text-center">
             <i class="fas fa-info-circle fa-2x mb-3"></i>
@@ -937,13 +996,14 @@
                 </div>
             </div>
             <section id="schedule-table-section" class="bg-white rounded-xl shadow-xl">
-                <h2 id="current-month-year-display" class="text-2xl font-bold text-gray-800 p-5 border-b border-gray-200 bg-gray-50 rounded-t-xl relative">
-                    <span id="current-month-year-text">Horario para [Mes Año]</span>
-                    <span id="unsaved-indicator-table" class="unsaved-dot hidden-by-default" title="Hay cambios sin guardar"></span>
-                    <span id="help-icon-container" class="absolute top-0 right-0 p-3 cursor-pointer" title="Mostrar Consejos Útiles">
+                <h2 id="current-month-year-display" class="text-2xl font-bold text-gray-800 p-5 border-b border-gray-200 bg-gray-50 rounded-t-xl relative flex items-center">
+                    <span id="current-month-year-text-prefix">Horario para</span> <span id="current-month-text" class="ml-1 mr-2"></span> <input type="number" id="title-year-input" value="2026" class="p-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-2xl font-bold text-gray-800 w-24 text-center" style="max-width: 100px;">
+                    <span id="unsaved-indicator-table" class="unsaved-dot hidden-by-default ml-3" title="Hay cambios sin guardar"></span>
+                    <span id="help-icon-container" class="absolute top-1/2 right-5 transform -translate-y-1/2 cursor-pointer" title="Mostrar Consejos Útiles">
                         <i class="fas fa-lightbulb text-gray-500 text-2xl"></i>
                     </span>
                 </h2>
+                
                 <div class="table-container">
                     <table id="schedule-table" class="min-w-full divide-y divide-gray-200">
                         <thead id="schedule-table-head" class="bg-gray-50 sticky-header"></thead>
@@ -1879,7 +1939,9 @@
         
             // --- Controles de Importación, Año y Guardado/Exportación Principal ---
             domCache.csvFileInput = document.getElementById('csv-file-input');
-            domCache.yearInput = document.getElementById('year-input');
+			domCache.titleYearInput = document.getElementById('title-year-input');
+			domCache.currentMonthYearTextPrefix = document.getElementById('current-month-year-text-prefix');
+			domCache.currentMonthText = document.getElementById('current-month-text'); // ID que podría estar causando el error si no se cachea bien o el HTML es incorrecto
             domCache.saveLocalButton = document.getElementById('save-local-button');
             domCache.exportCsvButton = document.getElementById('export-csv-button');
             domCache.createEmptyCsvButton = document.getElementById('create-empty-csv-button');
@@ -2056,6 +2118,18 @@
 			domCache.clearLocalStorageCountdownMessage = document.getElementById('clear-local-storage-countdown-message');
 			domCache.modalCancelClearLocalStorage = document.getElementById('modal-cancel-clear-local-storage');
 			domCache.modalConfirmClearLocalStorage = document.getElementById('modal-confirm-clear-local-storage');
+			// Botones para Exportar/Importar Estado de la Aplicación
+			domCache.exportAppStateButton = document.getElementById('export-app-state-button');
+			domCache.importAppStateButton = document.getElementById('import-app-state-button');
+			domCache.importAppStateFileInput = document.getElementById('import-app-state-file-input');
+			
+			domCache.manageAppConfigButton = document.getElementById('manage-app-config-button');
+			domCache.manageConfigModal = document.getElementById('manage-config-modal');
+			domCache.closeManageConfigModalButton = document.getElementById('close-manage-config-modal');
+			domCache.modalExportAppConfigButton = document.getElementById('modal-export-app-config-button');
+			domCache.modalImportAppConfigButton = document.getElementById('modal-import-app-config-button');
+			domCache.csvFileInputIcon = document.getElementById('csv-file-input-icon');
+			
         }
 
         // --- MANEJO DE EVENTOS DE SELECCIÓN DE CELDAS ---
@@ -2294,11 +2368,32 @@
         
         function setupEventListeners() {
             // --- Listeners Existentes (DEBES MANTENER LOS QUE YA TENÍAS Y FUNCIONABAN) ---
+			
+            if (domCache.exportAppStateButton) {
+                domCache.exportAppStateButton.addEventListener('click', prepareExportApplicationState);
+            }
+            if (domCache.importAppStateButton) {
+                domCache.importAppStateButton.addEventListener('click', prepareImportApplicationState);
+            }
+            if (domCache.importAppStateFileInput) {
+                domCache.importAppStateFileInput.addEventListener('change', handleImportApplicationStateFile);
+            }			
+			
             if (domCache.csvFileInput) {
                 domCache.csvFileInput.addEventListener('change', handleFileUpload);
             }
-            if (domCache.yearInput) {
-                domCache.yearInput.addEventListener('change', handleYearChange);
+            if (domCache.titleYearInput) {
+                domCache.titleYearInput.addEventListener('change', handleYearChange); // O handleYearChangeInTitle
+                domCache.titleYearInput.addEventListener('blur', handleYearChange); // Para guardar si pierde el foco
+                domCache.titleYearInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault(); // Prevenir envío de formulario si estuviera en uno
+                        domCache.titleYearInput.blur(); // Disparar el evento blur, que llamará a handleYearChange
+                    } else if (event.key === 'Escape') {
+                        domCache.titleYearInput.value = yearOfSchedule; // Revertir al valor actual
+                        domCache.titleYearInput.blur(); // Quitar el foco
+                    }
+                });
             }
             if (domCache.saveLocalButton) {
                 domCache.saveLocalButton.addEventListener('click', () => saveScheduleToLocalStorage(false));
@@ -2720,6 +2815,56 @@
                     if (event.target === domCache.rulesModal) hideModal(domCache.rulesModal);
                 });
             }
+            // Listener para el nuevo botón "Gestionar Configuración App"
+            if (domCache.manageAppConfigButton) {
+                domCache.manageAppConfigButton.addEventListener('click', () => {
+                    showModal(domCache.manageConfigModal); // Usa tu función showModal existente
+                });
+            }
+            
+            // Listener para el botón de cerrar el nuevo modal
+            if (domCache.closeManageConfigModalButton) {
+                domCache.closeManageConfigModalButton.addEventListener('click', () => {
+                    hideModal(domCache.manageConfigModal); // Usa tu función hideModal existente
+                });
+            }
+            
+            // Listener para el botón "Exportar Configuración Actual" DENTRO DEL MODAL
+            if (domCache.modalExportAppConfigButton) {
+                domCache.modalExportAppConfigButton.addEventListener('click', () => {
+                    prepareExportApplicationState(); // Llama a tu función de exportación existente
+                    hideModal(domCache.manageConfigModal);
+                });
+            }
+            
+            // Listener para el botón "Importar Configuración desde Archivo" DENTRO DEL MODAL
+            if (domCache.modalImportAppConfigButton) {
+                domCache.modalImportAppConfigButton.addEventListener('click', () => {
+                    prepareImportApplicationState(); // Llama a tu función de importación existente (que dispara el input file)
+                    // No cierres el modal aquí inmediatamente, ya que el usuario necesita seleccionar un archivo.
+                    // Podrías cerrarlo en handleImportApplicationStateFile después de una importación exitosa o fallida.
+                });
+            }
+            
+            // Modifica el listener del input de archivo CSV para el texto
+            if (domCache.csvFileInput && domCache.csvFileInputText) {
+                domCache.csvFileInput.addEventListener('change', function(event) { // Añade 'event'
+                    if (this.files && this.files.length > 0) {
+                        let fileName = this.files[0].name;
+                        if (fileName.length > 25) {
+                            fileName = fileName.substring(0, 22) + "...";
+                        }
+                        domCache.csvFileInputText.textContent = fileName;
+                        // Asegúrate de que el icono vuelva a ser 'fa-upload' si se cambia a 'fa-check'
+                        if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3';
+                    } else {
+                        domCache.csvFileInputText.textContent = 'Seleccionar archivo...';
+                        if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3';
+                    }
+                    // Llama a tu función handleFileUpload original si es necesario
+                    // handleFileUpload(event); // Descomenta y asegúrate que 'handleFileUpload' exista y acepte el evento
+                });
+            }
             // El listener para domCache.saveRulesButton ya está añadido arriba con los inputs de las normas.
         
             // Listener global para teclas (Deshacer, Rehacer, Escape)
@@ -2998,33 +3143,75 @@
         
 
         function loadYearFromLocalStorage() {
-            const savedYear = localStorage.getItem(LOCAL_STORAGE_KEY_YEAR);
-            if (savedYear && !isNaN(parseInt(savedYear))) {
-                yearOfSchedule = parseInt(savedYear);
-            } else {
-                yearOfSchedule = new Date().getFullYear();
+            const savedYearString = localStorage.getItem(LOCAL_STORAGE_KEY_YEAR);
+            let parsedYear = new Date().getFullYear(); // Valor por defecto: año actual
+        
+            if (savedYearString) {
+                const tempYear = parseInt(savedYearString);
+                if (!isNaN(tempYear) && tempYear >= 1900 && tempYear <= 2200) {
+                    parsedYear = tempYear;
+                } else {
+                    console.warn(`Año guardado ('${savedYearString}') inválido. Usando año actual por defecto.`);
+                }
             }
-            domCache.yearInput.value = yearOfSchedule;
+            
+            yearOfSchedule = parsedYear;
+        
+            // Actualiza el input en el título directamente.
+            // updateScheduleTitleDisplay() será llamado más tarde por updateViewModeUI() o
+            // durante la inicialización general de la UI, lo que también establecerá el mes.
+            if (domCache.titleYearInput) {
+                domCache.titleYearInput.value = yearOfSchedule;
+            } else {
+                // Esto podría pasar si cacheDOMElements() aún no se ha ejecutado completamente
+                // o si el elemento no existe. Es bueno tener un log para depuración.
+                console.warn("domCache.titleYearInput no disponible al intentar cargar el año desde localStorage.");
+            }
+            // No es necesario llamar a updateScheduleTitleDisplay() aquí directamente si se va a llamar
+            // de forma más general durante la inicialización (ej. a través de updateViewModeUI).
+            // Si esta es la única vez que se establece el año al cargar, entonces sí sería necesario:
+            // updateScheduleTitleDisplay();
         }
 
-        function handleYearChange(event) {
-            const newYear = parseInt(event.target.value);
-            if (!isNaN(newYear) && newYear > 1900 && newYear < 2200 && newYear !== yearOfSchedule) {
-                yearOfSchedule = newYear;
-                localStorage.setItem(LOCAL_STORAGE_KEY_YEAR, yearOfSchedule.toString());
-                hasUnsavedChanges = true;
-                updateUnsavedChangesIndicator();
-
-                if (isDataLoadedForStats()) {
-                    handleViewChange();
-                    initializeAndRenderNewStatistics();
+        function handleYearChange() {
+            if (!domCache.titleYearInput) {
+                console.error("Error: domCache.titleYearInput no está definido en handleYearChange.");
+                return;
+            }
+        
+            const newYearString = domCache.titleYearInput.value;
+            const newYear = parseInt(newYearString);
+        
+            // Validación robusta del año
+            if (!isNaN(newYear) && newYear >= 1900 && newYear <= 2200) { // Rango de años razonable
+                if (newYear !== yearOfSchedule) {
+                    yearOfSchedule = newYear; // Actualiza la variable global del año
+                    localStorage.setItem(LOCAL_STORAGE_KEY_YEAR, yearOfSchedule.toString());
+                    
+                    hasUnsavedChanges = true;
+                    updateUnsavedChangesIndicator();
+                    saveStateForUndo(`Año cambiado a ${yearOfSchedule}`);
+        
+                    // Actualizar la UI completa que depende del año
+                    updateScheduleTitleDisplay(); // Actualiza el título (mes y año)
+                    
+                    if (isDataLoadedForStats()) {
+                        handleViewChange(); // Re-renderiza la tabla de horarios (mensual/anual)
+                                            // Esta función también debería llamar a validateAndDisplayRuleViolations()
+                        initializeAndRenderNewStatistics(); // Re-calcula y re-renderiza estadísticas
+                        populateMonthTabs(); // Actualiza las pestañas de mes, ya que los días/festivos pueden cambiar
+                    } else {
+                        // Si no hay datos, al menos asegurar que el título se actualice
+                        // y la tabla vacía refleje el nuevo año si es necesario (ej. para el botón "Añadir Empleado")
+                        renderAddEmployeeButtonInTable(); // O una función similar que prepare la tabla vacía
+                    }
+                    showToast(`Año del horario actualizado a ${yearOfSchedule}.`, 'info');
                 }
-                showToast(`Año del horario actualizado a ${yearOfSchedule}.`, 'info');
-            } else if (newYear === yearOfSchedule) {
-                // No action
+                // Si el año es el mismo, no hacer nada más
             } else {
-                event.target.value = yearOfSchedule;
-                showToast('Por favor, introduce un año válido (ej. 2024).', 'error');
+                // Si el año no es válido (ej. letras, fuera de rango), revertir al valor anterior y mostrar error
+                showToast('Por favor, introduce un año válido (entre 1900 y 2200).', 'error');
+                domCache.titleYearInput.value = yearOfSchedule; // Revertir el valor en el input al último año válido
             }
         }
 
@@ -4143,7 +4330,10 @@
 
 
         function updateViewModeUI() {
-            const dataExists = isDataLoadedForStats(); 
+            const dataExists = isDataLoadedForStats(); // Asume que esta función verifica si hay datos para mostrar
+        
+            // Actualiza el título principal (que ahora incluye el input del año)
+            updateScheduleTitleDisplay(); // Esta función se encarga de "Horario para [Mes] [Año]" o "Horario Anual [Año]"
         
             if (domCache.monthTabsWrapper) {
                 if (currentViewMode === 'monthly' && dataExists) {
@@ -4159,36 +4349,33 @@
                 if (currentViewMode === 'annual' && dataExists) {
                     domCache.viewAnnualButton.classList.add('active');
                     domCache.viewMonthlyButton.classList.remove('active');
-                    if (domCache.currentMonthYearText) domCache.currentMonthYearText.textContent = `Horario Anual ${yearOfSchedule}`;
-                    // MODIFICACIÓN: Texto del botón de descarga principal para vista anual
+                    // El texto del título principal ya se actualiza con updateScheduleTitleDisplay()
                     if (domCache.downloadImageButton) {
                         domCache.downloadImageButton.innerHTML = '<i class="fas fa-file-pdf mr-2"></i>Descargar Calendario Anual PDF';
                     }
                 } else if (currentViewMode === 'monthly' && dataExists) {
                     domCache.viewMonthlyButton.classList.add('active');
                     domCache.viewAnnualButton.classList.remove('active');
-                    if (domCache.currentMonthYearText) domCache.currentMonthYearText.textContent = `Horario para ${MONTH_NAMES[currentSelectedMonth - 1]} ${yearOfSchedule}`;
-                    highlightActiveMonthTab();
-                    // MODIFICACIÓN: Texto del botón de descarga principal para vista mensual
+                    // El texto del título principal ya se actualiza con updateScheduleTitleDisplay()
+                    highlightActiveMonthTab(); // Asegúrate de que esta función exista y funcione
                     if (domCache.downloadImageButton) {
                         domCache.downloadImageButton.innerHTML = '<i class="fas fa-file-pdf mr-2"></i>Descargar Calendario Mensual PDF';
                     }
-                } else {
+                } else { // No hay datos o vista desconocida
                     domCache.viewMonthlyButton.classList.remove('active');
                     domCache.viewAnnualButton.classList.remove('active');
-                    if (domCache.currentMonthYearText) domCache.currentMonthYearText.textContent = 'Horario para [Mes Año]';
-                    // Texto por defecto si no hay datos o vista desconocida
+                    // El texto del título principal ya se actualiza con updateScheduleTitleDisplay()
                     if (domCache.downloadImageButton) {
                         domCache.downloadImageButton.innerHTML = '<i class="fas fa-file-pdf mr-2"></i>Descargar Calendario PDF';
                     }
                 }
             }
         
-            // MODIFICACIÓN: Texto del botón de descarga semanal
-            if (domCache.downloadWeeklySvgButton) {
+            if (domCache.downloadWeeklySvgButton) { // Botón para PDF semanal
                 domCache.downloadWeeklySvgButton.innerHTML = '<i class="fas fa-file-pdf mr-2"></i>Descargar Calendario Semanal PDF';
             }
         
+            // Habilitar/deshabilitar botones de descarga
             if (domCache.downloadImageButton) {
                 domCache.downloadImageButton.disabled = !dataExists;
             }
@@ -4196,8 +4383,8 @@
                 domCache.downloadWeeklySvgButton.disabled = !dataExists || currentViewMode !== 'monthly';
             }
         
-            updateCalendarExportButtonsState(); 
-            updateUnsavedChangesIndicator(); 
+            updateCalendarExportButtonsState(); // Actualiza el estado de otros botones de exportación
+            updateUnsavedChangesIndicator();    // Actualiza el indicador de cambios no guardados
         }
 
         function handleViewChange() {
@@ -7810,6 +7997,285 @@
             }
         }
         
+        /**
+         * Recopila todos los datos relevantes del estado actual de la aplicación.
+         * @returns {object} Un objeto que contiene todo el estado de la aplicación.
+         */
+        function getApplicationStateSnapshot() {
+            const uploadedFileName = domCache.csvFileInput ? domCache.csvFileInput.dataset.uploadedFileName : null;
+        
+            return {
+                version: "1.0.0", // Puedes usar esto para futuras comprobaciones de compatibilidad
+                timestamp: new Date().toISOString(),
+                scheduleData: scheduleData,
+                employeeNamesOrdered: employeeNamesOrdered,
+                currentSelectedMonth: currentSelectedMonth,
+                yearOfSchedule: yearOfSchedule,
+                currentViewMode: currentViewMode,
+                generalNotes: domCache.generalNotesTextarea ? domCache.generalNotesTextarea.value : "",
+                currentShiftColors: currentShiftColors,
+                currentUserShiftTimes: currentUserShiftTimes,
+                rulesConfig: rulesConfig,
+                changeHistory: changeHistory, // Considera si quieres exportar el historial completo
+                undoStack: undoStack,         // Podrías optar por no exportar undo/redo para simplificar
+                redoStack: redoStack,
+                isAutosaveEnabled: isAutosaveEnabled,
+                uploadedCsvName: uploadedFileName,
+                // Podrías añadir aquí cualquier otra variable global crítica para el estado de tu app
+            };
+        }
+        
+        /**
+         * Inicia el proceso de exportación del estado completo de la aplicación.
+         * Pide al usuario un nombre de archivo y luego descarga el estado como un archivo JSON.
+         */
+        function prepareExportApplicationState() {
+            const defaultFilename = `estado_gestor_horarios_${new Date().toISOString().slice(0,10)}`;
+            showFilenameModal(
+                "Exportar Estado de la Aplicación",
+                "Nombre para el archivo de estado (JSON):",
+                defaultFilename,
+                ".json", // Extensión del archivo
+                (filenameBase) => {
+                    exportApplicationState(filenameBase);
+                }
+            );
+        }
+        
+        /**
+         * Exporta el estado actual de la aplicación a un archivo JSON.
+         * @param {string} filenameBase - El nombre base para el archivo JSON.
+         */
+        function exportApplicationState(filenameBase) {
+            if (!filenameBase) {
+                showToast("Se requiere un nombre de archivo para la exportación.", "error");
+                return;
+            }
+            const finalFilename = `${filenameBase}.json`;
+            const appState = getApplicationStateSnapshot();
+            const jsonString = JSON.stringify(appState, null, 2); // null, 2 para una bonita impresión del JSON
+        
+            const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement("a");
+        
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", finalFilename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        
+            showToast(`Estado de la aplicación exportado como ${finalFilename}.`, 'success');
+        }
+        
+        /**
+         * Inicia el proceso de importación del estado de la aplicación desde un archivo JSON.
+         * Simula un clic en el input de archivo oculto.
+         */
+        function prepareImportApplicationState() {
+            if (!domCache.importAppStateFileInput) {
+                showToast("Error: No se encontró el selector de archivos para importar.", "error");
+                return;
+            }
+            // Mostrar una advertencia antes de proceder, ya que esto sobrescribirá los datos actuales.
+            if (isDataLoadedForSave() || hasUnsavedChanges) { // Reutiliza tu lógica para ver si hay datos
+                // Usar un modal de confirmación similar al de cargar CSV o borrar datos
+                // Por simplicidad aquí usaré un confirm, pero es mejor un modal personalizado.
+                // ESTO ES UN EJEMPLO, DEBERÍAS USAR TU SISTEMA DE MODALES
+                if (!confirm("Importar un estado de la aplicación sobrescribirá todos los datos y cambios no guardados actuales. ¿Deseas continuar?")) {
+                    return;
+                }
+            }
+            domCache.importAppStateFileInput.value = null; // Resetear el input por si se selecciona el mismo archivo
+            domCache.importAppStateFileInput.click();
+        }
+        
+        /**
+         * Maneja la selección de un archivo para importar el estado de la aplicación.
+         * @param {Event} event - El evento del input de archivo.
+         */
+        function handleImportApplicationStateFile(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                showToast("No se seleccionó ningún archivo.", "info");
+                return;
+            }
+        
+            if (file.type !== "application/json") {
+                showToast("Por favor, selecciona un archivo JSON válido (.json).", "error");
+                return;
+            }
+        
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const jsonString = e.target.result;
+                    const importedState = JSON.parse(jsonString);
+                    
+                    // Validación básica de la estructura del archivo importado
+                    if (!validateImportedState(importedState)) {
+                        showToast("El archivo de estado no tiene el formato esperado o está corrupto.", "error");
+                        return;
+                    }
+        
+                    applyImportedApplicationState(importedState);
+                    showToast("Estado de la aplicación importado y aplicado correctamente.", "success");
+        
+                } catch (error) {
+                    console.error("Error al leer o parsear el archivo de estado:", error);
+                    showToast(`Error al importar el estado: ${error.message}`, "error");
+                } finally {
+                    // Limpiar el valor del input para permitir importar el mismo archivo de nuevo si es necesario
+                    if (domCache.importAppStateFileInput) {
+                        domCache.importAppStateFileInput.value = "";
+                    }
+                }
+            };
+            reader.onerror = function() {
+                console.error("Error al leer el archivo:", reader.error);
+                showToast("Error al leer el archivo de estado.", "error");
+            };
+            reader.readAsText(file);
+        }
+        
+        /**
+         * Valida la estructura básica del objeto de estado importado.
+         * @param {object} state - El objeto de estado parseado desde el JSON.
+         * @returns {boolean} True si el estado parece válido, false en caso contrario.
+         */
+        function validateImportedState(state) {
+            if (typeof state !== 'object' || state === null) return false;
+            // Comprueba algunas propiedades clave que esperas encontrar
+            const expectedKeys = [
+                "scheduleData", "employeeNamesOrdered", "currentSelectedMonth", 
+                "yearOfSchedule", "currentViewMode", "generalNotes", 
+                "currentShiftColors", "currentUserShiftTimes", "rulesConfig"
+                // No es necesario validar 'version' o 'timestamp' estrictamente aquí,
+                // pero podrías hacerlo si implementas control de versiones.
+            ];
+            for (const key of expectedKeys) {
+                if (!(key in state)) {
+                    console.warn(`Clave esperada '${key}' no encontrada en el estado importado.`);
+                    return false;
+                }
+            }
+            // Podrías añadir validaciones más profundas aquí (tipos de datos, etc.)
+            return true;
+        }
+        
+        /**
+         * Aplica el estado importado a la aplicación.
+         * Esto implica actualizar todas las variables de estado relevantes y re-renderizar la UI.
+         * @param {object} importedState - El objeto de estado validado para aplicar.
+         */
+        function applyImportedApplicationState(importedState) {
+            // 1. Resetear el estado actual (similar a resetToInitialState pero sin borrar localStorage)
+            undoStack = [];
+            redoStack = [];
+            updateUndoRedoButtonsState();
+            scheduleData = {};
+            employeeNamesOrdered = [];
+            hasUnsavedChanges = false; // El estado importado se considera "guardado" inicialmente
+        
+            // 2. Aplicar los datos importados
+            scheduleData = importedState.scheduleData || {};
+            employeeNamesOrdered = importedState.employeeNamesOrdered || [];
+            currentSelectedMonth = importedState.currentSelectedMonth || (new Date().getMonth() + 1);
+            yearOfSchedule = importedState.yearOfSchedule || new Date().getFullYear();
+            currentViewMode = importedState.currentViewMode || 'monthly';
+            
+            if (domCache.generalNotesTextarea) {
+                domCache.generalNotesTextarea.value = importedState.generalNotes || "";
+            }
+            currentShiftColors = importedState.currentShiftColors || JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
+            currentUserShiftTimes = importedState.currentUserShiftTimes || JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
+            rulesConfig = importedState.rulesConfig || getDefaultRulesConfig();
+            
+            changeHistory = importedState.changeHistory || []; // O resetear si no se importa
+            // Los undo/redo stacks generalmente no se importan para evitar conflictos, se empiezan de nuevo.
+            
+            isAutosaveEnabled = importedState.isAutosaveEnabled !== undefined ? importedState.isAutosaveEnabled : false;
+            if (domCache.autosaveToggle) {
+                domCache.autosaveToggle.checked = isAutosaveEnabled;
+                // No llames a toggleAutosave(isAutosaveEnabled) directamente aquí si eso guarda en localStorage,
+                // ya que el objetivo es aplicar el estado importado.
+                // El estado de autosave se guardará la próxima vez que el usuario interactúe con el toggle.
+            }
+        
+            if (domCache.csvFileInput && importedState.uploadedCsvName) {
+                domCache.csvFileInput.dataset.uploadedFileName = importedState.uploadedCsvName;
+            } else if (domCache.csvFileInput) {
+                delete domCache.csvFileInput.dataset.uploadedFileName;
+            }
+            
+            if (domCache.yearInput) {
+                domCache.yearInput.value = yearOfSchedule;
+            }
+        
+            // 3. Actualizar toda la Interfaz de Usuario
+            // Esta es la parte más crítica y depende de cómo esté estructurada tu UI.
+            // Necesitarás llamar a tus funciones de renderizado y actualización:
+        
+            updateLegend(); // Actualiza la leyenda con los nuevos colores/tiempos
+            populateMonthTabs(); // Actualiza las pestañas de mes
+            updateViewModeUI(); // Actualiza los botones de modo de vista y título principal
+            handleViewChange(); // Esto debería re-renderizar la tabla de horario principal (mensual o anual)
+                                // y también llamar a validateAndDisplayRuleViolations()
+        
+            renderChangeHistory(); // Muestra el historial importado (si se incluye)
+            
+            // Si el modal de normas estaba abierto, re-renderizarlo
+            if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
+                renderRulesModal();
+            }
+            
+            initializeAndRenderNewStatistics(); // Re-calcula y re-renderiza todas las estadísticas
+        
+            updateUnsavedChangesIndicator(); // Debería estar en false
+            enableControls(isDataLoadedForStats()); // Habilita/deshabilita controles según los datos cargados
+        
+            // Considera guardar este estado importado en localStorage inmediatamente
+            // para que persista si el usuario cierra la pestaña.
+            saveScheduleToLocalStorage(true); // true para limpiar el historial de undo/redo si no se importó
+            hasUnsavedChanges = false; // Confirmar que no hay cambios pendientes después de guardar
+            updateUnsavedChangesIndicator();
+            if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = true;
+        
+        
+            console.log("Estado de la aplicación importado y aplicado.");
+        }
+
+        function updateScheduleTitleDisplay() {
+            // Comprobación robusta de la existencia de los elementos en domCache
+            if (!domCache.currentMonthText || !domCache.titleYearInput || !domCache.currentMonthYearTextPrefix) {
+                // Si esta función se llama antes de que cacheDOMElements haya terminado,
+                // este console.error se activará.
+                console.error("Error en updateScheduleTitleDisplay: Elementos del DOM para el título del horario no encontrados en domCache.");
+                return;
+            }
+        
+            let titlePrefixText = "Horario para ";
+            let monthName = "";
+        
+            if (currentViewMode === 'annual') {
+                titlePrefixText = "Horario Anual "; // Correcto para vista anual
+                monthName = ""; // No se muestra el mes en la vista anual
+                domCache.currentMonthText.textContent = ''; // Limpiar el span del mes
+                domCache.currentMonthYearTextPrefix.textContent = titlePrefixText;
+            } else { // Vista mensual
+                // Asegurarse de que currentSelectedMonth sea un índice válido para MONTH_NAMES
+                if (currentSelectedMonth >= 1 && currentSelectedMonth <= 12) {
+                    monthName = MONTH_NAMES[currentSelectedMonth - 1];
+                } else {
+                    monthName = "[Mes Inválido]"; // Fallback si el mes no es correcto
+                    console.warn(`currentSelectedMonth tiene un valor inválido: ${currentSelectedMonth}`);
+                }
+                domCache.currentMonthText.textContent = monthName; // ESTA LÍNEA ES CLAVE PARA MOSTRAR EL MES
+                domCache.currentMonthYearTextPrefix.textContent = titlePrefixText;
+            }
+            
+            domCache.titleYearInput.value = yearOfSchedule;
+        }
 
     </script>
 </body>
