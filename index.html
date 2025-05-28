@@ -230,6 +230,149 @@
          .month-tab:active:not(.active) {
             transform: translateY(-1px) scale(0.98);
         }
+		
+        /* Estilos para la nueva fila de nombres de meses en la cabecera anual */
+        #schedule-table-head .month-name-header-row th {
+            position: -webkit-sticky; /* Para compatibilidad con Safari */
+            position: sticky;
+            top: 0; /* Esta fila se pega en la parte superior */
+            background-color: #e2e8f0; /* Un color de fondo gris claro (Tailwind bg-slate-200) */
+            color: #2d3748; /* Color de texto oscuro (Tailwind text-gray-700) */
+            font-weight: 600; /* Texto en negrita (Tailwind font-semibold) */
+            font-size: 0.8rem; /* Tamaño de fuente un poco más pequeño */
+            padding-top: 0.5rem; /* Tailwind py-2 */
+            padding-bottom: 0.5rem; /* Tailwind py-2 */
+            padding-left: 0.25rem; /* Tailwind px-1 */
+            padding-right: 0.25rem; /* Tailwind px-1 */
+            text-align: center;
+            border-bottom: 1px solid #cbd5e0; /* Borde inferior (Tailwind border-slate-300) */
+            border-right: 1px solid #cbd5e0; /* Borde derecho para separar los meses */
+            z-index: 25; /* Asegura que esté sobre las celdas de datos pero potencialmente debajo de elementos más importantes */
+            height: 36px; /* Altura fija para esta fila de cabecera */
+            box-sizing: border-box; /* Importante para que el padding y borde no aumenten la altura total más allá de 36px */
+        }
+        
+        /* --- INICIO: ESTILOS PARA TABLA CON BORDER-COLLAPSE: SEPARATE --- */
+        #schedule-table {
+            border-collapse: separate; /* Cambia el modelo de bordes */
+            border-spacing: 0; /* Elimina el espacio entre celdas si se usa separate */
+            /* Puedes añadir un borde general a la tabla si lo deseas, ej:
+            border: 1px solid #e5e7eb; 
+            border-radius: 0.375rem; /* Si la tabla tiene un contenedor con bordes redondeados */
+            */
+        }
+        
+        /* Estilo base para todas las celdas (th y td) de la tabla de horarios */
+        #schedule-table th,
+        #schedule-table td {
+            border-right: 1px solid #e5e7eb; /* Borde derecho gris claro (Tailwind gray-200) */
+            border-bottom: 1px solid #e5e7eb; /* Borde inferior gris claro */
+        }
+        
+        /* Eliminar borde derecho de la última celda de cada fila */
+        #schedule-table tr th:last-child,
+        #schedule-table tr td:last-child {
+            border-right: none;
+        }
+        
+        /* Eliminar borde inferior de la última fila del thead y tbody */
+        /* (Esto puede ser opcional o necesitar ajustes según cómo quieras los bordes externos de la tabla) */
+        #schedule-table thead tr:last-child th {
+            /* border-bottom: 1px solid #d1d5db; /* Un borde más grueso para separar cabecera de cuerpo */
+        }
+        #schedule-table tbody tr:last-child td {
+            border-bottom: none; /* Si la tabla tiene un borde general, este podría no ser necesario */
+        }
+        /* --- FIN: ESTILOS PARA TABLA CON BORDER-COLLAPSE: SEPARATE --- */
+        
+        
+        /* Estilos para la nueva fila de nombres de meses en la cabecera anual */
+        #schedule-table-head .month-name-header-row th {
+            position: -webkit-sticky; /* Para compatibilidad con Safari */
+            position: sticky;
+            top: 0; /* Esta fila se pega en la parte superior */
+            background-color: #e2e8f0; /* Un color de fondo gris claro (Tailwind bg-slate-200) */
+            color: #2d3748; /* Color de texto oscuro (Tailwind text-gray-700) */
+            font-weight: 600; /* Texto en negrita (Tailwind font-semibold) */
+            font-size: 0.8rem; /* Tamaño de fuente un poco más pequeño */
+            padding-top: 0.5rem; 
+            padding-bottom: 0.5rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+            text-align: center;
+            /* Los bordes ahora se definen globalmente para th, pero podemos anular si es necesario */
+            /* border-bottom: 1px solid #cbd5e0; */ /* Ya cubierto por el estilo global de th */
+            /* border-right: 1px solid #cbd5e0; */ /* Ya cubierto */
+            z-index: 25; 
+            height: 36px; 
+            box-sizing: border-box; 
+        }
+        
+        /* Estilo para la primera celda ("Empleado" o "Meses") en la fila de nombres de meses */
+        #schedule-table-head .month-name-header-row th.sticky-col-header {
+            left: 0; 
+            z-index: 35; 
+            background-color: #e2e8f0 !important; /* Asegurar fondo opaco */
+            border-bottom-color: #cbd5e0 !important; /* Asegurar que este borde sea visible y del color correcto */
+            /* border-right-color: #cbd5e0 !important; /* Si es necesario, para la celda sticky */
+        }
+        
+        /* Ajustes para la fila de números de días cuando está en la vista anual */
+        #schedule-table-head .day-number-header-row th {
+            position: -webkit-sticky; 
+            position: sticky;
+            top: 36px; /* Altura de la fila de meses */
+            background-color: #f9fafb; /* Tailwind bg-gray-50 */
+            z-index: 20; 
+        }
+        
+        /* Ajustes para la celda "Empleado" en la fila de números de días */
+        #schedule-table-head .day-number-header-row th.sticky-col-header {
+            left: 0; 
+            top: 36px; 
+            z-index: 30; 
+            background-color: #f9fafb !important; /* Asegurar fondo opaco */
+        }
+        
+        /* --- INICIO DE LA CORRECCIÓN PARA EL FONDO Y BORDES DE LA COLUMNA DE EMPLEADOS --- */
+        /* Estilos generales para la columna de empleados (celdas de nombre en el tbody) */
+        #schedule-table-body td.employee-name-cell.sticky-col {
+            position: -webkit-sticky;
+            position: sticky;
+            left: 0;
+            z-index: 10; 
+            /* Los bordes se controlarán específicamente abajo para asegurar que cubran las líneas de división.
+               Con border-collapse: separate, cada celda tiene sus propios bordes. */
+        }
+        
+        /* Forzar fondo opaco y BORDES que coincidan con el fondo para las celdas de nombre de empleado sticky */
+        #schedule-table-body td.employee-name-cell.sticky-col.bg-white {
+            background-color: #ffffff !important;
+            /* Hacer que los bordes de esta celda sean del mismo color que su fondo
+               para "pintar sobre" cualquier línea de la fila que pudiera filtrarse. */
+            border-top: 1px solid #ffffff !important;
+            border-bottom: 1px solid #ffffff !important;
+            border-right: 1px solid #e5e7eb !important; /* Mantener el borde derecho visible contra las celdas de scroll */
+            /* border-left no es necesario ya que es la primera columna */
+        }
+        
+        #schedule-table-body td.employee-name-cell.sticky-col.bg-gray-50 {
+            background-color: #f9fafb !important;
+            border-top: 1px solid #f9fafb !important;
+            border-bottom: 1px solid #f9fafb !important;
+            border-right: 1px solid #e5e7eb !important; /* Mantener el borde derecho visible */
+        }
+        
+        /* Para la fila de "Añadir Empleado", si es sticky */
+        #schedule-table-body .add-employee-row-reformed .add-employee-cell-reformed.sticky-col {
+            background-color: #f9fafb !important; 
+            border-top: 1px solid #f9fafb !important;
+            border-bottom: 1px solid #f9fafb !important;
+            border-right: 1px solid #e5e7eb !important;
+            z-index: 15; 
+        }
+        /* --- FIN DE LA CORRECCIÓN PARA EL FONDO Y BORDES DE LA COLUMNA DE EMPLEADOS --- */
+        
     
         /* Responsive Adjustments para la nueva barra de navegación */
         @media (max-width: 767px) { /* md */
@@ -4688,64 +4831,106 @@
         }
 
         function buildScheduleTableHeader(viewType, month, year) {
-            const headerRow = createElement('tr');
-			headerRow.appendChild(createElement('th', {
-				textContent: 'Empleado',
-				className: 'py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider sticky-col-header' // ¡Clase clave!
-			}));
+            // No es necesario limpiar domCache.scheduleTableHead.innerHTML aquí,
+            // ya que las funciones renderMonthlyScheduleTable/renderAnnualScheduleTable lo hacen antes de llamar.
         
             if (viewType === 'monthly') {
+                const headerRow = createElement('tr');
+                // Celda para "Empleado"
+                headerRow.appendChild(createElement('th', {
+                    textContent: 'Empleado',
+                    className: 'py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider sticky-col-header'
+                }));
+        
                 const daysInSelectedMonth = getDaysInMonth(month, year);
                 for (let day = 1; day <= daysInSelectedMonth; day++) {
-                    // --- MODIFICACIÓN AQUÍ para el wrapper del número del día ---
                     const dayNumberWrapper = createElement('span', { className: 'day-number-wrapper', textContent: day });
-                    const dayHeaderContent = createElement('div'); // Contenedor para el número y el día de la semana
+                    const dayHeaderContent = createElement('div');
                     dayHeaderContent.appendChild(dayNumberWrapper);
                     dayHeaderContent.appendChild(createElement('span', { className: 'day-header-weekday', textContent: getWeekDayInitial(year, month, day) }));
                     
                     headerRow.appendChild(createElement('th', {
                         className: 'py-3 px-2 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider',
-                    }, [dayHeaderContent])); 
-                    // --- FIN DE MODIFICACIÓN ---
+                    }, [dayHeaderContent]));
                 }
+                domCache.scheduleTableHead.appendChild(headerRow); // Añade la fila de cabecera mensual
+        
             } else if (viewType === 'annual') {
+                const monthNameRow = createElement('tr');
+                monthNameRow.classList.add('month-name-header-row'); // Clase para estilos CSS
+        
+                // Celda para "Empleado" en la fila de nombres de meses
+                const thEmployeeMonth = createElement('th', {
+                    textContent: 'Meses', // O dejar vacío, o "Empleado"
+                    className: 'py-2 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sticky-col-header'
+                    // Nota: La clase 'sticky-col-header' la hará pegajosa.
+                    // Los estilos específicos para esta celda en la fila de meses se manejarán con CSS.
+                });
+                monthNameRow.appendChild(thEmployeeMonth);
+        
+                // Celdas para los nombres de los meses
+                for (let m = 1; m <= 12; m++) {
+                    const daysInThisMonth = getDaysInMonth(m, year);
+                    const thMonth = createElement('th', {
+                        textContent: SHORT_MONTH_NAMES[m - 1], // ENE, FEB, etc.
+                        attributes: { colspan: daysInThisMonth.toString() },
+                        // Clases de Tailwind para estilo básico, se refinarán con CSS dedicado
+                        className: 'py-2 px-1 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'
+                    });
+                    monthNameRow.appendChild(thMonth);
+                }
+                domCache.scheduleTableHead.appendChild(monthNameRow); // Añade la fila de nombres de meses
+        
+                // Fila para los números de los días y las iniciales de la semana (como antes)
+                const dayNumberRow = createElement('tr');
+                dayNumberRow.classList.add('day-number-header-row'); // Clase para estilos CSS
+        
+                // Celda para "Empleado" en la fila de números de días
+                dayNumberRow.appendChild(createElement('th', {
+                    textContent: 'Empleado',
+                    className: 'py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider sticky-col-header'
+                }));
+        
                 for (let m = 1; m <= 12; m++) {
                     const daysInThisMonth = getDaysInMonth(m, year);
                     for (let day = 1; day <= daysInThisMonth; day++) {
-                        // --- INICIO DE LA MODIFICACIÓN PARA VISTA ANUAL ---
                         const dayNumberWrapper = createElement('span', { className: 'day-number-wrapper', textContent: day });
-                        const dayHeaderContent = createElement('div'); // Contenedor para el número del día y la inicial de la semana
-                        
+                        const dayHeaderContent = createElement('div');
                         dayHeaderContent.appendChild(dayNumberWrapper);
-                        // Aquí usamos getWeekDayInitial, igual que en la vista mensual
                         dayHeaderContent.appendChild(createElement('span', {
-                        className: 'day-header-weekday', // Puedes usar la misma clase que la mensual
-                        textContent: getWeekDayInitial(year, m, day) // 'm' es el mes actual en el bucle anual
+                            className: 'day-header-weekday',
+                            textContent: getWeekDayInitial(year, m, day)
                         }));
                         
-                        headerRow.appendChild(createElement('th', {
-                        className: 'py-3 px-1.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[50px]',
+                        dayNumberRow.appendChild(createElement('th', {
+                            className: 'py-3 px-1.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[50px]',
                         }, [dayHeaderContent]));
-                        // --- FIN DE LA MODIFICACIÓN PARA VISTA ANUAL ---
                     }
                 }
+                domCache.scheduleTableHead.appendChild(dayNumberRow); // Añade la fila de números de días
             }
-            return headerRow;
         }
+        
 
         function buildEmployeeRow(employeeName, rowIndex, viewType, currentDisplayMonth, yearToDisplay) {
+            const isEvenRow = rowIndex % 2 === 0;
+            // Determina la clase de fondo para la fila y para la celda de nombre explícitamente
+            const rowAndNameCellBgClass = isEvenRow ? 'bg-white' : 'bg-gray-50';
+            // Determina la clase de hover para la fila (esto no afecta directamente el problema de transparencia de la celda sticky)
+            const rowHoverBgClass = isEvenRow ? 'hover:bg-gray-100' : 'hover:bg-gray-200';
+        
             const employeeRow = createElement('tr', {
-                className: `draggable-row ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}`,
+                className: `draggable-row ${rowAndNameCellBgClass} ${rowHoverBgClass}`, // Aplicar clase de fondo a la fila
                 dataset: { rowIndex: rowIndex.toString() }
             });
-
+        
             const nameCell = createElement('td', {
-                // ASEGÚRATE DE QUE ESTAS CLASES ESTÉN PRESENTES Y CORRECTAS
-                className: `py-2 px-4 whitespace-nowrap text-sm font-medium text-gray-800 sticky-col employee-name-cell`,
+                // Aplicar la clase de fondo directamente a la celda del nombre del empleado.
+                // Esto, junto con el CSS que asegura la opacidad con !important, debería resolver el problema.
+                className: `py-2 px-4 whitespace-nowrap text-sm font-medium text-gray-800 sticky-col employee-name-cell ${rowAndNameCellBgClass}`,
                 title: 'Doble clic para editar. Arrastra para reordenar.'
             });
-            nameCell.style.backgroundColor = (rowIndex % 2 === 0) ? '#ffffff' : '#f9fafb';
-
+        
             const nameSpan = createElement('span', {
                 className: 'employee-name-display flex-grow', textContent: employeeName, attributes: { draggable: "true" }
             });
@@ -4753,7 +4938,7 @@
             nameCell.appendChild(nameSpan);
             nameCell.appendChild(deleteIcon);
             employeeRow.appendChild(nameCell);
-
+        
             if (viewType === 'monthly') {
                 const daysInSelectedMonth = getDaysInMonth(currentDisplayMonth, yearToDisplay);
                 const employeeMonthData = scheduleData[employeeName]?.[currentDisplayMonth] || {};
@@ -4795,7 +4980,6 @@
         function renderMonthlyScheduleTable(month, year) {
             domCache.scheduleTableHead.innerHTML = ''; domCache.scheduleTableBody.innerHTML = '';
             const headerRow = buildScheduleTableHeader('monthly', month, year);
-            domCache.scheduleTableHead.appendChild(headerRow);
 
             if (!isDataLoadedForStats()) {
                 renderAddEmployeeButtonInTable();
@@ -4819,7 +5003,6 @@
         function renderAnnualScheduleTable(year) {
             domCache.scheduleTableHead.innerHTML = ''; domCache.scheduleTableBody.innerHTML = '';
             const headerRow = buildScheduleTableHeader('annual', null, year);
-            domCache.scheduleTableHead.appendChild(headerRow);
 
             if (!isDataLoadedForStats()) {
                  renderAddEmployeeButtonInTable();
