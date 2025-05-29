@@ -947,6 +947,8 @@
                                 /* Los bordes superior e inferior ahora se manejan con pseudo-elementos */
         }
         
+		
+		
         /* Pseudo-elemento para la línea superior roja */
         .consecutive-workday-violation-cell::before {
             content: '';
@@ -1003,7 +1005,41 @@
             right: -3px;
         }
         
-
+        .rule-violation-tooltip {
+            position: absolute; /* Posicionamiento absoluto respecto al body o un contenedor posicionado */
+            background-color: #2d3748; /* Tailwind bg-gray-800 */
+            color: #f7fafc;           /* Tailwind text-gray-100 */
+            border: 1px solid #4a5568; /* Tailwind border-gray-600 */
+            border-radius: 0.375rem;  /* Tailwind rounded-md */
+            padding: 0.5rem 0.75rem;  /* Tailwind p-2 px-3 */
+            font-size: 0.75rem;       /* Tailwind text-xs */
+            z-index: 100;             /* Asegura que esté por encima de otros elementos */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Sombra sutil */
+            max-width: 250px;         /* Ancho máximo para que no sea demasiado grande */
+            opacity: 0;               /* Inicialmente invisible */
+            visibility: hidden;         /* Inicialmente oculto */
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out; /* Transición suave */
+            pointer-events: none;     /* Para que no interfiera con el ratón */
+        }
+        
+        .rule-violation-tooltip.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .rule-violation-tooltip ul {
+            list-style-type: disc;
+            padding-left: 1rem; /* Espacio para los puntos de la lista */
+            margin: 0;
+        }
+        
+        .rule-violation-tooltip li {
+            margin-bottom: 0.25rem; /* Espacio entre ítems de la lista */
+        }
+        .rule-violation-tooltip li:last-child {
+            margin-bottom: 0;
+        }
+        
         
         @keyframes palpitar {
             0% { transform: scale(1); }
@@ -1801,6 +1837,7 @@
 
 		// INICIO: AÑADIR ESTA NUEVA VARIABLE GLOBAL
 		let activeRuleViolations = {}; // Objeto para almacenar violaciones: { "año-mes-día": ["mensaje1"] }
+		let ruleViolationTooltipElement = null;
 		let activeConsecutiveDayViolations = {}; // Formato: { "employeeName": [{ startDay, endDay, count, month, year }, ...], ... }
         let clearLocalStorageCountdownInterval = null;
 		
@@ -2780,6 +2817,13 @@
                     handleRuleInputChange();
                 });
             }
+			
+            if (domCache.scheduleTableHead) {
+                domCache.scheduleTableHead.addEventListener('mouseover', handleRuleViolationMouseOver);
+                domCache.scheduleTableHead.addEventListener('mouseout', handleRuleViolationMouseOut);
+            }
+            
+
             const ruleInputs = [
                 domCache.personsMorningMin, domCache.personsMorningMax,
                 domCache.personsAfternoonMin, domCache.personsAfternoonMax,
@@ -6160,51 +6204,53 @@
          * @param {boolean} hasViolation True si hay una violación, false en caso contrario.
          */
         function updateDayViolationIndicator(year, month, day, hasViolation) {
-            // Solo actualiza si la vista es mensual y es el mes correcto, O si es vista anual.
-            if (currentViewMode === 'monthly' && month !== currentSelectedMonth) {
-                return;
-            }
-        
             let dayHeaderCellElement; // El elemento <th> que representa el día
         
+            // Lógica para encontrar dayHeaderCellElement (basada en la Parte 1 de esta guía)
             if (currentViewMode === 'monthly') {
-                // En vista mensual, los días son las celdas <th> después de "Empleado".
-                // El día 1 es el segundo <th> (índice 1 en las celdas de la fila), el día 'd' es el (d)-ésimo <th> después del de "Empleado".
                 if (domCache.scheduleTableHead && domCache.scheduleTableHead.firstChild && domCache.scheduleTableHead.firstChild.cells) {
                      const headerCells = domCache.scheduleTableHead.firstChild.cells;
-                     // El índice 0 es "Empleado", así que el día 'd' es la celda en el índice 'd'.
-                     if (day >= 1 && day < headerCells.length) { // 'day' es 1-based
+                     if (day >= 1 && day < headerCells.length) {
                         dayHeaderCellElement = headerCells[day];
                      }
                 }
             } else { // Vista Anual
-                // Calcular el índice de columna global para el día en la vista anual.
                 let columnIndex = 0;
                 for (let m = 1; m < month; m++) {
-                    columnIndex += getDaysInMonth(m, year); // getDaysInMonth debe estar definida y funcionar correctamente
+                    columnIndex += getDaysInMonth(m, year); // Asumiendo que getDaysInMonth está definida
                 }
-                columnIndex += day; // Sumamos el día (1-based)
+                columnIndex += day;
         
-                // Acceder a la segunda fila de la cabecera (la que tiene los números de día y la clase .day-number-header-row)
                 const dayNumberHeaderRow = domCache.scheduleTableHead.querySelector('.day-number-header-row');
                 if (dayNumberHeaderRow && dayNumberHeaderRow.cells) {
                     const headerCells = dayNumberHeaderRow.cells;
-                    // El índice 0 de headerCells es "Empleado", así que el día correspondiente a columnIndex
-                    // (que ya es 1-based para el primer día del año, ej: Ene 1 es columnIndex 1)
-                    // estará en headerCells[columnIndex].
                     if (columnIndex >= 1 && columnIndex < headerCells.length) {
                         dayHeaderCellElement = headerCells[columnIndex];
                     }
                 }
             }
+            // Fin de la lógica para encontrar dayHeaderCellElement
         
             if (dayHeaderCellElement) {
-                // El estilo CSS '.day-rule-violation .day-number-wrapper' se encarga de redondear el número.
-                // Aplicamos la clase 'day-rule-violation' al <th> padre.
                 dayHeaderCellElement.classList.toggle('day-rule-violation', hasViolation);
+                if (hasViolation) {
+                    // Obtener los mensajes de violación para este día específico
+                    // Asumimos que activeRuleViolations está poblado correctamente
+                    const violationKey = `${year}-${month}-${day}`;
+                    const violationMessages = activeRuleViolations[violationKey] || [];
+                    if (violationMessages.length > 0) {
+                        // Almacenar los mensajes como una cadena JSON en un data-attribute
+                        dayHeaderCellElement.dataset.violationMessages = JSON.stringify(violationMessages);
+                    } else {
+                        // Si por alguna razón hasViolation es true pero no hay mensajes, limpiar el atributo
+                        delete dayHeaderCellElement.dataset.violationMessages;
+                    }
+                } else {
+                    // Si no hay violación, asegurarse de limpiar el atributo
+                    delete dayHeaderCellElement.dataset.violationMessages;
+                }
             }
         }
-        
         
         
 
@@ -8609,6 +8655,86 @@
             }
             
             domCache.titleYearInput.value = yearOfSchedule;
+        }
+
+        function createRuleViolationTooltip() {
+            if (!ruleViolationTooltipElement) {
+                ruleViolationTooltipElement = document.createElement('div');
+                ruleViolationTooltipElement.className = 'rule-violation-tooltip';
+                document.body.appendChild(ruleViolationTooltipElement);
+            }
+        }
+        
+        function handleRuleViolationMouseOver(event) {
+            const targetCell = event.target.closest('th.day-rule-violation'); // Solo actuar sobre celdas con violación
+            if (!targetCell || !targetCell.dataset.violationMessages) {
+                // Si no es una celda de violación o no tiene mensajes, ocultar por si acaso y salir
+                if (ruleViolationTooltipElement) {
+                    ruleViolationTooltipElement.classList.remove('visible');
+                }
+                return;
+            }
+        
+            createRuleViolationTooltip(); // Crea el elemento si no existe
+        
+            try {
+                const messages = JSON.parse(targetCell.dataset.violationMessages);
+                if (messages && messages.length > 0) {
+                    let contentHtml = '<strong>Infracciones:</strong><ul>';
+                    messages.forEach(msg => {
+                        contentHtml += `<li>${msg}</li>`;
+                    });
+                    contentHtml += '</ul>';
+                    ruleViolationTooltipElement.innerHTML = contentHtml;
+        
+                    // Posicionamiento del tooltip
+                    const rect = targetCell.getBoundingClientRect();
+                    let tooltipTop = rect.bottom + window.scrollY + 5; // 5px debajo del elemento
+                    let tooltipLeft = rect.left + window.scrollX;
+        
+                    // Ajustar si se sale de la pantalla
+                    ruleViolationTooltipElement.classList.add('visible'); // Hacer visible para calcular dimensiones
+                    const tooltipRect = ruleViolationTooltipElement.getBoundingClientRect();
+        
+                    if (tooltipLeft + tooltipRect.width > window.innerWidth - 10) {
+                        tooltipLeft = window.innerWidth - tooltipRect.width - 10;
+                    }
+                    if (tooltipTop + tooltipRect.height > window.innerHeight - 10) {
+                        tooltipTop = rect.top + window.scrollY - tooltipRect.height - 5; // Poner encima
+                    }
+                    tooltipLeft = Math.max(10, tooltipLeft); // Mínimo 10px del borde izquierdo
+                    tooltipTop = Math.max(10, tooltipTop);   // Mínimo 10px del borde superior
+        
+        
+                    ruleViolationTooltipElement.style.top = `${tooltipTop}px`;
+                    ruleViolationTooltipElement.style.left = `${tooltipLeft}px`;
+        
+                } else {
+                    ruleViolationTooltipElement.classList.remove('visible');
+                }
+            } catch (e) {
+                console.error("Error al parsear mensajes de violación:", e);
+                if (ruleViolationTooltipElement) {
+                    ruleViolationTooltipElement.classList.remove('visible');
+                }
+            }
+        }
+        
+        function handleRuleViolationMouseOut(event) {
+            const targetCell = event.target.closest('th.day-rule-violation');
+            // Solo ocultar si el ratón realmente ha salido de una celda de violación
+            // y no se ha movido a otro elemento dentro de la misma celda que dispare el mouseout.
+            if (targetCell && ruleViolationTooltipElement) {
+                // Una comprobación adicional: si el relatedTarget (hacia dónde se movió el ratón)
+                // no está dentro del targetCell, entonces ocultar.
+                if (!targetCell.contains(event.relatedTarget)) {
+                     ruleViolationTooltipElement.classList.remove('visible');
+                }
+            } else if (ruleViolationTooltipElement && !event.target.closest('th.day-rule-violation')) {
+                // Si el mouseout no es de una celda de violación pero el tooltip está visible, ocultarlo.
+                // Esto puede pasar si el mouse se mueve muy rápido.
+                ruleViolationTooltipElement.classList.remove('visible');
+            }
         }
 
     </script>
