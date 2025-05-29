@@ -877,6 +877,23 @@
             font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 0.75rem;
             display: flex; align-items: center;
         }
+		
+        /* Estilo para las áreas de resumen de violaciones dentro del modal de normas */
+        .rule-violation-summary-area {
+            max-height: 150px; /* Ajusta esta altura según tus preferencias */
+            overflow-y: auto;  /* Habilita el scroll vertical si el contenido excede max-height */
+            padding: 0.5rem;
+            background-color: #f9fafb; /* Un fondo ligeramente diferente para el área de scroll */
+            border-radius: 0.25rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* Ajuste para el modal de normas para que pueda crecer un poco más si es necesario */
+        #rules-modal .modal-content {
+            max-width: 48rem; /* Puedes ajustar esto, antes era max-w-2xl (42rem) */
+        }
+        
+		
         #rules-modal-body .rule-title .rule-status-indicator {
             width: 10px; height: 10px; border-radius: 50%; margin-left: 0.75rem;
             background-color: #d1d5db; 
@@ -1646,72 +1663,72 @@
                 </button>
             </div>
             
-            <div id="rules-modal-body" class="space-y-6">
-                <div class="rule-block border p-4 rounded-lg bg-white shadow">
-                    <div class="flex justify-between items-center mb-3">
-                        <h4 class="text-lg font-semibold text-gray-800">Personas por Turno</h4>
-                        <label for="persons-per-shift-enabled-toggle" class="flex items-center cursor-pointer">
-                            <div class="relative switch">
-                                <input type="checkbox" id="persons-per-shift-enabled-toggle" class="sr-only peer">
-                                <span class="slider"></span>
+            <div id="rules-modal-body" class="flex flex-col md:flex-row gap-6"> <div class="flex-1 min-w-0"> <div class="rule-block border p-4 rounded-lg bg-white shadow h-full flex flex-col"> <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-lg font-semibold text-gray-800">Personas por Turno</h4>
+                            <label for="persons-per-shift-enabled-toggle" class="flex items-center cursor-pointer">
+                                <div class="relative switch">
+                                    <input type="checkbox" id="persons-per-shift-enabled-toggle" class="sr-only peer">
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">
+                            Define el rango de empleados (mínimo - máximo) requeridos por turno.
+                            M2, T2, N2 cuentan como M, T, N respectivamente. Deja un campo vacío si no hay límite.
+                        </p>
+                        <div id="persons-per-shift-settings-inputs" class="space-y-3"> <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
+                                <label for="persons-morning-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Mañanas (M/M2):</label>
+                                <input type="number" id="persons-morning-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
+                                <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
+                                <input type="number" id="persons-morning-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
                             </div>
-                        </label>
-                    </div>
-                    <p class="text-xs text-gray-500 mb-4">
-                        Define el rango de empleados (mínimo - máximo) requeridos por turno.
-                        M2, T2, N2 cuentan como M, T, N respectivamente. Deja un campo vacío si no hay límite específico.
-						Los días que incumplan la norma se verán rodeados de color rojo.
-                    </p>
-                    <div id="persons-per-shift-settings-inputs" class="space-y-3 hidden-by-default">
-                        <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
-                            <label for="persons-morning-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Mañanas (M/M2):</label>
-                            <input type="number" id="persons-morning-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                            <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
-                            <input type="number" id="persons-morning-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                            <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
+                                <label for="persons-afternoon-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Tardes (T/T2):</label>
+                                <input type="number" id="persons-afternoon-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
+                                <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
+                                <input type="number" id="persons-afternoon-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
+                                <label for="persons-night-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Noches (N/N2):</label>
+                                <input type="number" id="persons-night-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
+                                <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
+                                <input type="number" id="persons-night-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                            </div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
-                            <label for="persons-afternoon-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Tardes (T/T2):</label>
-                            <input type="number" id="persons-afternoon-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                            <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
-                            <input type="number" id="persons-afternoon-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
-                            <label for="persons-night-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Noches (N/N2):</label>
-                            <input type="number" id="persons-night-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                            <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
-                            <input type="number" id="persons-night-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                        <div class="mt-4 pt-3 border-t border-gray-200 flex-grow min-h-0"> <h5 class="font-semibold text-gray-700 mb-2 text-sm">Violaciones (Personas por Turno):</h5>
+                            <div id="persons-per-shift-violations-summary" class="text-xs text-gray-600 overflow-y-auto rule-violation-summary-area">
+                                <p>No se han detectado violaciones o la norma está desactivada.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             
-                <div class="rule-block border p-4 rounded-lg bg-white shadow">
-                   <div class="flex justify-between items-center mb-3">
-                       <h4 class="text-lg font-semibold text-gray-800">Máximo Días Consecutivos Trabajados</h4>
-                       <label for="max-consecutive-days-enabled-toggle" class="flex items-center cursor-pointer">
-                           <div class="relative switch">
-                               <input type="checkbox" id="max-consecutive-days-enabled-toggle" class="sr-only peer">
-                               <span class="slider"></span>
-                           </div>
-                       </label>
-                   </div>
-                   <p class="text-xs text-gray-500 mb-4">
-                       Define el número máximo de días que un empleado puede trabajar consecutivamente sin un día libre.
-                       Se consideran días trabajados aquellos con turnos M, T, N (y sus variantes M2, T2, N2) o texto personalizado.
-					   Los turnos que incumplan la norma se verán rodeados de color rojo.
-                   </p>
-                   <div id="max-consecutive-days-settings-inputs" class="space-y-3 hidden-by-default">
-                       <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-x-3">
-                           <label for="max-consecutive-days-input" class="text-sm font-medium text-gray-600 sm:col-span-1">Máx. Días:</label>
-                           <input type="number" id="max-consecutive-days-input" placeholder="Ej: 7" min="1" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
+                <div class="flex-1 min-w-0">
+                    <div class="rule-block border p-4 rounded-lg bg-white shadow h-full flex flex-col">
+                       <div class="flex justify-between items-center mb-3">
+                           <h4 class="text-lg font-semibold text-gray-800">Máx. Días Consecutivos</h4>
+                           <label for="max-consecutive-days-enabled-toggle" class="flex items-center cursor-pointer">
+                               <div class="relative switch">
+                                   <input type="checkbox" id="max-consecutive-days-enabled-toggle" class="sr-only peer">
+                                   <span class="slider"></span>
+                               </div>
+                           </label>
                        </div>
-                   </div>
-               </div>
-            
-                <div id="rule-violations-summary-section" class="p-4 bg-gray-50 rounded-lg">
-                    <h4 class="font-semibold text-gray-700 mb-3">Resumen de Violaciones de Normas:</h4>
-                    <div id="rule-violations-summary" class="text-sm text-gray-600 max-h-40 overflow-y-auto">
-                        <p>No se han detectado violaciones o las normas están desactivadas.</p>
+                       <p class="text-xs text-gray-500 mb-4">
+                           Define el número máximo de días que un empleado puede trabajar consecutivamente.
+                       </p>
+                       <div id="max-consecutive-days-settings-inputs" class="space-y-3"> <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-x-3">
+                               <label for="max-consecutive-days-input" class="text-sm font-medium text-gray-600 sm:col-span-1">Máx. Días:</label>
+                               <input type="number" id="max-consecutive-days-input" placeholder="Ej: 7" min="1" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
+                           </div>
+                       </div>
+                       <div class="mt-4 pt-3 border-t border-gray-200 flex-grow min-h-0">
+                            <h5 class="font-semibold text-gray-700 mb-2 text-sm">Violaciones (Días Consecutivos):</h5>
+                            <div id="max-consecutive-days-violations-summary" class="text-xs text-gray-600 overflow-y-auto rule-violation-summary-area">
+                                <p>No se han detectado violaciones o la norma está desactivada.</p>
+                            </div>
                         </div>
+                    </div>
                 </div>
             </div>
             
@@ -2369,6 +2386,8 @@
 			domCache.maxConsecutiveDaysEnabledToggle = document.getElementById('max-consecutive-days-enabled-toggle');
 			domCache.maxConsecutiveDaysSettingsInputs = document.getElementById('max-consecutive-days-settings-inputs');
 			domCache.maxConsecutiveDaysInput = document.getElementById('max-consecutive-days-input');
+			domCache.personsPerShiftViolationsSummary = document.getElementById('persons-per-shift-violations-summary');
+			domCache.maxConsecutiveDaysViolationsSummary = document.getElementById('max-consecutive-days-violations-summary');
 			
 			domCache.personsPerShiftEnabledToggle = document.getElementById('persons-per-shift-enabled-toggle');
 			domCache.personsPerShiftSettingsInputs = document.getElementById('persons-per-shift-settings-inputs');
@@ -7921,14 +7940,18 @@
         // --- FIN DE LA NUEVA FUNCIÓN AUXILIAR ---
 
         function renderRulesModal() {
-            // Asegurarse de que los elementos del DOM para la norma "Personas por Turno" estén cacheados y existan
-            if (domCache.personsPerShiftEnabledToggle && domCache.personsPerShiftSettingsInputs && 
-                domCache.personsMorningMin && domCache.personsMorningMax &&
-                domCache.personsAfternoonMin && domCache.personsAfternoonMax &&
-                domCache.personsNightMin && domCache.personsNightMax) {
-                
+            // Norma: Personas por Turno
+            if (domCache.personsPerShiftEnabledToggle &&
+                domCache.personsPerShiftSettingsInputs &&
+                domCache.personsMorningMin &&
+                domCache.personsMorningMax &&
+                domCache.personsAfternoonMin &&
+                domCache.personsAfternoonMax &&
+                domCache.personsNightMin &&
+                domCache.personsNightMax) {
                 const configPersons = rulesConfig.personsPerShift;
                 domCache.personsPerShiftEnabledToggle.checked = configPersons.enabled;
+                // La visibilidad de los inputs se maneja por el listener del toggle
                 domCache.personsPerShiftSettingsInputs.classList.toggle('hidden-by-default', !configPersons.enabled);
         
                 domCache.personsMorningMin.value = configPersons.settings.morning.min !== null ? configPersons.settings.morning.min : '';
@@ -7938,26 +7961,27 @@
                 domCache.personsNightMin.value = configPersons.settings.night.min !== null ? configPersons.settings.night.min : '';
                 domCache.personsNightMax.value = configPersons.settings.night.max !== null ? configPersons.settings.night.max : '';
             } else {
-                console.warn("Algunos elementos del DOM para la norma 'Personas por Turno' no están cacheados o no existen.");
+                console.warn("Elementos DOM para 'Personas por Turno' no encontrados en renderRulesModal.");
             }
         
-            // --- NUEVA NORMA: Máximo Días Consecutivos ---
-            // Asegurarse de que los elementos del DOM para la norma "Máximo Días Consecutivos" estén cacheados y existan
+            // Norma: Máximo Días Consecutivos
             if (domCache.maxConsecutiveDaysEnabledToggle && domCache.maxConsecutiveDaysSettingsInputs && domCache.maxConsecutiveDaysInput) {
                 const consecutiveConfig = rulesConfig.maxConsecutiveWorkdays;
                 domCache.maxConsecutiveDaysEnabledToggle.checked = consecutiveConfig.enabled;
+                // La visibilidad de los inputs se maneja por el listener del toggle
                 domCache.maxConsecutiveDaysSettingsInputs.classList.toggle('hidden-by-default', !consecutiveConfig.enabled);
                 domCache.maxConsecutiveDaysInput.value = consecutiveConfig.maxDays !== null ? consecutiveConfig.maxDays : '';
             } else {
-                console.warn("Algunos elementos del DOM para la norma 'Máximo Días Consecutivos' no están cacheados o no existen.");
+                console.warn("Elementos DOM para 'Máx. Días Consecutivos' no encontrados en renderRulesModal.");
             }
-            // --- FIN NUEVA NORMA ---
         
-            // Deshabilitar botón de guardar inicialmente, se habilita si hay cambios
             if (domCache.saveRulesButton) {
                 domCache.saveRulesButton.disabled = true;
             }
+            // Llamar a displayRuleViolationsSummary para poblar las nuevas áreas de resumen
+            displayRuleViolationsSummary();
         }
+        
         
         
         function handleRuleInputChange() {
@@ -8139,67 +8163,66 @@
          * Muestra un resumen de las violaciones de normas activas en el modal de Normas.
          */
         function displayRuleViolationsSummary() {
-            if (!domCache.ruleViolationsSummarySection || !domCache.ruleViolationsSummary) return;
+            // Cache de los elementos de resumen (asegúrate que estén en domCache)
+            const personsSummaryDiv = domCache.personsPerShiftViolationsSummary;
+            const consecutiveSummaryDiv = domCache.maxConsecutiveDaysViolationsSummary;
         
-            let summaryHtml = '';
-            let hasAnyViolation = false;
-        
-            // Sección para Personas por Turno
-            if (rulesConfig.personsPerShift.enabled) {
-                domCache.ruleViolationsSummarySection.classList.remove('hidden-by-default'); // Mostrar sección si alguna norma está activa
-                const personViolationKeys = Object.keys(activeRuleViolations);
-                if (personViolationKeys.length > 0) {
-                    hasAnyViolation = true;
-                    summaryHtml += '<h5 class="font-semibold text-gray-700 mt-2 mb-1">Violaciones de Personas por Turno:</h5><ul class="list-disc pl-5 space-y-1">';
-                    personViolationKeys.forEach(key => {
-                        const [year, month, day] = key.split('-');
-                        summaryHtml += `<li><strong>${day}/${SHORT_MONTH_NAMES[parseInt(month)-1]}/${year}:</strong><ul>`;
-                        activeRuleViolations[key].forEach(violationMsg => {
-                            summaryHtml += `<li class="text-red-600 ml-4">- ${violationMsg}</li>`;
-                        });
-                        summaryHtml += `</ul></li>`;
-                    });
-                    summaryHtml += '</ul>';
-                } else {
-                     summaryHtml += '<p class="text-green-600"><i class="fas fa-check-circle mr-2"></i>Norma de Personas por Turno: Sin violaciones detectadas.</p>';
-                }
+            if (!personsSummaryDiv || !consecutiveSummaryDiv) {
+                console.error("Elementos de resumen de violaciones no encontrados en el DOM.");
+                return;
             }
         
-            // --- NUEVA SECCIÓN para Máximo Días Consecutivos ---
+            let personsHtml = '';
+            let consecutiveHtml = '';
+            let hasPersonsViolations = false;
+            let hasConsecutiveViolations = false;
+        
+            // Resumen para Personas por Turno
+            if (rulesConfig.personsPerShift.enabled) {
+                const personViolationKeys = Object.keys(activeRuleViolations);
+                if (personViolationKeys.length > 0) {
+                    hasPersonsViolations = true;
+                    personsHtml += '<ul class="list-disc pl-4 space-y-0.5">'; // Ajustar padding y espacio
+                    personViolationKeys.forEach(key => {
+                        const [year, month, day] = key.split('-');
+                        personsHtml += `<li><strong>${day}/${SHORT_MONTH_NAMES[parseInt(month)-1]}/${year}:</strong><ul class="list-circle pl-3">`; // list-circle para sublista
+                        activeRuleViolations[key].forEach(violationMsg => {
+                            personsHtml += `<li class="text-red-600">${violationMsg}</li>`;
+                        });
+                        personsHtml += `</ul></li>`;
+                    });
+                    personsHtml += '</ul>';
+                } else {
+                    personsHtml = '<p class="text-green-600 text-xs"><i class="fas fa-check-circle mr-1"></i>Sin violaciones detectadas.</p>';
+                }
+            } else {
+                personsHtml = '<p class="text-gray-500 text-xs">Norma desactivada.</p>';
+            }
+            personsSummaryDiv.innerHTML = personsHtml;
+        
+            // Resumen para Máximo Días Consecutivos
             if (rulesConfig.maxConsecutiveWorkdays.enabled) {
-                domCache.ruleViolationsSummarySection.classList.remove('hidden-by-default'); // Mostrar sección si alguna norma está activa
                 const consecutiveViolationKeys = Object.keys(activeConsecutiveDayViolations);
                 if (consecutiveViolationKeys.length > 0) {
-                    hasAnyViolation = true;
-                    summaryHtml += '<h5 class="font-semibold text-gray-700 mt-3 mb-1">Violaciones de Máx. Días Consecutivos Trabajados:</h5><ul class="list-disc pl-5 space-y-1">';
+                    hasConsecutiveViolations = true;
+                    consecutiveHtml += '<ul class="list-disc pl-4 space-y-0.5">';
                     consecutiveViolationKeys.forEach(empName => {
                         activeConsecutiveDayViolations[empName].forEach(violation => {
                             const startDateStr = `${violation.startDate.day}/${SHORT_MONTH_NAMES[violation.startDate.month-1]}`;
                             const endDateStr = `${violation.endDate.day}/${SHORT_MONTH_NAMES[violation.endDate.month-1]}`;
-                            summaryHtml += `<li class="text-red-600 ml-4">- <strong>${empName}:</strong> ${violation.count} días (Máx: ${rulesConfig.maxConsecutiveWorkdays.maxDays}) desde ${startDateStr} hasta ${endDateStr}.</li>`;
+                            consecutiveHtml += `<li class="text-red-600"><strong>${empName}:</strong> ${violation.count} días (Máx: ${rulesConfig.maxConsecutiveWorkdays.maxDays}) de ${startDateStr} a ${endDateStr}.</li>`;
                         });
                     });
-                    summaryHtml += '</ul>';
+                    consecutiveHtml += '</ul>';
                 } else {
-                    summaryHtml += '<p class="text-green-600 mt-2"><i class="fas fa-check-circle mr-2"></i>Norma de Máx. Días Consecutivos: Sin violaciones detectadas.</p>';
+                    consecutiveHtml = '<p class="text-green-600 text-xs"><i class="fas fa-check-circle mr-1"></i>Sin violaciones detectadas.</p>';
                 }
-            }
-            // --- FIN NUEVA SECCIÓN ---
-        
-            if (!rulesConfig.personsPerShift.enabled && !rulesConfig.maxConsecutiveWorkdays.enabled) {
-                // Si AMBAS normas están desactivadas, ocultar la sección del resumen.
-                domCache.ruleViolationsSummarySection.classList.add('hidden-by-default');
-                domCache.ruleViolationsSummary.innerHTML = '<p>Ninguna norma está activada.</p>';
-            } else if (!hasAnyViolation && (rulesConfig.personsPerShift.enabled || rulesConfig.maxConsecutiveWorkdays.enabled)) {
-                // Si al menos una norma está activa pero no hay violaciones de ningún tipo
-                if (summaryHtml === '') { // Si el HTML está vacío porque solo había mensajes de "sin violaciones"
-                     summaryHtml = '<p class="text-green-600"><i class="fas fa-check-circle mr-2"></i>Todas las normas activas se cumplen para los días visibles.</p>';
-                }
-                domCache.ruleViolationsSummary.innerHTML = summaryHtml;
             } else {
-                domCache.ruleViolationsSummary.innerHTML = summaryHtml;
+                consecutiveHtml = '<p class="text-gray-500 text-xs">Norma desactivada.</p>';
             }
+            consecutiveSummaryDiv.innerHTML = consecutiveHtml;
         }
+        
         
         function isWorkDay(shiftValue) {
             if (!shiftValue || shiftValue.trim() === "") return false; // Vacío no es trabajo
