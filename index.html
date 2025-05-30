@@ -1075,12 +1075,83 @@
 			user-select: none;         /* Estándar */
 			cursor: pointer; /* Para mantener la indicación de que es clickeable */
 			
+        .view-toggle-button {
+            /* ... tus estilos existentes ... */
+            transition: all 0.15s ease-in-out;
+        }
+        .view-toggle-button:hover {
+            /* ... tus estilos hover existentes ... */
+            transform: translateY(-1px); /* Ligero movimiento hacia arriba */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra más pronunciada */
+        }
+        .view-toggle-button:active {
+            transform: translateY(0px) scale(0.98); /* Efecto de pulsación */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+        }
+        
+			
     </style>
 </head>
 
 <body class="p-4 md:p-8">
 
 
+    <div id="history-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-lg"> <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                    <i class="fas fa-history text-purple-500 mr-3"></i>Historial de Cambios
+                </h3>
+                <button id="close-history-modal-button" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+    
+            <div class="flex justify-end items-center mb-3">
+                <button id="modal-undo-button" title="Deshacer (Ctrl+Z)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5 mr-2" disabled>
+                    <i class="fas fa-undo"></i> Deshacer
+                </button>
+                <button id="modal-redo-button" title="Rehacer (Ctrl+Y)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5" disabled>
+                    <i class="fas fa-redo"></i> Rehacer
+                </button>
+            </div>
+    
+            <div id="modal-change-history-list-container" class="max-h-96 overflow-y-auto border border-gray-200 rounded-md p-3 bg-gray-50">
+                <ul id="modal-change-history-list">
+                    <li class="text-center text-gray-400">No hay cambios recientes.</li>
+                </ul>
+            </div>
+    
+            <div class="mt-6 text-right">
+                <button id="ok-history-modal-button" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notes-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-xl"> <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                    <i class="fas fa-pencil-alt text-orange-500 mr-3"></i>Notas Generales
+                </h3>
+                <button id="close-notes-modal-button" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+    
+            <textarea id="modal-general-notes-textarea"
+                      class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm notes-textarea"
+                      rows="10"
+                      placeholder="Añade comentarios o recordatorios aquí..."></textarea>
+    
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="ok-notes-modal-button" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+    
 
     <div class="container mx-auto max-w-full">
         <header class="mb-10 text-center">
@@ -1244,43 +1315,53 @@
 
         <main id="schedule-display-section" class="hidden-by-default">
         
-            <div class="schedule-navigation-bar"> 
-                <div id="view-mode-buttons-group"
-                     class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3 w-full">
-                
-                    <div class="flex flex-row w-full gap-2 sm:contents">
+            <div class="schedule-navigation-bar">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 w-full">
+                    <div class="flex gap-2">
                         <button id="open-legend-colors-modal-button-nav"
-                                class="view-toggle-button bg-teal-500 hover:bg-teal-600 text-white !justify-center flex-1 sm:flex-none sm:w-auto sm:order-1"
+                                class="view-toggle-button bg-teal-500 hover:bg-teal-600 text-white"
                                 title="Abrir Leyenda, Colores, Horarios de Turno y Logo">
-                            <i class="fas fa-palette"></i>
+                            <i class="fas fa-palette mr-2"></i>
                             <span>Personalización</span>
                         </button>
                         <button id="open-rules-modal-button-nav"
-                                class="view-toggle-button bg-sky-500 hover:bg-sky-600 text-white !justify-center flex-1 sm:flex-none sm:w-auto sm:order-3"
+                                class="view-toggle-button bg-sky-500 hover:bg-sky-600 text-white"
                                 title="Abrir Configuración de Normas">
-                            <i class="fas fa-gavel"></i>
+                            <i class="fas fa-gavel mr-2"></i>
                             <span>Normas</span>
                         </button>
                     </div>
-                
-                    <div class="flex justify-center w-full gap-2 sm:gap-3 sm:order-2 sm:w-auto">
-                        <button id="view-monthly-button" class="view-toggle-button active flex-1 sm:flex-initial">
-                            <i class="fas fa-calendar-day"></i>
+            
+                    <div class="flex gap-2">
+                        <button id="view-monthly-button" class="view-toggle-button active">
+                            <i class="fas fa-calendar-day mr-2"></i>
                             <span>Vista Mensual</span>
                         </button>
-                        <button id="view-annual-button" class="view-toggle-button flex-1 sm:flex-initial">
-                            <i class="fas fa-calendar-alt"></i>
+                        <button id="view-annual-button" class="view-toggle-button">
+                            <i class="fas fa-calendar-alt mr-2"></i>
                             <span>Vista Anual</span>
                         </button>
                     </div>
-                </div>
-        
-                <div id="month-tabs-wrapper" class="min-w-0"> 
-                    <div id="month-tabs-container" class="month-tabs-container">
-                        <!-- Las pestañas de mes (ENE, FEB, etc.) serán generadas aquí 
-                             por tu función JavaScript populateMonthTabs(). 
-                             No necesitas copiar los botones de mes del prototipo aquí. -->
+            
+                    <div class="flex gap-2">
+                        <button id="open-history-modal-button"
+                                class="view-toggle-button bg-purple-500 hover:bg-purple-600 text-white"
+                                title="Ver Historial de Cambios">
+                            <i class="fas fa-history mr-2"></i>
+                            <span>Historial</span>
+                        </button>
+                        <button id="open-notes-modal-button"
+                                class="view-toggle-button bg-orange-500 hover:bg-orange-600 text-white"
+                                title="Ver/Editar Notas Generales">
+                            <i class="fas fa-pencil-alt mr-2"></i>
+                            <span>Notas</span>
+                        </button>
                     </div>
+                </div>
+            
+                <div id="month-tabs-wrapper" class="min-w-0">
+                    <div id="month-tabs-container" class="month-tabs-container">
+                        </div>
                 </div>
             </div>
             <section id="schedule-table-section" class="bg-white rounded-xl shadow-xl">
@@ -1412,34 +1493,6 @@
                         </section>
                 </section> 
         
-                <div class="lg:col-span-4 grid grid-cols-1 lg:grid-cols-2 gap-8"> 
-                    <section id="history-section" class="lg:col-span-1">
-                        <div class="flex justify-between items-center mb-3 border-b border-gray-200 pb-3">
-                            <h3 class="section-title !mb-0 !border-b-0 !pb-0 flex-grow">
-                                <i class="fas fa-history"></i>Historial de Cambios
-                            </h3>
-                            <div class="flex-shrink-0">
-                                <button id="undo-button" title="Deshacer (Ctrl+Z)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5 mr-2" disabled>
-                                    <i class="fas fa-undo"></i>
-                                </button>
-                                <button id="redo-button" title="Rehacer (Ctrl+Y)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5" disabled>
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div id="change-history-list-container">
-                            <ul id="change-history-list">
-                                <li class="text-center text-gray-400">No hay cambios recientes.</li>
-                            </ul>
-                        </div>
-                    </section>
-        
-                    <section id="notes-section" class="lg:col-span-1">
-                        <h3 class="section-title"><i class="fas fa-pencil-alt"></i>Notas Generales</h3>
-                        <textarea id="general-notes" class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm notes-textarea" placeholder="Añade comentarios o recordatorios aquí..."></textarea>
-                    </section>
-                </div> 
-            </div> 
         </main>
 
         <footer class="mt-16 text-center text-sm text-gray-500 relative pb-4 md:pb-2 px-4 md:px-2">
@@ -2155,7 +2208,7 @@
                 employeeNamesOrdered: JSON.parse(JSON.stringify(employeeNamesOrdered)),
                 currentShiftColors: JSON.parse(JSON.stringify(currentShiftColors)),
                 currentUserShiftTimes: JSON.parse(JSON.stringify(currentUserShiftTimes)),
-                generalNotes: domCache.generalNotesTextarea.value,
+                generalNotes: domCache.modalGeneralNotesTextarea ? domCache.modalGeneralNotesTextarea.value : "",
                 yearOfSchedule: yearOfSchedule,
                 currentSelectedMonth: currentSelectedMonth,
                 currentViewMode: currentViewMode,
@@ -2165,44 +2218,78 @@
         }
 
         function restoreAppState(snapshot) {
-        		const currentGlobalYearBeforeRestore = yearOfSchedule;
+            // Guardar el año global actual como fallback si el snapshot no lo tiene
+            const currentGlobalYearBeforeRestore = yearOfSchedule; 
         
-        		scheduleData = snapshot.scheduleData;
-        		employeeNamesOrdered = snapshot.employeeNamesOrdered;
-        		currentShiftColors = snapshot.currentShiftColors;
-        		currentUserShiftTimes = snapshot.currentUserShiftTimes;
-        		domCache.generalNotesTextarea.value = snapshot.generalNotes;
-            // <<<< INICIO: AÑADIR ESTO PARA RULESCONFIG >>>>
+            // Restaurar datos del horario
+            scheduleData = snapshot.scheduleData || {};
+            employeeNamesOrdered = snapshot.employeeNamesOrdered || [];
+        
+            // Restaurar colores y tiempos de turno
+            currentShiftColors = snapshot.currentShiftColors || JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
+            currentUserShiftTimes = snapshot.currentUserShiftTimes || JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
+        
+            // CORRECCIÓN NOTAS: Usar el textarea del modal y comprobar existencia
+            if (domCache.modalGeneralNotesTextarea) { 
+                domCache.modalGeneralNotesTextarea.value = snapshot.generalNotes || "";
+            } else {
+                console.warn("restoreAppState: domCache.modalGeneralNotesTextarea no encontrado.");
+            }
+        
+            // Restaurar configuración de normas
             if (snapshot.rulesConfig) {
                 rulesConfig = snapshot.rulesConfig;
             } else {
                 // Si el snapshot es antiguo y no tiene rulesConfig, usar defaults
-                rulesConfig = getDefaultRulesConfig();
+                rulesConfig = getDefaultRulesConfig(); // Asegúrate de que getDefaultRulesConfig() esté definida
             }
-            // <<<< FIN: AÑADIR ESTO PARA RULESCONFIG >>>>
         
-        		currentSelectedMonth = snapshot.currentSelectedMonth;
-        		currentViewMode = snapshot.currentViewMode;
-        		if (domCache.csvFileInput) {
-        			if (snapshot.uploadedFileName) {
-        				domCache.csvFileInput.dataset.uploadedFileName = snapshot.uploadedFileName;
-        			} else {
-        				delete domCache.csvFileInput.dataset.uploadedFileName;
-        			}
-        		}
+            // Restaurar vista y mes seleccionado
+            currentSelectedMonth = snapshot.currentSelectedMonth || (new Date().getMonth() + 1);
+            currentViewMode = snapshot.currentViewMode || 'monthly';
         
-        		yearOfSchedule = currentGlobalYearBeforeRestore;
-        		domCache.yearInput.value = yearOfSchedule; 
+            // Restaurar nombre de archivo CSV si existe en el snapshot
+            if (domCache.csvFileInput) {
+                if (snapshot.uploadedFileName) {
+                    domCache.csvFileInput.dataset.uploadedFileName = snapshot.uploadedFileName;
+                     if(domCache.csvFileInputText) domCache.csvFileInputText.textContent = snapshot.uploadedFileName; // Actualizar texto del botón
+                     if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-check-circle mr-2 text-green-500'; // Cambiar icono
+                } else {
+                    delete domCache.csvFileInput.dataset.uploadedFileName;
+                    if(domCache.csvFileInputText) domCache.csvFileInputText.textContent = 'Seleccionar archivo...';
+                    if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3';
+                }
+            }
         
-        		updateLegend();
-        		handleViewChange(); 
-        		initializeAndRenderNewStatistics(); 
-        		populateMonthTabs();
-        		updateViewModeUI();
-        		updateUnsavedChangesIndicator();
-        		updateUndoRedoButtonsState();
-            validateAndDisplayRuleViolations(); // <<<< AÑADIR: Revalidar normas después de restaurar estado
-        	}
+            // CORRECCIÓN AÑO: Actualizar variable global y LUEGO el input del DOM si existe
+            // Usar el año del snapshot. Si no existe, usar el que estaba antes de la restauración.
+            yearOfSchedule = snapshot.yearOfSchedule || currentGlobalYearBeforeRestore; 
+            if (domCache.titleYearInput) { // Usar la referencia correcta del DOM para el input del año en el título
+                domCache.titleYearInput.value = yearOfSchedule; 
+            } else {
+                 console.warn("restoreAppState: domCache.titleYearInput (input del año en título) no encontrado.");
+            }
+        
+            // Restaurar configuración del logo
+            if (snapshot.currentLogoConfig) {
+                currentLogoConfig = { ...DEFAULT_LOGO_CONFIG, ...snapshot.currentLogoConfig };
+                renderEditableLogo(); // Actualiza el logo visible y los inputs del editor de logo
+                // No es necesario llamar a saveLogoConfig() aquí, ya que solo estamos restaurando un estado.
+            } else {
+                // Si el snapshot no tiene config de logo, mantener la actual o cargar desde su propio localStorage/defaults.
+                loadLogoConfig(); // Asegura que el logo y su editor estén consistentes.
+            }
+        
+            // Actualizar toda la UI para reflejar el estado restaurado
+            updateLegend();
+            handleViewChange(); // Esta función renderiza la tabla y debería llamar a validateAndDisplayRuleViolations
+            initializeAndRenderNewStatistics(); 
+            populateMonthTabs();
+            updateViewModeUI(); // Esta también llama a updateScheduleTitleDisplay
+            updateUnsavedChangesIndicator(); // El estado restaurado se considera "guardado" respecto a sí mismo
+            updateUndoRedoButtonsState();    // Actualizar estado de botones Deshacer/Rehacer
+            // validateAndDisplayRuleViolations(); // Es llamada por handleViewChange
+        }
 
         function saveStateForUndo(descriptionForHistory) {
             if (undoStack.length >= MAX_UNDO_STACK_SIZE) {
@@ -2244,11 +2331,11 @@
         }
 
         function updateUndoRedoButtonsState() {
-            if (domCache.undoButton) {
-                domCache.undoButton.disabled = undoStack.length === 0;
+            if (domCache.modalUndoButton) { // Antes era domCache.undoButton
+                domCache.modalUndoButton.disabled = undoStack.length === 0;
             }
-            if (domCache.redoButton) {
-                domCache.redoButton.disabled = redoStack.length === 0;
+            if (domCache.modalRedoButton) { // Antes era domCache.redoButton
+                domCache.modalRedoButton.disabled = redoStack.length === 0;
             }
         }
 
@@ -2375,9 +2462,7 @@
             domCache.welcomeMessage = document.getElementById('welcome-message');
             domCache.scheduleDisplaySection = document.getElementById('schedule-display-section');
             domCache.scheduleTableSection = document.getElementById('schedule-table-section');
-            // domCache.notesSection = document.getElementById('notes-section'); // Ya no existe como sección principal
             // domCache.legendSection = document.getElementById('legend-section'); // Ya no existe como sección principal
-            domCache.historySection = document.getElementById('history-section');
         
             // --- Elementos de la Tabla de Horario Principal ---
             domCache.currentMonthYearDisplay = document.getElementById('current-month-year-display');
@@ -2395,10 +2480,27 @@
             domCache.legendItemsContainer = document.getElementById('legend-items-container'); // Sigue siendo el mismo ID, pero ahora está en el modal
         
             // --- Historial de Cambios y Notas ---
-            domCache.changeHistoryList = document.getElementById('change-history-list');
-            domCache.generalNotesTextarea = document.getElementById('general-notes'); // Asumo que la sección de notas sigue existiendo
-            domCache.undoButton = document.getElementById('undo-button');
-            domCache.redoButton = document.getElementById('redo-button');
+			
+            // Nuevos botones en la barra de navegación
+            domCache.openHistoryModalButton = document.getElementById('open-history-modal-button');
+            domCache.openNotesModalButton = document.getElementById('open-notes-modal-button');
+            
+            // Modal de Historial y sus elementos
+            domCache.historyModal = document.getElementById('history-modal');
+            domCache.closeHistoryModalButton = document.getElementById('close-history-modal-button');
+            domCache.okHistoryModalButton = document.getElementById('ok-history-modal-button');
+            domCache.modalUndoButton = document.getElementById('modal-undo-button'); // Nuevo ID
+            domCache.modalRedoButton = document.getElementById('modal-redo-button'); // Nuevo ID
+            domCache.modalChangeHistoryListContainer = document.getElementById('modal-change-history-list-container');
+            domCache.modalChangeHistoryList = document.getElementById('modal-change-history-list'); // Nuevo ID para la ul
+            
+            // Modal de Notas y sus elementos
+            domCache.notesModal = document.getElementById('notes-modal');
+            domCache.closeNotesModalButton = document.getElementById('close-notes-modal-button');
+            domCache.okNotesModalButton = document.getElementById('ok-notes-modal-button');
+            domCache.modalGeneralNotesTextarea = document.getElementById('modal-general-notes-textarea'); // Nuevo ID
+            // domCache.saveNotesModalButton = document.getElementById('save-notes-modal-button'); // Si añades botón de guardar
+            	
         
             // --- Modales Existentes ---
             domCache.addEmployeeModal = document.getElementById('add-employee-modal');
@@ -2828,6 +2930,77 @@
                         console.error("El modal del editor de logo (logoEditorModal) no está disponible.");
                         if(typeof showToast === 'function') showToast('Error: No se pudo abrir el editor de logo.', 'error');
                     }
+                });
+            }
+			
+            if (domCache.openHistoryModalButton) {
+                domCache.openHistoryModalButton.addEventListener('click', () => {
+                    renderChangeHistory(); // Asegúrate que renderiza en el nuevo ul
+                    updateUndoRedoButtonsState(); // Actualiza estado de botones en el modal
+                    showModal(domCache.historyModal);
+                });
+            }
+            if (domCache.openNotesModalButton) {
+                domCache.openNotesModalButton.addEventListener('click', () => {
+                    // Cargar el contenido actual de las notas en el textarea del modal
+                    const savedNotes = localStorage.getItem(LOCAL_STORAGE_KEY_NOTES); // O de tu variable global
+                    if (domCache.modalGeneralNotesTextarea && savedNotes !== null) {
+                        domCache.modalGeneralNotesTextarea.value = savedNotes;
+                    }
+                    showModal(domCache.notesModal, domCache.modalGeneralNotesTextarea);
+                });
+            }
+            
+            if (domCache.closeHistoryModalButton) {
+                domCache.closeHistoryModalButton.addEventListener('click', () => hideModal(domCache.historyModal));
+            }
+            if (domCache.okHistoryModalButton) { // Botón "Aceptar" también cierra
+                domCache.okHistoryModalButton.addEventListener('click', () => hideModal(domCache.historyModal));
+            }
+            if (domCache.historyModal) { // Clic fuera del contenido
+                domCache.historyModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.historyModal) hideModal(domCache.historyModal);
+                });
+            }
+            
+            if (domCache.closeNotesModalButton) {
+                domCache.closeNotesModalButton.addEventListener('click', () => hideModal(domCache.notesModal));
+            }
+            if (domCache.okNotesModalButton) { // Botón "Aceptar" también cierra
+                domCache.okNotesModalButton.addEventListener('click', () => {
+                    // Aquí podrías añadir lógica para guardar explícitamente si no es dinámico
+                    hideModal(domCache.notesModal);
+                });
+            }
+            if (domCache.notesModal) { // Clic fuera del contenido
+                domCache.notesModal.addEventListener('click', (event) => {
+                    if (event.target === domCache.notesModal) hideModal(domCache.notesModal);
+                });
+            }
+            
+            // Modifica tus listeners existentes para usar los nuevos IDs
+            if (domCache.modalUndoButton) { // Antes era domCache.undoButton
+                domCache.modalUndoButton.addEventListener('click', undoChange);
+            }
+            if (domCache.modalRedoButton) { // Antes era domCache.redoButton
+                domCache.modalRedoButton.addEventListener('click', redoChange);
+            }
+			
+            if (domCache.modalGeneralNotesTextarea) {
+                domCache.modalGeneralNotesTextarea.addEventListener('input', () => {
+                    hasUnsavedChanges = true;
+                    updateUnsavedChangesIndicator();
+                    // Guardado dinámico
+                    localStorage.setItem(LOCAL_STORAGE_KEY_NOTES, domCache.modalGeneralNotesTextarea.value);
+            
+                    // Lógica de debounce para el historial (si la tienes)
+                    clearTimeout(notesDebounceTimer);
+                    notesDebounceTimer = setTimeout(() => {
+                        const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
+                        if (!lastUndoState || (lastUndoState.generalNotes !== undefined && lastUndoState.generalNotes !== domCache.modalGeneralNotesTextarea.value)) { // CORREGIDO AQUÍ TAMBIÉN
+                            // saveStateForUndo("Notas generales modificadas.");
+                        }
+                    }, 1500);
                 });
             }
 			
@@ -3364,10 +3537,22 @@
                 if (event.ctrlKey || event.metaKey) {
                     if (event.key === 'z' || event.key === 'Z') {
                         event.preventDefault();
-                        if (domCache.undoButton && !domCache.undoButton.disabled) undoChange();
+                        // CORRECCIÓN: Verificar directamente si hay algo en la pila de deshacer
+                        if (undoStack.length > 0) { 
+                            undoChange();
+                        } else {
+                            // Opcional: un pequeño aviso si intentan deshacer sin nada que deshacer
+                            // showToast('Nada que deshacer.', 'info', 1500); 
+                        }
                     } else if (event.key === 'y' || event.key === 'Y') {
                         event.preventDefault();
-                        if (domCache.redoButton && !domCache.redoButton.disabled) redoChange();
+                        // CORRECCIÓN: Verificar directamente si hay algo en la pila de rehacer
+                        if (redoStack.length > 0) {
+                            redoChange();
+                        } else {
+                            // Opcional: un pequeño aviso
+                            // showToast('Nada que rehacer.', 'info', 1500);
+                        }
                     }
                 } else if (event.key === 'Escape') {
                     // Cierra el modal activo. Esta lógica debe ser robusta para manejar cualquier modal abierto.
@@ -3712,36 +3897,68 @@
 
         function addChangeToHistory(description) {
             const newChange = { timestamp: new Date(), description: description };
-            changeHistory.unshift(newChange);
-            if (changeHistory.length > MAX_HISTORY_ITEMS) changeHistory.pop();
-            renderChangeHistory();
+            changeHistory.unshift(newChange); // Añade al principio para que los más recientes estén arriba
+            if (changeHistory.length > MAX_HISTORY_ITEMS) { // MAX_HISTORY_ITEMS debe estar definido (ej. 30)
+                changeHistory.pop(); // Elimina el más antiguo si se supera el límite
+            }
+            renderChangeHistory(); // Actualiza la visualización del historial
         }
 
 
         function renderChangeHistory() {
-            domCache.changeHistoryList.innerHTML = '';
-            if (changeHistory.length === 0) {
-                domCache.changeHistoryList.appendChild(createElement('li', {
-                    textContent: 'No hay cambios recientes.', className: 'text-center text-gray-400'
-                }));
+            if (!domCache.modalChangeHistoryList) { // Comprobación de seguridad
+                console.warn("renderChangeHistory: domCache.modalChangeHistoryList no está disponible.");
                 return;
             }
-            changeHistory.forEach(change => {
-                const timeSpan = createElement('span', {
-                    className: 'history-time', textContent: `[${new Date(change.timestamp).toLocaleTimeString('es-ES')}]`
+            domCache.modalChangeHistoryList.innerHTML = ''; // Limpiar la lista actual
+
+            if (changeHistory.length === 0) {
+                const noChangesItem = createElement('li', {
+                    textContent: 'No hay cambios recientes.',
+                    className: 'text-center text-gray-400 italic py-2' // Estilo para el mensaje
                 });
-                domCache.changeHistoryList.appendChild(createElement('li', {}, [ timeSpan, ` ${change.description}` ]));
+                domCache.modalChangeHistoryList.appendChild(noChangesItem);
+                return;
+            }
+
+            changeHistory.forEach(change => {
+                // Formatear la fecha y hora del cambio
+                const timeFormat = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const timeString = change.timestamp.toLocaleTimeString('es-ES', timeFormat);
+                const dateString = change.timestamp.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+                // Crear el elemento span para la fecha/hora
+                const timeSpan = createElement('span', { 
+                    className: 'history-time text-xs font-semibold text-gray-700 mr-2', // Clases actualizadas
+                    textContent: `${dateString} ${timeString}:` 
+                });
+
+                // Crear el nodo de texto para la descripción
+                const descriptionNode = document.createTextNode(` ${change.description}`); // Añadir un espacio inicial
+
+                // Crear el elemento de lista <li>
+                const listItem = createElement('li', {
+                    className: 'text-xs text-gray-600 py-1 border-b border-gray-100 last:border-b-0' // Clases para estilo
+                }); 
+                
+                // Añadir el tiempo y la descripción al listItem
+                listItem.appendChild(timeSpan);
+                listItem.appendChild(descriptionNode);
+                
+                // Añadir el listItem completo a la lista del historial en el modal
+                domCache.modalChangeHistoryList.appendChild(listItem); 
             });
         }
+        
 
         // --- COMIENZO DE LA FUNCIÓN MODIFICADA loadChangeHistory ---
         function loadChangeHistory() {
             const compressedHistoryString = localStorage.getItem(LOCAL_STORAGE_KEY_HISTORY);
-            const savedHistory = decompressData(compressedHistoryString, "changeHistory");
+            const savedHistory = decompressData(compressedHistoryString, "changeHistory"); // Asumiendo que decompressData existe
 
             if (Array.isArray(savedHistory)) {
                 try {
-                    changeHistory = savedHistory.map(item => ({ // changeHistory debe estar definido
+                    changeHistory = savedHistory.map(item => ({ 
                         ...item,
                         timestamp: new Date(item.timestamp) // Re-hidratar las fechas
                     }));
@@ -3750,11 +3967,13 @@
                     changeHistory = [];
                 }
             } else {
-                if (savedHistory !== null) { // Si no es un array pero tampoco es null (error de parseo/descompresión)
+                if (savedHistory !== null) { 
                     console.warn("Historial de cambios cargado no es un array, usando historial vacío.");
                 }
                 changeHistory = [];
             }
+            // No es necesario llamar a renderChangeHistory() aquí, 
+            // se llamará cuando se abra el modal o se añada un nuevo cambio.
         }
         // --- FIN DE LA FUNCIÓN MODIFICADA loadChangeHistory ---
 
@@ -4169,7 +4388,10 @@
         
 
         function isDataLoadedForSave() {
-            return Object.keys(scheduleData).length > 0 || employeeNamesOrdered.length > 0 || domCache.generalNotesTextarea.value.trim();
+            return Object.keys(scheduleData).length > 0 || 
+				employeeNamesOrdered.length > 0 || 
+				(domCache.modalGeneralNotesTextarea && domCache.modalGeneralNotesTextarea.value.trim() !== '');
+
         }
         function isDataLoadedForStats() { // General check if any data is loaded for the app
             return Object.keys(scheduleData).length > 0 && employeeNamesOrdered.length > 0;
@@ -4315,9 +4537,9 @@
             if (domCache.currentMonthYearText) domCache.currentMonthYearText.textContent = 'Horario para [Mes Año]';
         
             // Resetear notas si no se indica mantenerlas
-            if (!keepNotes && domCache.generalNotesTextarea) {
-                domCache.generalNotesTextarea.value = '';
-            }
+			if (!keepNotes && domCache.modalGeneralNotesTextarea) { // Comprobar existencia
+				domCache.modalGeneralNotesTextarea.value = '';
+			}
         
             // Resetear configuración de colores y tiempos de turno a los por defecto
             currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
@@ -4417,9 +4639,9 @@
                 localStorage.setItem(LOCAL_STORAGE_KEY_SCHEDULE, compressedSchedule);
 
                 // 2. Notas (string simple, no necesita compresión generalmente)
-                if (domCache.generalNotesTextarea) {
-                    localStorage.setItem(LOCAL_STORAGE_KEY_NOTES, domCache.generalNotesTextarea.value);
-                }
+			if (domCache.modalGeneralNotesTextarea) { // Comprobar existencia
+				localStorage.setItem(LOCAL_STORAGE_KEY_NOTES, domCache.modalGeneralNotesTextarea.value);
+			}
 
                 // 3. Vista Actual (string simple, no necesita compresión)
                 localStorage.setItem(LOCAL_STORAGE_KEY_VIEW, currentViewMode);
@@ -4497,7 +4719,10 @@
 
                 // 2. Notas (string simple, no necesita descompresión)
                 const savedNotes = localStorage.getItem(LOCAL_STORAGE_KEY_NOTES);
-                if (savedNotes !== null) domCache.generalNotesTextarea.value = savedNotes; // !== null para permitir notas vacías
+                if (domCache.modalGeneralNotesTextarea && savedNotes !== null) { // Comprobar existencia
+					domCache.modalGeneralNotesTextarea.value = savedNotes;
+				}
+
 
                 // 3. Vista Actual (string simple, no necesita descompresión)
                 const savedView = localStorage.getItem(LOCAL_STORAGE_KEY_VIEW);
@@ -5894,7 +6119,7 @@
             }); 
             
             svgHeight = currentY + pagePadding + safetyBufferBottom;
-            const footerText = `Página ${pageNumber} de ${totalPages}`;
+            const footerText = ``;
             const footerFontSize = 10;
             const footerY = svgHeight - pagePadding / 2;
             svgElements.push(`<text x="${svgWidth - pagePadding}" y="${footerY}" font-family="Inter, sans-serif" font-size="${footerFontSize}px" text-anchor="end" fill="#4A5568">${footerText}</text>`);
