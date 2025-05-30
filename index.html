@@ -6434,90 +6434,87 @@
          * Calcula las estadísticas para todos los empleados basado en `scheduleData`.
          */
         function calculateAllEmployeeStatsForNewUI() {
-            // (Log opcional para ver el scheduleData con el que EMPIEZA esta función)
-            console.log("[VERIFICACIÓN 1] calculateAllEmployeeStatsForNewUI - ENTRANDO con scheduleData:", JSON.parse(JSON.stringify(scheduleData)));
-            console.log("[VERIFICACIÓN 1] calculateAllEmployeeStatsForNewUI - ENTRANDO con employeeNamesOrdered:", JSON.parse(JSON.stringify(employeeNamesOrdered)));
-
-            currentStatsEmployeeData = []; // Correcto: se limpia para recalcular.
+            console.log("[STATS CALC DEBUG] calculateAllEmployeeStatsForNewUI - INICIO. Año actual:", yearOfSchedule);
+            console.log("[STATS CALC DEBUG] scheduleData ANTES del cálculo:", JSON.parse(JSON.stringify(scheduleData)));
+            console.log("[STATS CALC DEBUG] employeeNamesOrdered:", JSON.parse(JSON.stringify(employeeNamesOrdered)));
+        
+            currentStatsEmployeeData = []; // Limpiar para recalcular
             if (!isDataLoadedForStats()) { 
-                console.warn("calculateAllEmployeeStatsForNewUI: No hay datos de horario cargados al inicio del cálculo.");
+                console.warn("[STATS CALC DEBUG] calculateAllEmployeeStatsForNewUI: No hay datos de horario cargados.");
                 return;
             }
-
+        
             employeeNamesOrdered.forEach(empName => {
-                let stats = { 
+                let annualStats = { 
                     name: empName, 
                     M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, 
                     totalWorkDays: 0, weekendsOff: 0
-                    // No es necesario M2, T2, N2 aquí si se agregan a M, T, N
+                    // M2, T2, N2 no se cuentan por separado aquí, se agregan a M, T, N
                 };
-
-                if (!scheduleData[empName]) { // Comprueba el scheduleData actual
-                    currentStatsEmployeeData.push(stats); 
-                    return; // Pasa al siguiente empleado si este no tiene datos
+        
+                if (!scheduleData[empName]) {
+                    console.warn(`[STATS CALC DEBUG] No hay datos en scheduleData para el empleado: ${empName}`);
+                    currentStatsEmployeeData.push(annualStats); // Añadir con ceros si no hay datos
+                    return; // Siguiente empleado
                 }
-
-                for (let month = 1; month <= 12; month++) { // Itera todos los meses
-                    if (!scheduleData[empName][month]) continue; // Si no hay datos para este mes, pasa al siguiente
-
-                    const daysInThisMonth = getDaysInMonth(month, yearOfSchedule); 
-                    for (let day = 1; day <= daysInThisMonth; day++) {
-                        const shift = scheduleData[empName][month][day]; // Lee del scheduleData actual
+        
+                for (let month = 1; month <= 12; month++) {
+                    if (!scheduleData[empName][month]) continue; // Saltar si no hay datos para este mes
+        
+                    const daysInCurrentMonth = getDaysInMonth(month, yearOfSchedule);
+                    for (let day = 1; day <= daysInCurrentMonth; day++) {
+                        const shift = scheduleData[empName][month][day];
                         if (shift !== undefined && shift !== null && shift !== "") {
-                            let effectiveShift = shift; 
-                            let workShift = false;     
-
+                            let effectiveShiftKey = shift;
+                            let isWorkShift = false;
+        
                             if (shift === 'M' || shift === 'M2') {
-                                effectiveShift = 'M';
-                                workShift = true;
+                                effectiveShiftKey = 'M'; isWorkShift = true;
                             } else if (shift === 'T' || shift === 'T2') {
-                                effectiveShift = 'T';
-                                workShift = true;
+                                effectiveShiftKey = 'T'; isWorkShift = true;
                             } else if (shift === 'N' || shift === 'N2') {
-                                effectiveShift = 'N';
-                                workShift = true;
+                                effectiveShiftKey = 'N'; isWorkShift = true;
                             } else if (shift === 'L') {
-                                effectiveShift = 'L';
+                                effectiveShiftKey = 'L';
                             } else if (shift === 'V') {
-                                effectiveShift = 'V';
+                                effectiveShiftKey = 'V';
                             } else if (shift === 'B') {
-                                effectiveShift = 'B';
-                            } else { 
-                                effectiveShift = 'Otro';
-                                workShift = true; 
+                                effectiveShiftKey = 'B';
+                            } else { // Turnos personalizados
+                                effectiveShiftKey = 'Otro'; isWorkShift = true;
                             }
-
-                            if (stats.hasOwnProperty(effectiveShift)) {
-                                stats[effectiveShift]++;
+                            
+                            if (annualStats.hasOwnProperty(effectiveShiftKey)) {
+                                annualStats[effectiveShiftKey]++;
                             }
-
-                            if (workShift) {
-                                stats.totalWorkDays++;
+        
+                            if (isWorkShift) {
+                                annualStats.totalWorkDays++;
                             }
-
+        
+                            // Lógica para fines de semana libres
                             const currentDate = new Date(yearOfSchedule, month - 1, day);
-                            if (currentDate.getDay() === 6) { // Sábado
+                            if (currentDate.getDay() === 6) { // Es sábado
                                 const nextDayDate = new Date(yearOfSchedule, month - 1, day + 1);
-                                if (nextDayDate.getMonth() === month - 1) { 
-                                    const satShift = scheduleData[empName][month][day]; 
-                                    const sunShift = scheduleData[empName][month][day + 1]; 
-
-                                    const isSatFree = (satShift === "L" || satShift === "V" || satShift === "B" || satShift === "");
-                                    const isSunFree = (sunShift === "L" || sunShift === "V" || sunShift === "B" || sunShift === "");
-
+                                // Verificar que el domingo esté dentro del mismo mes
+                                if (nextDayDate.getMonth() === month - 1) {
+                                    const satShift = scheduleData[empName]?.[month]?.[day];
+                                    const sunShift = scheduleData[empName]?.[month]?.[day + 1];
+                                    const isSatFree = (satShift === "L" || satShift === "V" || satShift === "B" || satShift === "" || !satShift);
+                                    const isSunFree = (sunShift === "L" || sunShift === "V" || sunShift === "B" || sunShift === "" || !sunShift);
                                     if (isSatFree && isSunFree) {
-                                        stats.weekendsOff++;
+                                        annualStats.weekendsOff++;
                                     }
                                 }
                             }
                         }
                     }
                 }
-                currentStatsEmployeeData.push(stats);
+                currentStatsEmployeeData.push(annualStats);
             });
-            // (Log opcional para ver el currentStatsEmployeeData que PRODUCE esta función)
-            console.log("[VERIFICACIÓN 2] calculateAllEmployeeStatsForNewUI - SALIENDO con currentStatsEmployeeData:", JSON.parse(JSON.stringify(currentStatsEmployeeData)));
+            console.log("[STATS CALC DEBUG] calculateAllEmployeeStatsForNewUI - FIN. currentStatsEmployeeData:", JSON.parse(JSON.stringify(currentStatsEmployeeData)));
         }
+        
 
         /**
          * Valida las normas para los días visibles y actualiza los indicadores y el resumen.
@@ -7732,60 +7729,55 @@
         }
 
         function calculateMonthlyStatsForPdf(monthNum, year) {
-            // Calcula las estadísticas para un mes específico.
-            // Esta función es crucial si el usuario quiere exportar el PDF para un solo mes.
+            console.log(`[PDF STATS DEBUG] calculateMonthlyStatsForPdf - Calculando para Mes: ${monthNum}, Año: ${year}`);
             const monthlyResults = [];
             if (!employeeNamesOrdered || !scheduleData) {
-                console.error("calculateMonthlyStatsForPdf: employeeNamesOrdered o scheduleData no están definidos.");
+                console.error("[PDF STATS DEBUG] calculateMonthlyStatsForPdf: employeeNamesOrdered o scheduleData no están definidos.");
                 return monthlyResults;
             }
-
+        
             employeeNamesOrdered.forEach(empName => {
                 let stats = {
                     name: empName, M: 0, T: 0, N: 0, L: 0, V: 0, B: 0, Otro: 0, totalWorkDays: 0, weekendsOff: 0
                 };
                 if (scheduleData[empName] && scheduleData[empName][monthNum]) {
                     const monthSchedule = scheduleData[empName][monthNum];
-                    const daysInMonth = getDaysInMonth(monthNum, year); // Asegúrate que getDaysInMonth exista en tu app principal
-
+                    const daysInMonth = getDaysInMonth(monthNum, year);
+        
                     for (let day = 1; day <= daysInMonth; day++) {
                         const shift = monthSchedule[day];
                         if (shift === undefined || shift === null || shift === "") continue;
-
+        
                         let effectiveShift = shift;
                         let isWorkShift = false;
-
+        
                         if (shift === 'M' || shift === 'M2') {
-                            effectiveShift = 'M';
-                            isWorkShift = true;
+                            effectiveShift = 'M'; isWorkShift = true;
                         } else if (shift === 'T' || shift === 'T2') {
-                            effectiveShift = 'T';
-                            isWorkShift = true;
+                            effectiveShift = 'T'; isWorkShift = true;
                         } else if (shift === 'N' || shift === 'N2') {
-                            effectiveShift = 'N';
-                            isWorkShift = true;
-                        } else if (['L', 'V', 'B'].includes(shift)) {
-                            effectiveShift = shift;
+                            effectiveShift = 'N'; isWorkShift = true;
+                        } else if (['L', 'V', 'B'].includes(shift.toUpperCase())) { // Comparar en mayúsculas por si acaso
+                            effectiveShift = shift.toUpperCase();
                         } else {
-                            effectiveShift = 'Otro';
-                            isWorkShift = true;
+                            effectiveShift = 'Otro'; isWorkShift = true;
                         }
-
+        
                         if (stats.hasOwnProperty(effectiveShift)) {
                             stats[effectiveShift]++;
                         }
                         if (isWorkShift) {
                             stats.totalWorkDays++;
                         }
-
+        
                         const currentDate = new Date(year, monthNum - 1, day);
                         if (currentDate.getDay() === 6) { // Sábado
                             const nextDayDate = new Date(year, monthNum - 1, day + 1);
                             if (nextDayDate.getMonth() === monthNum - 1) {
-                                const satShiftOriginal = scheduleData[empName][monthNum][day];
-                                const sunShiftOriginal = scheduleData[empName][monthNum][day + 1];
-                                const isSatFree = (satShiftOriginal === "L" || satShiftOriginal === "V" || satShiftOriginal === "B" || satShiftOriginal === "");
-                                const isSunFree = (sunShiftOriginal === "L" || sunShiftOriginal === "V" || sunShiftOriginal === "B" || sunShiftOriginal === "");
+                                const satShiftOriginal = scheduleData[empName]?.[monthNum]?.[day];
+                                const sunShiftOriginal = scheduleData[empName]?.[monthNum]?.[day + 1];
+                                const isSatFree = (satShiftOriginal === "L" || satShiftOriginal === "V" || satShiftOriginal === "B" || satShiftOriginal === "" || !satShiftOriginal);
+                                const isSunFree = (sunShiftOriginal === "L" || sunShiftOriginal === "V" || sunShiftOriginal === "B" || sunShiftOriginal === "" || !sunShiftOriginal);
                                 if (isSatFree && isSunFree) {
                                     stats.weekendsOff++;
                                 }
@@ -7795,9 +7787,9 @@
                 }
                 monthlyResults.push(stats);
             });
+            console.log(`[PDF STATS DEBUG] calculateMonthlyStatsForPdf - Resultados para Mes ${monthNum}:`, JSON.parse(JSON.stringify(monthlyResults)));
             return monthlyResults;
         }
-
 
         // --- Funciones para el Modal de Nombre de Archivo (Estadísticas PDF) ---
         function showStatsPdfFilenameModal(title, defaultName, extension, callback) {
@@ -7841,43 +7833,67 @@
         // --- Lógica Principal de Exportación PDF de Estadísticas ---
 
         function initiateStatsPdfExport() {
-            if (!isDataLoadedForStats()) { // Usa tu función isDataLoadedForStats existente
+            if (!isDataLoadedForStats()) {
                 showToast('No hay datos de estadísticas para exportar.', 'error');
                 return;
             }
-
-            const period = currentSelectedPeriodForMainStats;
+        
+            const period = currentSelectedPeriodForMainStats; // Esta variable global se actualiza por el dropdown de la tabla de stats
             const year = yearOfSchedule;
+            
+            // DEBUG: Verificar el período seleccionado
+            console.log("[PDF STATS DEBUG] Iniciando exportación. Periodo seleccionado:", period, "Año:", year);
+            console.log("[PDF STATS DEBUG] Valor actual de currentSelectedPeriodForMainStats:", currentSelectedPeriodForMainStats);
+        
+        
             let reportSubtitleText;
             let statsDataForPdf;
-
+        
             if (period === 'all') {
                 reportSubtitleText = `Periodo: Año Completo ${year}`;
-                statsDataForPdf = currentStatsEmployeeData; // Datos anuales ya agregados
+                statsDataForPdf = currentStatsEmployeeData; // Se usa la data anual ya calculada
+                // DEBUG: Verificar los datos anuales que se van a usar
+                console.log("[PDF STATS DEBUG] Usando datos ANUALES (currentStatsEmployeeData) para PDF:", JSON.parse(JSON.stringify(statsDataForPdf)));
+                if (!statsDataForPdf || statsDataForPdf.length === 0) {
+                    console.error("[PDF STATS DEBUG] ERROR: currentStatsEmployeeData está vacío para el período 'all'.");
+                    showToast("Error: No hay datos anuales calculados para exportar.", "error");
+                    return;
+                }
             } else {
                 const monthNum = parseInt(period);
                 if (monthNum >= 1 && monthNum <= 12) {
-                    reportSubtitleText = `Periodo: ${MONTH_NAMES[monthNum - 1]} ${year}`; // Asegúrate que MONTH_NAMES exista
-                    statsDataForPdf = calculateMonthlyStatsForPdf(monthNum, year);
+                    reportSubtitleText = `Periodo: ${MONTH_NAMES[monthNum - 1]} ${year}`;
+                    statsDataForPdf = calculateMonthlyStatsForPdf(monthNum, year); // Calcula específicamente para este mes
+                    // DEBUG: Verificar los datos mensuales que se van a usar
+                    console.log(`[PDF STATS DEBUG] Usando datos MENSUALES calculados para el mes ${monthNum}:`, JSON.parse(JSON.stringify(statsDataForPdf)));
+                    if (!statsDataForPdf || statsDataForPdf.length === 0) {
+                        console.error(`[PDF STATS DEBUG] ERROR: calculateMonthlyStatsForPdf devolvió vacío para el mes ${monthNum}.`);
+                        showToast(`Error: No hay datos calculados para ${MONTH_NAMES[monthNum - 1]} para exportar.`, "error");
+                        return;
+                    }
                 } else {
                     showToast("Error: Periodo de estadísticas no válido.", "error");
+                    console.error("[PDF STATS DEBUG] ERROR: Periodo no válido:", period);
                     return;
                 }
             }
-
+        
             const reportTitleText = "Informe Detallado de Estadísticas";
-            let defaultFilenameBase = `informe_estadisticas_${period === 'all' ? 'anual' : MONTH_NAMES[parseInt(period) - 1].toLowerCase()}_${year}`;
-            defaultFilenameBase = defaultFilenameBase.replace(/\s+/g, '_'); // Reemplazar espacios por guiones bajos
-
-            showStatsPdfFilenameModal(
+            let defaultFilenameBase = `informe_estadisticas_${period === 'all' ? 'anual' : MONTH_NAMES[parseInt(period) - 1].toLowerCase().replace(/\s+/g, '_')}_${year}`;
+            defaultFilenameBase = defaultFilenameBase.replace(/[^a-z0-9_-]/gi, '_');
+        
+            showStatsPdfFilenameModal( // Esta función debe estar definida y operativa
                 "Nombre del Archivo PDF de Estadísticas",
                 defaultFilenameBase,
                 ".pdf",
                 (finalFilename) => {
+                    // DEBUG: Confirmar datos finales antes de generar SVG
+                    console.log("[PDF STATS DEBUG] Datos finales para generar SVG:", JSON.parse(JSON.stringify(statsDataForPdf)));
                     generateAndDownloadStatsPdf(finalFilename, statsDataForPdf, reportTitleText, reportSubtitleText);
                 }
             );
         }
+        
 
         async function generateAndDownloadStatsPdf(finalFilename, statsDataForPeriod, reportTitleText, reportSubtitleText) {
             showToast('Generando PDF de estadísticas, por favor espera...', 'info');
@@ -7949,13 +7965,15 @@
         // --- Funciones de Generación de SVG (Adaptadas del Prototipo) ---
 
         function getImpressiveStatsSvgString(data, headers, order, title, subtitle, logoSvgMarkupIgnored, colorsForSvg) {
+            console.log("[PDF STATS DEBUG] getImpressiveStatsSvgString - Datos recibidos para dibujar SVG:", JSON.parse(JSON.stringify(data)));
             const headerTextOffsetY = 5; 
             const cellTextOffsetY = 5; 
             const pagePadding = 60;
             const contentWidth = 1200; 
             const finalSvgWidth = contentWidth + 2 * pagePadding; 
         
-            const tempLogoForSizingStats = generateLogoSVGString(
+            // Generar el logo dinámicamente con la configuración actual
+            const dynamicLogoSvg = generateLogoSVGString(
                 currentLogoConfig.linea1, currentLogoConfig.linea2, currentLogoConfig.starColor,
                 currentLogoConfig.starVerticalSpacing, 
                 currentLogoConfig.pdfScale,    
@@ -7964,7 +7982,7 @@
                 currentLogoConfig.starHorizontalOffset 
             );
             const tempParserStats = new DOMParser();
-            const tempSvgDocStats = tempParserStats.parseFromString(tempLogoForSizingStats, "image/svg+xml");
+            const tempSvgDocStats = tempParserStats.parseFromString(dynamicLogoSvg, "image/svg+xml");
             const tempSvgElementStats = tempSvgDocStats.documentElement;
             const logoRenderWidth = parseFloat(tempSvgElementStats.getAttribute('width'));
             const logoRenderHeight = parseFloat(tempSvgElementStats.getAttribute('height'));
@@ -7974,6 +7992,10 @@
             const sectionTitleFontSize = 20; 
             const tableHeaderFontSize = 11; 
             const tableCellFontSize = 10;   
+            // --- ¡CORRECCIÓN AQUÍ! AÑADIR ESTAS LÍNEAS ---
+            const chartTitleFontSize = 18;   // Tamaño de fuente para títulos de gráficos (ej. "Distribución General...")
+            const chartLabelFontSize = 10;  // Tamaño de fuente para etiquetas de ejes o leyendas de gráficos
+            // --- FIN DE LÍNEAS A AÑADIR ---
             const textLineHeight = 1.4; 
             const sectionSpacing = 40; 
             let currentY = pagePadding;
@@ -7986,13 +8008,19 @@
                 .section-title { font-size: ${sectionTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle;}
                 .table-header-text { font-size: ${tableHeaderFontSize}px; font-weight: bold; fill: #1A202C; text-anchor: middle; dominant-baseline: middle; }
                 .table-cell-text { font-size: ${tableCellFontSize}px; fill: #2D3748; text-anchor: middle; dominant-baseline: middle; font-weight: 500; }
-                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; padding-left: 10px; }
+                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; } /* Eliminado padding-left, se maneja con X */
                 .table-header-rect { fill: #EBF4FF; stroke: #BEE3F8; stroke-width: 1; } 
                 .table-cell-rect { stroke: #E2E8F0; stroke-width: 1; }
+                .chart-title { font-size: ${chartTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle; }
+                .chart-label { font-size: ${chartLabelFontSize}px; fill: #4A5568; text-anchor: middle; }
+                .chart-axis-line { stroke: #A0AEC0; stroke-width: 1; }
+                .chart-grid-line { stroke: #E2E8F0; stroke-width: 0.5; stroke-dasharray: 3,3; }
+                .legend-item rect { stroke: #CBD5E0; stroke-width:0.5; } 
+                .legend-item text { font-size: 10px; fill: #2D3748; dominant-baseline: middle; }
             </style>`); 
         
             const logoX = (finalSvgWidth / 2) - (logoRenderWidth / 2); 
-            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${tempLogoForSizingStats}</g>`);
+            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${dynamicLogoSvg}</g>`); // Usar el logo dinámico
             currentY += logoRenderHeight + 20; 
         
             svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-title">${title}</text>`);
@@ -8073,12 +8101,21 @@
             });
             currentY += sectionSpacing; 
         
+            const chartAreaY = currentY;
+            const chartAreaWidth = contentWidth;
+            const chartHeight = 300;
+        
+            // Aquí es donde se usa chartTitleFontSize, y ahora está definida
+            svgElements.push(`<text x="${pagePadding + chartAreaWidth / 2}" y="${chartAreaY}" class="chart-title">Distribución General de Turnos por Empleado</text>`);
+            currentY = chartAreaY + chartTitleFontSize * textLineHeight + 20; // Uso de chartTitleFontSize
+            svgElements.push(drawStackedShiftDistributionBarChartSvg(data, pagePadding, currentY, chartAreaWidth, chartHeight, headers, colorsForSvg));
+            currentY += chartHeight + pagePadding;
+        
             const finalSvgHeight = currentY; 
             svgElements.unshift(`<rect width="${finalSvgWidth}" height="${finalSvgHeight}" fill="white"/>`);
             return `<svg width="${finalSvgWidth}" height="${finalSvgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${svgElements.join('')}</svg>`;
         }
-        
-        
+
 
         function drawStackedShiftDistributionBarChartSvg(allEmployeeData, x, y, width, height, headers, colorsForSvg) {
             let chartElements = [];
