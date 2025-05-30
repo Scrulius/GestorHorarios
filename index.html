@@ -1081,6 +1081,8 @@
 
 <body class="p-4 md:p-8">
 
+
+
     <div class="container mx-auto max-w-full">
         <header class="mb-10 text-center">
             <div id="logo-container" class="flex justify-center mb-3">
@@ -1198,7 +1200,7 @@
                             Con estas herramientas, puedes:
                         </p>
                         <ul class="list-disc list-inside text-sm text-gray-600 space-y-1.5 pl-4">
-                            <li><strong>Exportar Configuración:</strong> Genera un archivo de respaldo (<code>.json</code>) con todo: tu horario detallado, la lista de empleados, notas, los colores que has elegido y las reglas personalizadas. ¡Perfecto para tener una copia segura o para llevarte tus datos a otro ordenador!</li>
+                            <li><strong>Exportar Configuración:</strong> Genera un archivo de respaldo (<code>.json</code>) con todo: tu horario detallado, la lista de empleados, notas, los colores que has elegido, las reglas personalizadas y el logo. ¡Perfecto para tener una copia segura o para llevarte tus datos a otro ordenador!</li>
                             <li><strong>Importar Configuración:</strong> ¿Tienes un archivo de configuración guardado? Cárgalo aquí para restaurar la aplicación exactamente como la tenías.</li>
                         </ul>
                         <div class="mt-6 pt-4 border-t border-gray-100 space-y-3">
@@ -1760,10 +1762,111 @@
         </div>
     </div>
 
+    <div id="logo-editor-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-xl bg-white p-6 rounded-lg shadow-xl">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
+                <h3 class="text-xl font-semibold text-indigo-700 flex items-center">
+                    <i class="fas fa-palette mr-3 text-2xl text-indigo-500"></i>
+                    <span>Editor de Logo</span>
+                </h3>
+                <button id="close-logo-editor-modal" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                <div class="md:border-r md:pr-6 border-gray-200 flex flex-col">
+                    <h4 class="text-md font-semibold text-indigo-600 mb-2">Previsualización (Web)</h4>
+                    <div id="logo-editor-preview-container" class="w-full flex-grow flex items-center justify-center bg-gray-100 rounded-md border border-gray-300 p-3 overflow-hidden mb-3" style="min-height: 120px;">
+                        </div>
+                    <p class="text-xs text-gray-500 mt-auto">
+                        Esta previsualización refleja los ajustes web. Los ajustes de PDF se aplican solo al exportar.
+                    </p>
+                </div>
+    
+                <div class="space-y-4">
+                    <div>
+                        <label for="logo-linea1-input" class="block text-sm font-medium text-gray-700 mb-1">Línea 1 del Logo:</label>
+                        <input type="text" id="logo-linea1-input" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="TÍTULO">
+                    </div>
+                    <div>
+                        <label for="logo-linea2-input" class="block text-sm font-medium text-gray-700 mb-1">Línea 2 del Logo:</label>
+                        <input type="text" id="logo-linea2-input" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="SUBTITULO">
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4">
+                        <div>
+                            <label for="logo-star-count-input" class="block text-sm font-medium text-gray-700 mb-1">Nº Estrellas: <span id="logo-star-count-value" class="font-normal text-gray-500">5</span></label>
+                            <input type="range" id="logo-star-count-input" min="0" max="5" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label for="logo-star-color-input" class="block text-sm font-medium text-gray-700 mb-1">Color Estrellas:</label>
+                            <input type="color" id="logo-star-color-input" value="#B08D57" class="w-full h-9 p-1 border border-gray-300 rounded-md cursor-pointer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="logo-star-vertical-spacing-input" class="block text-sm font-medium text-gray-700 mb-1">Espaciado Vertical (Web, px): <span id="logo-star-vertical-spacing-value" class="font-normal text-gray-500">5</span></label>
+                        <input type="range" id="logo-star-vertical-spacing-input" min="0" max="30" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="logo-star-horizontal-offset-input" class="block text-sm font-medium text-gray-700 mb-1">Alineación Horizontal (Web, px): <span id="logo-star-horizontal-offset-value" class="font-normal text-gray-500">0</span></label>
+                        <input type="range" id="logo-star-horizontal-offset-input" min="-50" max="50" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                </div>
+            </div>
+    
+            <div class="pt-5 mt-6 border-t border-gray-200">
+                <h4 class="text-md font-semibold text-indigo-600 mb-4">Ajustes para Impresión PDF</h4>
+                <div class="space-y-5">
+                    
+                    <div>
+                        <label for="logo-pdf-scale-input" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Escalado General en PDF (%): 
+                            <span id="logo-pdf-scale-value" class="font-semibold text-indigo-500 ml-1">100</span>
+                        </label>
+                        <input type="range" id="logo-pdf-scale-input" min="20" max="150" value="100" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+                    </div>
+
+                    <div>
+                        <label for="logo-pdf-star-vertical-spacing-input" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Espaciado Vertical Estrellas PDF (px): 
+                            <span id="logo-pdf-star-vertical-spacing-value" class="font-semibold text-indigo-500 ml-1">5</span>
+                        </label>
+                        <input type="range" id="logo-pdf-star-vertical-spacing-input" min="-30" max="30" value="5" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+                    </div>
+
+                </div>
+            </div>
+    
+            <div class="flex flex-col sm:flex-row-reverse gap-3 mt-6 pt-5 border-t border-gray-300">
+                <button id="apply-logo-editor-changes" class="action-button w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-2 focus:ring-indigo-400">
+                    <i class="fas fa-check mr-2"></i>Aplicar y Cerrar
+                </button>
+                <button id="reset-logo-config-button" class="action-button w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white focus:ring-2 focus:ring-gray-400">
+                    <i class="fas fa-undo mr-2"></i>Restaurar Defecto
+                </button>
+            </div>
+        </div>
+    </div>
+    
 
     <script>
         // --- CONSTANTES Y CONFIGURACIÓN ---
 		
+        // --- CONSTANTES Y CONFIGURACIÓN DEL LOGO ---
+        const DEFAULT_LOGO_CONFIG = {
+            linea1: "GRAN HOTEL",
+            linea2: "MIRAMAR",
+            starColor: "#B08D57",
+            starCount: 5,
+            starVerticalSpacing: 5,     // Espaciado Y entre línea 2 y estrellas para la WEB
+            starHorizontalOffset: 17,    // Desplazamiento X de las estrellas para la WEB
+            pdfScale: 100,
+            pdfStarVerticalSpacing: -5   // Espaciado Y entre línea 2 y estrellas para el PDF
+        };
+        let currentLogoConfig = JSON.parse(JSON.stringify(DEFAULT_LOGO_CONFIG)); // Copia profunda inicial
+        const LOCAL_STORAGE_KEY_LOGO_CONFIG = 'scheduleAppLogoConfig_v2'; // Mantén tu clave
+        
+        
         const SVG_GHM_LOGO_SIMPLE = `
             <g transform="scale(0.5)">
                 <defs>
@@ -2223,6 +2326,30 @@
             domCache.footerTextElement = document.getElementById('footer-text');
             domCache.creatorNameElement = document.getElementById('creator-name');
             domCache.footerHeartElement = document.getElementById('footer-heart');
+			
+            // Editor de Logo
+			domCache.logoEditorModal = document.getElementById('logo-editor-modal'); // Nuevo
+			domCache.closeLogoEditorModalButton = document.getElementById('close-logo-editor-modal'); // Nuevo
+			domCache.applyLogoEditorChangesButton = document.getElementById('apply-logo-editor-changes'); // Nuevo
+			domCache.logoEditorPreviewContainer = document.getElementById('logo-editor-preview-container'); // NUEVO
+            domCache.logoLinea1Input = document.getElementById('logo-linea1-input');
+            domCache.logoLinea2Input = document.getElementById('logo-linea2-input');
+            domCache.logoStarColorInput = document.getElementById('logo-star-color-input');
+			domCache.logoStarCountInput = document.getElementById('logo-star-count-input'); // NUEVO
+			domCache.logoStarCountValue = document.getElementById('logo-star-count-value'); // NUEVO
+            domCache.logoStarSpacingInput = document.getElementById('logo-star-spacing-input');
+            domCache.logoStarSpacingValue = document.getElementById('logo-star-spacing-value'); // Para mostrar el valor del range
+            domCache.logoPdfScaleInput = document.getElementById('logo-pdf-scale-input');
+            domCache.logoPdfScaleValue = document.getElementById('logo-pdf-scale-value'); // Para mostrar el valor del range
+			// Slider y Span para Espaciado Vertical PDF (¡CORREGIDO!)
+			domCache.logoPdfStarVerticalSpacingInput = document.getElementById('logo-pdf-star-vertical-spacing-input');
+			domCache.logoPdfStarVerticalSpacingValue = document.getElementById('logo-pdf-star-vertical-spacing-value');
+            domCache.resetLogoConfigButton = document.getElementById('reset-logo-config-button');
+			// NUEVOS para alineación horizontal
+			domCache.logoStarHorizontalOffsetInput = document.getElementById('logo-star-horizontal-offset-input');
+			domCache.logoStarHorizontalOffsetValue = document.getElementById('logo-star-horizontal-offset-value');
+			domCache.logoStarVerticalSpacingInput = document.getElementById('logo-star-vertical-spacing-input');
+			domCache.logoStarVerticalSpacingValue = document.getElementById('logo-star-vertical-spacing-value'); 
         
             // --- Controles de Importación, Año y Guardado/Exportación Principal ---
             domCache.csvFileInput = document.getElementById('csv-file-input');
@@ -3287,6 +3414,9 @@
 			loadRulesConfigFromLocalStorage();
             updateLegend();
             loadChangeHistory();
+			loadLogoConfig(); // Carga la config del logo y actualiza inputs
+			setupLogoEditorEventListeners(); // Configura los listeners para el editor
+			renderEditableLogo(); // Renderiza el logo inicial en la cabecera
 
             setupMultiselectToolbar();
             updateMultiselectToolbar();
@@ -5527,52 +5657,63 @@
             let svgElements = [];
             let svgWidth = 0;
             let svgHeight = 0;
-        
             const pagePadding = 30;
-            const logoRenderWidth = 120;
-            const logoRenderHeight = 45;
+            
+            const tempLogoForSizing = generateLogoSVGString(
+                currentLogoConfig.linea1, 
+                currentLogoConfig.linea2, 
+                currentLogoConfig.starColor,
+                currentLogoConfig.starVerticalSpacing, 
+                currentLogoConfig.pdfScale,    
+                currentLogoConfig.pdfStarVerticalSpacing, 
+                currentLogoConfig.starCount,
+                currentLogoConfig.starHorizontalOffset // Pasar el offset horizontal para PDF también
+                                                       // Si necesitas un offset diferente para PDF, añade un nuevo control y config.
+            );
+            const tempParser = new DOMParser();
+            const tempSvgDoc = tempParser.parseFromString(tempLogoForSizing, "image/svg+xml");
+            const tempSvgElement = tempSvgDoc.documentElement;
+            const logoRenderWidth = parseFloat(tempSvgElement.getAttribute('width'));
+            const logoRenderHeight = parseFloat(tempSvgElement.getAttribute('height'));
+        
             const logoTopMargin = 20;
             const mainTitleTopMargin = 10;
             const sectionTitleFontSize = 16;
             const mainTitleFontSize = 18;
             const tableTopMargin = 15;
             const spaceBetweenTables = 30; 
-        
             const employeeColWidth = 90;
             const cellHeight = 28; 
             const headerHeight = 38; 
-            const cellFontSize = 8; // Tamaño de fuente para los turnos
+            const cellFontSize = 8;
             const employeeNameFontSize = 9; 
-            const headerEmployeeFontSize = 10; // Tamaño para "Empleado" en cabecera
-            const headerDayNumberFontSize = 8; // Tamaño para números de día en cabecera
-            const headerWeekdayFontSize = 7;   // Tamaño para letras de día en cabecera
+            const headerEmployeeFontSize = 10;
+            const headerDayNumberFontSize = 8;
+            const headerWeekdayFontSize = 7;
             const textYAdjust = cellFontSize * 0.35; 
             const safetyBufferBottom = 40; 
-        
             let currentY = pagePadding;
         
-            // --- Definir Ancho del SVG ---
             if (type === 'weekly') {
                 const svgCellWidthWeekly = 65; 
                 svgWidth = pagePadding * 2 + employeeColWidth + (7 * svgCellWidthWeekly);
             } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
                 const svgCellWidthAnnual = 35; 
-                const maxDaysPossible = 31;
+                const maxDaysPossible = 31; 
                 svgWidth = pagePadding * 2 + employeeColWidth + (maxDaysPossible * svgCellWidthAnnual);
-            } else { // Vista Mensual (cuando se exporta individualmente)
+            } else { 
                 const svgCellWidthMonthly = 35;
                 const monthForWidth = (itemsToRender && itemsToRender.length > 0 && typeof itemsToRender[0] === 'number') ? itemsToRender[0] : currentSelectedMonth;
                 const daysInCurrentMonth = getDaysInMonth(monthForWidth, yearToRender);
                 svgWidth = pagePadding * 2 + employeeColWidth + (daysInCurrentMonth * svgCellWidthMonthly);
             }
         
-            // --- Logo en CADA página ---
             currentY += logoTopMargin;
-            const logoGroupX = (svgWidth / 2) - (logoRenderWidth / 2);
-            svgElements.push(`<g transform="translate(${logoGroupX}, ${currentY}) scale(0.6)">${SVG_FINAL_LOGO_MARKUP}</g>`);
-            currentY += logoRenderHeight;
+            const logoXPositionInPdf = (svgWidth / 2) - (logoRenderWidth / 2); 
+            
+            svgElements.push(`<g transform="translate(${logoXPositionInPdf}, ${currentY})">${tempLogoForSizing}</g>`);
+            currentY += logoRenderHeight; 
         
-            // --- Título Principal del Documento (Solo en la primera página, debajo del logo) ---
             if (pageNumber === 1) {
                 currentY += mainTitleTopMargin;
                 let mainDocumentTitle = "";
@@ -5588,9 +5729,8 @@
                 currentY += mainTitleFontSize;
             }
             
-            // --- Iterar sobre los items (semanas o meses) para esta página ---
             itemsToRender.forEach((itemData, itemIndexInPage) => {
-                if (itemIndexInPage > 0) { // Añadir espacio solo si hay más de una tabla en la página
+                if (itemIndexInPage > 0) { 
                     currentY += spaceBetweenTables;
                 }
                 currentY += tableTopMargin; 
@@ -5612,7 +5752,6 @@
                     currentY += sectionTitleFontSize + (tableTopMargin / 2);
                 }
         
-                // --- Lógica de renderizado de la tabla ---
                 let tableHeaderX = pagePadding;
                 svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f3f4f6" stroke="#d1d5db"/>`);
                 svgElements.push(`<text x="${tableHeaderX + employeeColWidth/2}" y="${currentY + headerHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerEmployeeFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Empleado</text>`);
@@ -5631,7 +5770,7 @@
                         tableHeaderX += svgCellWidthWeekly;
                     });
                 } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
-                    const monthToRender = itemData;
+                    const monthToRender = itemData; 
                     const daysInCurrentMonth = getDaysInMonth(monthToRender, yearToRender); 
                     const svgCellWidthAnnual = (svgWidth - pagePadding * 2 - employeeColWidth) / 31; 
                     for (let day = 1; day <= daysInCurrentMonth; day++) {
@@ -5645,7 +5784,7 @@
                         svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#fdfdff" stroke="#e0e0e0"/>`);
                         tableHeaderX += svgCellWidthAnnual;
                     }
-                } else { // Vista Mensual individual (type === 'monthlyAnnual' && currentViewMode === 'monthly')
+                } else { 
                     const monthToRender = itemData; 
                     const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender); 
                     const svgCellWidthMonthly = (svgWidth - pagePadding * 2 - employeeColWidth) / daysInSelectedMonth;
@@ -5681,13 +5820,6 @@
                             }
                             
                             const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-        
-                            // ***** INICIO DEL LOG DE DIAGNÓSTICO (SEMANAL) *****
-                            if (shift === 'M' || shift === 'M2' || shift === 'T' || shift === 'T2' || shift === 'N' || shift === 'N2') {
-                                console.log(`PDF Semanal - Empleado: ${empName}, Día: ${day}/${month}, Turno Original: ${shift}, ColorConf Usado:`, JSON.parse(JSON.stringify(colorConf)));
-                            }
-                            // ***** FIN DEL LOG DE DIAGNÓSTICO (SEMANAL) *****
-                            
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
                             if (displayShift) {
                                 svgElements.push(`<text x="${currentCellX + svgCellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize -1}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}">${displayShift}</text>`);
@@ -5703,15 +5835,7 @@
                         for (let day = 1; day <= daysInCurrentMonth; day++) {
                             const shift = employeeMonthData[day] || "";
                             let displayShiftInPdfCell = shift; 
-                            
                             const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-        
-                            // ***** INICIO DEL LOG DE DIAGNÓSTICO (ANUAL) *****
-                            if (shift === 'M' || shift === 'M2' || shift === 'T' || shift === 'T2' || shift === 'N' || shift === 'N2') {
-                                console.log(`PDF Anual - Empleado: ${empName}, Día: ${day}/${monthToRender}, Turno Original: ${shift}, ColorConf Usado:`, JSON.parse(JSON.stringify(colorConf)));
-                            }
-                            // ***** FIN DEL LOG DE DIAGNÓSTICO (ANUAL) *****
-                            
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${colorConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
                             if(displayShiftInPdfCell) { 
                                 svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
@@ -5722,7 +5846,7 @@
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#fff' : '#f9fafb'}" stroke="#e0e0e0"/>`);
                             currentCellX += svgCellWidthAnnual;
                         }
-                    } else { // Vista Mensual individual (type === 'monthlyAnnual' && currentViewMode === 'monthly')
+                    } else { 
                          const monthToRender = itemData; 
                          const daysInSelectedMonth = getDaysInMonth(monthToRender, yearToRender); 
                          const svgCellWidthMonthly = (svgWidth - pagePadding * 2 - employeeColWidth) / daysInSelectedMonth;
@@ -5730,15 +5854,7 @@
                          for (let day = 1; day <= daysInSelectedMonth; day++) {
                             const shift = employeeMonthData[day] || "";
                             let displayShiftInPdfCell = shift;
-        
                             const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
-        
-                            // ***** INICIO DEL LOG DE DIAGNÓSTICO (MENSUAL) *****
-                            if (shift === 'M' || shift === 'M2' || shift === 'T' || shift === 'T2' || shift === 'N' || shift === 'N2') {
-                                console.log(`PDF Mensual - Empleado: ${empName}, Día: ${day}/${monthToRender}, Turno Original: ${shift}, ColorConf Usado:`, JSON.parse(JSON.stringify(colorConf)));
-                            }
-                            // ***** FIN DEL LOG DE DIAGNÓSTICO (MENSUAL) *****
-        
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthMonthly}" height="${cellHeight}" fill="${colorConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
                             if(displayShiftInPdfCell) {
                                 svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
@@ -5751,14 +5867,14 @@
             }); 
             
             svgHeight = currentY + pagePadding + safetyBufferBottom;
-        
+            const footerText = `Página ${pageNumber} de ${totalPages}`;
+            const footerFontSize = 10;
+            const footerY = svgHeight - pagePadding / 2;
+            svgElements.push(`<text x="${svgWidth - pagePadding}" y="${footerY}" font-family="Inter, sans-serif" font-size="${footerFontSize}px" text-anchor="end" fill="#4A5568">${footerText}</text>`);
             svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
             
             return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="font-family: 'Inter', sans-serif;">${svgElements.join('')}</svg>`;
         }
-        
-        
-        
         
         
 
@@ -7580,73 +7696,68 @@
 
         // --- Funciones de Generación de SVG (Adaptadas del Prototipo) ---
 
-        function getImpressiveStatsSvgString(data, headers, order, title, subtitle, logoSvgMarkup, colorsForSvg) {
-		
-		    const headerTextOffsetY = 5; // Ejemplo: 2 píxeles hacia abajo para el texto de la cabecera
-            const cellTextOffsetY = 50;   // Ejemplo: 2 píxeles hacia abajo para el texto de las celdas de datos
-			
-			const pagePadding = 60;
-			const contentWidth = 1200; // El valor que hayas ajustado en el Paso 1.1
-
-			const finalSvgWidth = contentWidth + 2 * pagePadding; 
-
-			const logoHeight = 60; 
-			const titleFontSize = 32;        // ANTES: 28
-			const subtitleFontSize = 18;     // ANTES: 16
-			const sectionTitleFontSize = 22;  // ANTES: 20
-			const tableHeaderFontSize = 13;   // ANTES: 9 (o el valor que tenías)
-			const tableCellFontSize = 10;    // ANTES: 8 (o el valor que tenías)
-			const chartLabelFontSize = 12;  // ANTES: 9.5
-			const chartTitleFontSize = 20;   // ANTES: 18
-
-			const textLineHeight = 1.6; 
-			const sectionSpacing = 50; // Este es un espaciado grande que usaremos más adelante
-
-			const logoRenderWidth = 110; 
-
-			let currentY = pagePadding; // currentY empieza en el margen superior
-
+        function getImpressiveStatsSvgString(data, headers, order, title, subtitle, logoSvgMarkupIgnored, colorsForSvg) {
+            const headerTextOffsetY = 5; 
+            const cellTextOffsetY = 5; 
+            const pagePadding = 60;
+            const contentWidth = 1200; 
+            const finalSvgWidth = contentWidth + 2 * pagePadding; 
+        
+            const tempLogoForSizingStats = generateLogoSVGString(
+                currentLogoConfig.linea1, currentLogoConfig.linea2, currentLogoConfig.starColor,
+                currentLogoConfig.starVerticalSpacing, 
+                currentLogoConfig.pdfScale,    
+                currentLogoConfig.pdfStarVerticalSpacing, 
+                currentLogoConfig.starCount,
+                currentLogoConfig.starHorizontalOffset 
+            );
+            const tempParserStats = new DOMParser();
+            const tempSvgDocStats = tempParserStats.parseFromString(tempLogoForSizingStats, "image/svg+xml");
+            const tempSvgElementStats = tempSvgDocStats.documentElement;
+            const logoRenderWidth = parseFloat(tempSvgElementStats.getAttribute('width'));
+            const logoRenderHeight = parseFloat(tempSvgElementStats.getAttribute('height'));
+        
+            const titleFontSize = 28;
+            const subtitleFontSize = 16; 
+            const sectionTitleFontSize = 20; 
+            const tableHeaderFontSize = 11; 
+            const tableCellFontSize = 10;   
+            const textLineHeight = 1.4; 
+            const sectionSpacing = 40; 
+            let currentY = pagePadding;
             let svgElements = [];
-
+        
             svgElements.push(`<style>
                 text { font-family: 'Inter', sans-serif; }
                 .report-title { font-size: ${titleFontSize}px; font-weight: 700; fill: #1A202C; text-anchor: middle; }
                 .report-subtitle { font-size: ${subtitleFontSize}px; fill: #4A5568; text-anchor: middle; }
-                .section-title { font-size: ${sectionTitleFontSize}px; font-weight: 600; fill: #2C5282; }
+                .section-title { font-size: ${sectionTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle;}
                 .table-header-text { font-size: ${tableHeaderFontSize}px; font-weight: bold; fill: #1A202C; text-anchor: middle; dominant-baseline: middle; }
-                .table-cell-text { font-size: ${tableCellFontSize}px; fill: #2D3748; text-anchor: middle; dominant-baseline: middle; font-weight: bold; }
-                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; }
+                .table-cell-text { font-size: ${tableCellFontSize}px; fill: #2D3748; text-anchor: middle; dominant-baseline: middle; font-weight: 500; }
+                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; padding-left: 10px; }
                 .table-header-rect { fill: #EBF4FF; stroke: #BEE3F8; stroke-width: 1; } 
                 .table-cell-rect { stroke: #E2E8F0; stroke-width: 1; }
-                .chart-title { font-size: ${chartTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle; }
-                .chart-label { font-size: ${chartLabelFontSize}px; fill: #4A5568; text-anchor: middle; }
-                .chart-axis-line { stroke: #A0AEC0; stroke-width: 1; }
-                .chart-grid-line { stroke: #E2E8F0; stroke-width: 0.5; stroke-dasharray: 3,3; }
-                .legend-item rect { stroke: #CBD5E0; stroke-width:0.5; } 
-                .legend-item text { font-size: 10px; fill: #2D3748; dominant-baseline: middle; }
-            </style>`);
-
-            const logoX = (finalSvgWidth / 2) - (logoRenderWidth / 2);
-            const titleAreaX = logoX + 120; // Espacio para el logo
-            const titleAreaWidth = contentWidth - 120;
-
-            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${logoSvgMarkup}</g>`);
-            currentY += logoHeight + 20; // Ajuste para que el subtítulo no se solape
-            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY + logoHeight / 2 + 5 }" class="report-title">${title}</text>`);
-			currentY += titleFontSize + 10; // Espacio: altura de la fuente del título (28px) + 10px de margen.
-            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY + logoHeight / 2 + subtitleFontSize}" class="report-subtitle">${subtitle}</text>`);
-            currentY += subtitleFontSize + sectionSpacing; 
-
-            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="section-title" text-anchor="middle"></text>`);
+            </style>`); 
+        
+            const logoX = (finalSvgWidth / 2) - (logoRenderWidth / 2); 
+            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${tempLogoForSizingStats}</g>`);
+            currentY += logoRenderHeight + 20; 
+        
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-title">${title}</text>`);
+            currentY += titleFontSize * textLineHeight;
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-subtitle">${subtitle}</text>`);
+            currentY += subtitleFontSize * textLineHeight + sectionSpacing; 
+        
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="section-title">Tabla de Estadísticas</text>`);
             currentY += sectionTitleFontSize * textLineHeight + 20;
-
-            const tableCellHeight = tableCellFontSize * textLineHeight * 2.8;
-            const tableHeaderHeight = tableHeaderFontSize * textLineHeight * 2.8;
-
+        
+            const tableCellHeight = tableCellFontSize * textLineHeight * 2.2; 
+            const tableHeaderHeight = tableHeaderFontSize * textLineHeight * 2.2; 
+        
             const tempSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            document.body.appendChild(tempSvg); // Necesario para getComputedTextLength
+            document.body.appendChild(tempSvg); 
             const colWidths = {};
-            let minNumericColWidth = 85;
+            let minNumericColWidth = 65; 
             order.forEach(key => {
                 let maxWidth = 0;
                 const thTest = Object.assign(document.createElementNS("http://www.w3.org/2000/svg", "text"), {
@@ -7656,23 +7767,23 @@
                 tempSvg.appendChild(thTest);
                 maxWidth = Math.max(maxWidth, thTest.getComputedTextLength());
                 tempSvg.removeChild(thTest);
-                (data || []).forEach(row => { // Asegurar que data no sea undefined
+                (data || []).forEach(row => { 
                     const tdTest = Object.assign(document.createElementNS("http://www.w3.org/2000/svg", "text"), {
                         textContent: String(row[key] !== undefined ? row[key] : '-'),
-                        style: `font-size:${tableCellFontSize}px; font-weight:bold; font-family:Inter, sans-serif;`
+                        style: `font-size:${tableCellFontSize}px; font-weight:500; font-family:Inter, sans-serif;`
                     });
                     tempSvg.appendChild(tdTest);
                     maxWidth = Math.max(maxWidth, tdTest.getComputedTextLength());
                     tempSvg.removeChild(tdTest);
                 });
-                colWidths[key] = Math.max(minNumericColWidth, maxWidth + 45); // Más padding
-                if (key === 'name') colWidths[key] = Math.max(230, colWidths[key]);
+                colWidths[key] = Math.max(minNumericColWidth, maxWidth + 20); 
+                if (key === 'name') colWidths[key] = Math.max(180, colWidths[key]); 
             });
             document.body.removeChild(tempSvg);
-
+        
             const tableTotalWidth = order.reduce((sum, key) => sum + colWidths[key], 0);
-            const tableStartX = Math.max(pagePadding, (contentWidth + 2 * pagePadding - tableTotalWidth) / 2);
-
+            const tableStartX = Math.max(pagePadding, (finalSvgWidth - tableTotalWidth) / 2); 
+        
             let currentTableX = tableStartX;
             order.forEach(key => {
                 svgElements.push(`<rect x="${currentTableX}" y="${currentY}" width="${colWidths[key]}" height="${tableHeaderHeight}" class="table-header-rect" />`);
@@ -7680,46 +7791,42 @@
                 currentTableX += colWidths[key];
             });
             currentY += tableHeaderHeight;
-
-            (data || []).forEach((row, rowIndex) => { // Asegurar que data no sea undefined
+        
+            (data || []).forEach((row, rowIndex) => { 
                 currentTableX = tableStartX;
                 order.forEach(key => {
                     const cellValue = row[key] !== undefined ? String(row[key]) : '-';
-                    let cellFill = (rowIndex % 2 === 0) ? '#FFFFFF' : '#F9FAFB';
-                    let textColor = '#2D3748';
-
+                    let cellFill = (rowIndex % 2 === 0) ? '#FFFFFF' : '#F9FAFB'; 
+                    let textColor = '#2D3748'; 
+        
                     const shiftKeyForColor = key === 'Otro' ? 'empty' : key;
-                    if (colorsForSvg[shiftKeyForColor]) {
+                    if (colorsForSvg[shiftKeyForColor] && key !== 'name' && key !== 'totalWorkDays' && key !== 'weekendsOff') {
                         cellFill = colorsForSvg[shiftKeyForColor].bg;
                         textColor = colorsForSvg[shiftKeyForColor].text;
                     } else if (key === 'name') {
-                        textColor = '#1A202C';
+                        textColor = '#1A202C'; 
+                    } else if (key === 'totalWorkDays' || key === 'weekendsOff') {
+                         cellFill = colorsForSvg[key] ? colorsForSvg[key].bg : cellFill; 
+                         textColor = colorsForSvg[key] ? colorsForSvg[key].text : textColor;
                     }
-
+        
                     svgElements.push(`<rect x="${currentTableX}" y="${currentY}" width="${colWidths[key]}" height="${tableCellHeight}" class="table-cell-rect" fill="${cellFill}" />`);
                     const textClass = key === 'name' ? 'table-cell-text name' : 'table-cell-text';
-                    const textX = key === 'name' ? currentTableX + 20 : currentTableX + colWidths[key] / 2;
-                    const textY = currentY + tableCellHeight / 2;
+                    const textX = key === 'name' ? currentTableX + 10 : currentTableX + colWidths[key] / 2; 
+                    const textY = currentY + tableCellHeight / 2 + cellTextOffsetY; 
                     svgElements.push(`<text x="${textX}" y="${textY}" class="${textClass}" fill="${textColor}">${cellValue}</text>`);
                     currentTableX += colWidths[key];
                 });
                 currentY += tableCellHeight;
             });
-            currentY += sectionSpacing;
-
-            const chartAreaY = currentY;
-            const chartAreaWidth = contentWidth;
-            const chartHeight = 300;
-
-            svgElements.push(`<text x="${pagePadding + chartAreaWidth / 2}" y="${chartAreaY}" class="chart-title">Distribución General de Turnos por Empleado</text>`);
-            currentY = chartAreaY + chartTitleFontSize * textLineHeight + 20;
-            svgElements.push(drawStackedShiftDistributionBarChartSvg(data, pagePadding, currentY, chartAreaWidth, chartHeight, headers, colorsForSvg));
-            currentY += chartHeight + pagePadding;
-
-            const finalSvgHeight = currentY;
-
+            currentY += sectionSpacing; 
+        
+            const finalSvgHeight = currentY; 
+            svgElements.unshift(`<rect width="${finalSvgWidth}" height="${finalSvgHeight}" fill="white"/>`);
             return `<svg width="${finalSvgWidth}" height="${finalSvgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${svgElements.join('')}</svg>`;
         }
+        
+        
 
         function drawStackedShiftDistributionBarChartSvg(allEmployeeData, x, y, width, height, headers, colorsForSvg) {
             let chartElements = [];
@@ -8408,7 +8515,7 @@
             const uploadedFileName = domCache.csvFileInput ? domCache.csvFileInput.dataset.uploadedFileName : null;
         
             return {
-                version: "1.0.0", // Puedes usar esto para futuras comprobaciones de compatibilidad
+                version: "1.0.1", // Puedes incrementar la versión si haces cambios significativos en la estructura del estado
                 timestamp: new Date().toISOString(),
                 scheduleData: scheduleData,
                 employeeNamesOrdered: employeeNamesOrdered,
@@ -8419,12 +8526,12 @@
                 currentShiftColors: currentShiftColors,
                 currentUserShiftTimes: currentUserShiftTimes,
                 rulesConfig: rulesConfig,
-                changeHistory: changeHistory, // Considera si quieres exportar el historial completo
-                undoStack: undoStack,         // Podrías optar por no exportar undo/redo para simplificar
+                currentLogoConfig: currentLogoConfig, // <-- AÑADIDO AQUÍ
+                changeHistory: changeHistory,
+                undoStack: undoStack,
                 redoStack: redoStack,
                 isAutosaveEnabled: isAutosaveEnabled,
-                uploadedCsvName: uploadedFileName,
-                // Podrías añadir aquí cualquier otra variable global crítica para el estado de tu app
+                uploadedCsvName: uploadedFileName
             };
         }
         
@@ -8572,13 +8679,13 @@
          * @param {object} importedState - El objeto de estado validado para aplicar.
          */
         function applyImportedApplicationState(importedState) {
-            // 1. Resetear el estado actual (similar a resetToInitialState pero sin borrar localStorage)
+            // 1. Resetear el estado actual (parcialmente, lo que será sobrescrito)
             undoStack = [];
             redoStack = [];
             updateUndoRedoButtonsState();
-            scheduleData = {};
-            employeeNamesOrdered = [];
-            hasUnsavedChanges = false; // El estado importado se considera "guardado" inicialmente
+            // No reseteamos scheduleData, employeeNamesOrdered, etc., aquí directamente,
+            // ya que serán sobrescritos por los valores importados o los defaults.
+            hasUnsavedChanges = false; 
         
             // 2. Aplicar los datos importados
             scheduleData = importedState.scheduleData || {};
@@ -8586,23 +8693,20 @@
             currentSelectedMonth = importedState.currentSelectedMonth || (new Date().getMonth() + 1);
             yearOfSchedule = importedState.yearOfSchedule || new Date().getFullYear();
             currentViewMode = importedState.currentViewMode || 'monthly';
-            
+        
             if (domCache.generalNotesTextarea) {
                 domCache.generalNotesTextarea.value = importedState.generalNotes || "";
             }
             currentShiftColors = importedState.currentShiftColors || JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
             currentUserShiftTimes = importedState.currentUserShiftTimes || JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
             rulesConfig = importedState.rulesConfig || getDefaultRulesConfig();
-            
-            changeHistory = importedState.changeHistory || []; // O resetear si no se importa
-            // Los undo/redo stacks generalmente no se importan para evitar conflictos, se empiezan de nuevo.
-            
+        
+            changeHistory = importedState.changeHistory || [];
+            // Los undo/redo stacks generalmente no se importan para evitar conflictos.
+        
             isAutosaveEnabled = importedState.isAutosaveEnabled !== undefined ? importedState.isAutosaveEnabled : false;
             if (domCache.autosaveToggle) {
                 domCache.autosaveToggle.checked = isAutosaveEnabled;
-                // No llames a toggleAutosave(isAutosaveEnabled) directamente aquí si eso guarda en localStorage,
-                // ya que el objetivo es aplicar el estado importado.
-                // El estado de autosave se guardará la próxima vez que el usuario interactúe con el toggle.
             }
         
             if (domCache.csvFileInput && importedState.uploadedCsvName) {
@@ -8610,40 +8714,57 @@
             } else if (domCache.csvFileInput) {
                 delete domCache.csvFileInput.dataset.uploadedFileName;
             }
-            
+        
             if (domCache.yearInput) {
                 domCache.yearInput.value = yearOfSchedule;
             }
         
+            // --- INICIO: Lógica para importar la configuración del logo ---
+            if (importedState.hasOwnProperty('currentLogoConfig') && typeof importedState.currentLogoConfig === 'object' && importedState.currentLogoConfig !== null) {
+                // Fusionar con defaults para asegurar que todas las propiedades necesarias estén presentes,
+                // y para manejar casos donde el archivo importado podría tener una estructura de logo incompleta.
+                currentLogoConfig = { ...DEFAULT_LOGO_CONFIG, ...importedState.currentLogoConfig };
+                console.log("Configuración del logo encontrada en el archivo importado. Aplicando:", JSON.parse(JSON.stringify(currentLogoConfig)));
+                saveLogoConfig(); // Guardar esta configuración importada en el localStorage específico del logo
+            } else {
+                // Si no hay currentLogoConfig en el archivo importado,
+                // currentLogoConfig mantendrá el valor que tenía (cargado de su propio localStorage o defaults).
+                // O, si queremos asegurar que se usen los defaults si no viene nada:
+                // currentLogoConfig = JSON.parse(JSON.stringify(DEFAULT_LOGO_CONFIG));
+                // saveLogoConfig(); 
+                // Por ahora, la lógica es no tocar la config del logo si no viene en el archivo.
+                // Si quieres que se resetee a defaults si no viene, descomenta las dos líneas anteriores.
+                console.log("No se encontró 'currentLogoConfig' en el archivo importado. La configuración del logo no se modificará desde este archivo de estado general.");
+                // Es importante llamar a loadLogoConfig() para asegurar que los inputs del modal se actualicen
+                // si el usuario abre el editor de logo después de una importación que NO contenía config de logo.
+                loadLogoConfig();
+            }
+            renderEditableLogo(); // Actualizar el logo visible en la cabecera y la previsualización del modal
+            // --- FIN: Lógica para importar la configuración del logo ---
+        
             // 3. Actualizar toda la Interfaz de Usuario
-            // Esta es la parte más crítica y depende de cómo esté estructurada tu UI.
-            // Necesitarás llamar a tus funciones de renderizado y actualización:
+            updateLegend(); 
+            populateMonthTabs(); 
+            updateViewModeUI(); 
+            handleViewChange(); 
+            renderChangeHistory(); 
         
-            updateLegend(); // Actualiza la leyenda con los nuevos colores/tiempos
-            populateMonthTabs(); // Actualiza las pestañas de mes
-            updateViewModeUI(); // Actualiza los botones de modo de vista y título principal
-            handleViewChange(); // Esto debería re-renderizar la tabla de horario principal (mensual o anual)
-                                // y también llamar a validateAndDisplayRuleViolations()
-        
-            renderChangeHistory(); // Muestra el historial importado (si se incluye)
-            
-            // Si el modal de normas estaba abierto, re-renderizarlo
             if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
                 renderRulesModal();
             }
-            
-            initializeAndRenderNewStatistics(); // Re-calcula y re-renderiza todas las estadísticas
         
-            updateUnsavedChangesIndicator(); // Debería estar en false
-            enableControls(isDataLoadedForStats()); // Habilita/deshabilita controles según los datos cargados
+            initializeAndRenderNewStatistics(); 
+            updateUnsavedChangesIndicator(); 
+            enableControls(isDataLoadedForStats()); 
         
-            // Considera guardar este estado importado en localStorage inmediatamente
-            // para que persista si el usuario cierra la pestaña.
+            // Guardar todo el estado importado (incluyendo el schedule, notas, etc., pero no el logo aquí, ya se guardó)
+            // en sus respectivas claves de localStorage.
+            // La función saveScheduleToLocalStorage ya guarda la mayoría de estas cosas.
+            // El logo se guarda con saveLogoConfig().
             saveScheduleToLocalStorage(true); // true para limpiar el historial de undo/redo si no se importó
-            hasUnsavedChanges = false; // Confirmar que no hay cambios pendientes después de guardar
+            hasUnsavedChanges = false; 
             updateUnsavedChangesIndicator();
             if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = true;
-        
         
             console.log("Estado de la aplicación importado y aplicado.");
         }
@@ -8759,6 +8880,343 @@
                 ruleViolationTooltipElement.classList.remove('visible');
             }
         }
+
+        // --- FUNCIONES DEL EDITOR DE LOGO ---
+        
+        /**
+         * Renderiza el logo en el contenedor especificado con la configuración actual.
+         */
+        function renderEditableLogo() {
+            console.log("renderEditableLogo: Renderizando con config:", JSON.parse(JSON.stringify(currentLogoConfig)));
+            const { linea1, linea2, starColor, starVerticalSpacing, starCount, starHorizontalOffset } = currentLogoConfig;
+        
+            if (domCache.logoContainer) {
+                const mainLogoSVG = generateLogoSVGString(linea1, linea2, starColor, starVerticalSpacing, 100, null, starCount, starHorizontalOffset);
+                domCache.logoContainer.innerHTML = mainLogoSVG;
+            }
+            if (domCache.logoEditorPreviewContainer) {
+                const previewLogoSVG = generateLogoSVGString(linea1, linea2, starColor, starVerticalSpacing, 100, null, starCount, starHorizontalOffset);
+                domCache.logoEditorPreviewContainer.innerHTML = previewLogoSVG;
+            }
+            console.log("renderEditableLogo: Renderizado completado.");
+        }
+        
+        
+        /**
+         * Genera la cadena de texto SVG para el logo con la configuración proporcionada.
+         * @param {string} linea1 Texto para la primera línea.
+         * @param {string} linea2 Texto para la segunda línea.
+         * @param {string} starColor Color hexadecimal para las estrellas.
+         * @param {number} starSpacing Espaciado Y entre la línea 2 y las estrellas.
+         * @param {number} [scalePercent=100] - Escala del logo en porcentaje (para PDF).
+         * @param {number} [pdfStarSpacingOverride] - Espaciado de estrellas específico para PDF.
+         * @returns {string} La cadena SVG del logo.
+         */
+        function generateLogoSVGString(linea1, linea2, starColor, starVerticalGapWeb, scalePercent = 100, pdfStarVerticalGapOverride = null, starCount = 5, starHorizontalOffsetWeb = 0) {
+            const yLinea1 = 28;
+            const yLinea2 = 55;
+            const fontSizeLinea2 = 26;
+            // const starShapeHeight = 19.0211; // Altura de la forma de la estrella individual
+            const starVisualHeight = 19.0211 * 0.7; // Altura visual de las estrellas después de la escala del grupo <g>
+        
+            const approxLinea2Bottom = yLinea2 + (fontSizeLinea2 / 2); // Punto medio vertical de la línea 2
+        
+            // Determinar el espaciado vertical final a usar para las estrellas
+            // Si se proporciona un override para PDF, se usa ese. Si no, se usa el espaciado web.
+            const finalStarVerticalGap = pdfStarVerticalGapOverride !== null ? pdfStarVerticalGapOverride : starVerticalGapWeb;
+        
+            // Posición Y para el grupo de estrellas: debajo de la línea 2 más el espaciado vertical
+            const yEstrellasTranslate = approxLinea2Bottom + finalStarVerticalGap;
+        
+            const scaleValue = scalePercent / 100; // Factor de escala general del SVG
+            const originalViewBoxWidth = 220;
+            let adjustedViewBoxHeight = 100; // Altura base del viewBox, se ajustará si las estrellas se salen
+        
+            let estrellasSVG = '';
+            if (starCount > 0 && starCount <= 5) { // Asegurar que starCount sea válido
+                const starPathUnitWidth = 20; // Ancho de una estrella en su <use>
+                const starPathUnitSpacing = 5; // Espacio entre estrellas
+        
+                // Ancho total del contenido de las estrellas (estrellas + espacios entre ellas)
+                const totalStarContentWidth = (starCount * starPathUnitWidth) + (Math.max(0, starCount - 1) * starPathUnitSpacing);
+        
+                // Calcular la posición X inicial para centrar el grupo de estrellas, y luego aplicar el offset horizontal.
+                // El offset se aplica a la posición del grupo <g> de estrellas.
+                const centeredStarGroupX = (originalViewBoxWidth / 2) - (totalStarContentWidth / 2);
+                const finalStarGroupTranslateX = centeredStarGroupX + starHorizontalOffsetWeb; // Usar el offset web aquí
+        
+                let useElements = '';
+                for (let i = 0; i < starCount; i++) {
+                    useElements += `<use href="#star-shape-dynamic" x="${i * (starPathUnitWidth + starPathUnitSpacing)}" y="0" />`;
+                }
+                // El grupo de estrellas se escala a 0.7
+                estrellasSVG = `<g class="stars-group-dynamic" fill="${starColor}" transform="translate(${finalStarGroupTranslateX}, ${yEstrellasTranslate}) scale(0.7)">${useElements}</g>`;
+        
+                // Ajustar la altura del viewBox si las estrellas se salen por abajo
+                const bottomOfStarsVisual = yEstrellasTranslate + starVisualHeight;
+                if (bottomOfStarsVisual > adjustedViewBoxHeight - 5) { // -5 para un pequeño margen
+                    adjustedViewBoxHeight = Math.ceil(bottomOfStarsVisual + 5);
+                }
+            } else if (starCount === 0) {
+                // Si no hay estrellas, asegurar que la altura del viewBox sea al menos la de las líneas de texto
+                adjustedViewBoxHeight = Math.max(adjustedViewBoxHeight, yLinea2 + fontSizeLinea2);
+            }
+        
+        
+            // El atributo width y height del SVG se escala, pero el viewBox define el sistema de coordenadas interno.
+            return `
+                <svg width="${originalViewBoxWidth * scaleValue}" height="${adjustedViewBoxHeight * scaleValue}" viewBox="0 0 ${originalViewBoxWidth} ${adjustedViewBoxHeight}" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .logo-text-gh { font-family: 'Times New Roman', Times, serif; font-size: 20px; font-weight: normal; fill: #252525; text-anchor: middle; dominant-baseline: central; }
+                        .logo-text-m { font-family: 'Times New Roman', Times, serif; font-size: 26px; font-weight: bold; fill: #1a1a1a; text-anchor: middle; dominant-baseline: central; }
+                    </style>
+                    <defs>
+                        <path id="star-shape-dynamic" d="M10 0 L12.3511 6.1803 L19.5106 7.2949 L14.7295 12.3197 L15.2939 19.0211 L10 16 L4.7061 19.0211 L5.2705 12.3197 L0.4894 7.2949 L7.6489 6.1803 Z" />
+                    </defs>
+                    <g>
+                        <text x="${originalViewBoxWidth / 2}" y="${yLinea1}" class="logo-text-gh">${linea1 || " "}</text>
+                        <text x="${originalViewBoxWidth / 2}" y="${yLinea2}" class="logo-text-m">${linea2 || " "}</text>
+                        ${estrellasSVG}
+                    </g>
+                </svg>
+            `;
+        }
+        
+        
+        
+        /**
+         * Carga la configuración del logo desde localStorage.
+         */
+        function loadLogoConfig() {
+            console.log("loadLogoConfig: Iniciando carga.");
+            const savedConfigString = localStorage.getItem(LOCAL_STORAGE_KEY_LOGO_CONFIG);
+            let loadedConfig = {};
+        
+            if (savedConfigString) {
+                try {
+                    loadedConfig = JSON.parse(savedConfigString);
+                    console.log("loadLogoConfig: Config cargada desde localStorage:", loadedConfig);
+                } catch (e) {
+                    console.error("loadLogoConfig: Error parseando config guardada, usando defaults:", e);
+                    loadedConfig = {};
+                }
+            } else {
+                console.log("loadLogoConfig: No se encontró config guardada, usando defaults.");
+            }
+        
+            const tempConfig = { ...DEFAULT_LOGO_CONFIG };
+            for (const key in DEFAULT_LOGO_CONFIG) {
+                if (loadedConfig.hasOwnProperty(key)) {
+                    const loadedValue = loadedConfig[key];
+                    if (['starVerticalSpacing', 'pdfStarVerticalSpacing', 'starCount', 'starHorizontalOffset', 'pdfScale'].includes(key)) {
+                        const numValue = parseInt(loadedValue, 10);
+                        if (!isNaN(numValue)) {
+                            tempConfig[key] = numValue;
+                        } else {
+                            console.warn(`loadLogoConfig: Valor inválido para ${key} ('${loadedValue}'), usando default: ${tempConfig[key]}`);
+                        }
+                    } else {
+                        tempConfig[key] = loadedValue;
+                    }
+                }
+            }
+            currentLogoConfig = { ...tempConfig };
+            console.log("loadLogoConfig: Configuración final a aplicar:", JSON.parse(JSON.stringify(currentLogoConfig)));
+        
+            if (!savedConfigString || Object.keys(loadedConfig).length === 0) {
+                saveLogoConfig();
+            }
+        
+            if (!domCache || Object.keys(domCache).length === 0) {
+                console.error("loadLogoConfig: domCache vacío. No se pueden actualizar elementos del DOM.");
+                return;
+            }
+        
+            if (domCache.logoLinea1Input) domCache.logoLinea1Input.value = currentLogoConfig.linea1;
+            if (domCache.logoLinea2Input) domCache.logoLinea2Input.value = currentLogoConfig.linea2;
+            if (domCache.logoStarColorInput) domCache.logoStarColorInput.value = currentLogoConfig.starColor;
+            if (domCache.logoStarCountInput) domCache.logoStarCountInput.value = currentLogoConfig.starCount;
+            if (domCache.logoStarCountValue) domCache.logoStarCountValue.textContent = currentLogoConfig.starCount;
+        
+            // Espaciado Vertical Web
+            if (domCache.logoStarVerticalSpacingInput) domCache.logoStarVerticalSpacingInput.value = currentLogoConfig.starVerticalSpacing;
+            if (domCache.logoStarVerticalSpacingValue) domCache.logoStarVerticalSpacingValue.textContent = currentLogoConfig.starVerticalSpacing;
+            console.log(`loadLogoConfig: Web Vertical Spacing - Input: ${domCache.logoStarVerticalSpacingInput?.value}, Span: ${domCache.logoStarVerticalSpacingValue?.textContent}`);
+        
+            // Alineación Horizontal Web
+            if (domCache.logoStarHorizontalOffsetInput) domCache.logoStarHorizontalOffsetInput.value = currentLogoConfig.starHorizontalOffset;
+            if (domCache.logoStarHorizontalOffsetValue) domCache.logoStarHorizontalOffsetValue.textContent = currentLogoConfig.starHorizontalOffset;
+        
+            // Escalado PDF
+            if (domCache.logoPdfScaleInput) domCache.logoPdfScaleInput.value = currentLogoConfig.pdfScale;
+            if (domCache.logoPdfScaleValue) domCache.logoPdfScaleValue.textContent = currentLogoConfig.pdfScale;
+        
+            // Espaciado Vertical PDF
+            if (domCache.logoPdfStarVerticalSpacingInput) domCache.logoPdfStarVerticalSpacingInput.value = currentLogoConfig.pdfStarVerticalSpacing;
+            if (domCache.logoPdfStarVerticalSpacingValue) domCache.logoPdfStarVerticalSpacingValue.textContent = currentLogoConfig.pdfStarVerticalSpacing;
+            console.log(`loadLogoConfig: PDF Vertical Spacing - Input: ${domCache.logoPdfStarVerticalSpacingInput?.value}, Span: ${domCache.logoPdfStarVerticalSpacingValue?.textContent}`);
+        
+            renderEditableLogo();
+            console.log("loadLogoConfig: Carga completada.");
+        }
+        
+        /**
+         * Guarda la configuración actual del logo en localStorage.
+         */
+        function saveLogoConfig() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY_LOGO_CONFIG, JSON.stringify(currentLogoConfig));
+                console.log("saveLogoConfig: Config guardada:", JSON.parse(JSON.stringify(currentLogoConfig)));
+                if (typeof hasUnsavedChanges !== 'undefined') hasUnsavedChanges = true;
+                if (typeof updateUnsavedChangesIndicator === 'function') updateUnsavedChangesIndicator();
+            } catch (error) {
+                console.error("saveLogoConfig: Error guardando config:", error);
+                if (typeof showToast === 'function') showToast("Error al guardar config del logo.", "error");
+            }
+        }
+        
+        /**
+         * Configura los event listeners para los inputs del editor de logo.
+         */
+        function setupLogoEditorEventListeners() {
+            console.log("setupLogoEditorEventListeners: Configurando listeners.");
+            if (domCache.logoContainer) {
+                domCache.logoContainer.addEventListener('click', () => {
+                    if (domCache.logoEditorModal) {
+                        loadLogoConfig(); // Carga la config actual (de localStorage o defaults) al abrir el modal
+                        renderEditableLogo(); // Renderiza la previsualización con esa config
+                        if (typeof showModal === 'function') showModal(domCache.logoEditorModal);
+                    }
+                });
+            }
+        
+            if (domCache.closeLogoEditorModalButton) domCache.closeLogoEditorModalButton.addEventListener('click', () => { 
+                if (domCache.logoEditorModal && typeof hideModal === 'function') {
+                    hideModal(domCache.logoEditorModal);
+                    // Al cerrar con "X", es buena idea recargar la configuración que estaba guardada
+                    // para descartar cambios no aplicados en el modal.
+                    loadLogoConfig(); 
+                    renderEditableLogo(); // Actualizar el logo principal al estado guardado
+                }
+            });
+        
+            if (domCache.applyLogoEditorChangesButton) {
+                domCache.applyLogoEditorChangesButton.addEventListener('click', () => {
+                    saveLogoConfig(); // Guardar la configuración del logo (que está en currentLogoConfig) al aplicar
+                    if (domCache.logoEditorModal && typeof hideModal === 'function') {
+                         hideModal(domCache.logoEditorModal);
+                    }
+                    if (typeof showToast === 'function') {
+                        showToast('Configuración del logo aplicada y guardada.', 'success');
+                    }
+                    renderEditableLogo(); // Asegurar que el logo principal se actualice con lo guardado
+                });
+            }
+        
+            if (domCache.logoEditorModal) domCache.logoEditorModal.addEventListener('click', (event) => { 
+                // Comentado para evitar cierre al hacer clic fuera:
+                // if (event.target === domCache.logoEditorModal && typeof hideModal === 'function') hideModal(domCache.logoEditorModal); 
+            });
+        
+            // Listeners de Inputs (saveLogoConfig() eliminado de aquí)
+            // Estos listeners ahora solo actualizan currentLogoConfig y la previsualización.
+            if (domCache.logoLinea1Input) domCache.logoLinea1Input.addEventListener('input', (e) => { currentLogoConfig.linea1 = e.target.value; renderEditableLogo(); });
+            if (domCache.logoLinea2Input) domCache.logoLinea2Input.addEventListener('input', (e) => { currentLogoConfig.linea2 = e.target.value; renderEditableLogo(); });
+            if (domCache.logoStarColorInput) domCache.logoStarColorInput.addEventListener('input', (e) => { currentLogoConfig.starColor = e.target.value; renderEditableLogo(); });
+        
+            if (domCache.logoStarCountInput) domCache.logoStarCountInput.addEventListener('input', (e) => { 
+                const count = parseInt(e.target.value, 10); 
+                currentLogoConfig.starCount = count; 
+                if (domCache.logoStarCountValue) domCache.logoStarCountValue.textContent = count; 
+                renderEditableLogo(); 
+            });
+        
+            if (domCache.logoStarHorizontalOffsetInput) domCache.logoStarHorizontalOffsetInput.addEventListener('input', (e) => { 
+                const offset = parseInt(e.target.value, 10); 
+                if (!isNaN(offset)) { 
+                    currentLogoConfig.starHorizontalOffset = offset; 
+                    if (domCache.logoStarHorizontalOffsetValue) domCache.logoStarHorizontalOffsetValue.textContent = offset; 
+                    renderEditableLogo(); 
+                } 
+            });
+        
+            if (domCache.logoPdfScaleInput) domCache.logoPdfScaleInput.addEventListener('input', (e) => { 
+                const scale = parseInt(e.target.value, 10); 
+                if (!isNaN(scale)) { 
+                    currentLogoConfig.pdfScale = scale; 
+                    if (domCache.logoPdfScaleValue) domCache.logoPdfScaleValue.textContent = scale; 
+                    // renderEditableLogo(); // No es necesario si solo afecta al PDF y la preview no lo muestra
+                } 
+            });
+        
+            if (domCache.logoStarVerticalSpacingInput) {
+                domCache.logoStarVerticalSpacingInput.addEventListener('input', (e) => {
+                    const spacing = parseInt(e.target.value, 10);
+                    if (!isNaN(spacing)) {
+                        currentLogoConfig.starVerticalSpacing = spacing;
+                        if (domCache.logoStarVerticalSpacingValue) {
+                            domCache.logoStarVerticalSpacingValue.textContent = spacing;
+                        }
+                        renderEditableLogo();
+                    }
+                });
+            }
+        
+            if (domCache.logoPdfStarVerticalSpacingInput) {
+                domCache.logoPdfStarVerticalSpacingInput.addEventListener('input', (e) => {
+                    const spacing = parseInt(e.target.value, 10);
+                    if (!isNaN(spacing)) {
+                        currentLogoConfig.pdfStarVerticalSpacing = spacing;
+                        if (domCache.logoPdfStarVerticalSpacingValue) {
+                            domCache.logoPdfStarVerticalSpacingValue.textContent = spacing;
+                        }
+                        // renderEditableLogo(); // No es necesario si solo afecta al PDF y la preview no lo muestra
+                    }
+                });
+            }
+        
+            // Modificación para el botón "Restaurar Defecto"
+            if (domCache.resetLogoConfigButton) {
+                domCache.resetLogoConfigButton.addEventListener('click', () => {
+                    if (confirm("¿Restaurar logo a valores por defecto?")) {
+                        // 1. Reset currentLogoConfig a los valores originales hardcodeados
+                        currentLogoConfig = JSON.parse(JSON.stringify(DEFAULT_LOGO_CONFIG));
+        
+                        // 2. Actualizar directamente los campos del modal con estos valores por defecto
+                        if (domCache.logoLinea1Input) domCache.logoLinea1Input.value = currentLogoConfig.linea1;
+                        if (domCache.logoLinea2Input) domCache.logoLinea2Input.value = currentLogoConfig.linea2;
+                        if (domCache.logoStarColorInput) domCache.logoStarColorInput.value = currentLogoConfig.starColor;
+        
+                        if (domCache.logoStarCountInput) domCache.logoStarCountInput.value = currentLogoConfig.starCount;
+                        if (domCache.logoStarCountValue) domCache.logoStarCountValue.textContent = currentLogoConfig.starCount;
+        
+                        if (domCache.logoStarVerticalSpacingInput) domCache.logoStarVerticalSpacingInput.value = currentLogoConfig.starVerticalSpacing;
+                        if (domCache.logoStarVerticalSpacingValue) domCache.logoStarVerticalSpacingValue.textContent = currentLogoConfig.starVerticalSpacing;
+        
+                        if (domCache.logoStarHorizontalOffsetInput) domCache.logoStarHorizontalOffsetInput.value = currentLogoConfig.starHorizontalOffset;
+                        if (domCache.logoStarHorizontalOffsetValue) domCache.logoStarHorizontalOffsetValue.textContent = currentLogoConfig.starHorizontalOffset;
+        
+                        if (domCache.logoPdfScaleInput) domCache.logoPdfScaleInput.value = currentLogoConfig.pdfScale;
+                        if (domCache.logoPdfScaleValue) domCache.logoPdfScaleValue.textContent = currentLogoConfig.pdfScale;
+        
+                        if (domCache.logoPdfStarVerticalSpacingInput) domCache.logoPdfStarVerticalSpacingInput.value = currentLogoConfig.pdfStarVerticalSpacing;
+                        if (domCache.logoPdfStarVerticalSpacingValue) domCache.logoPdfStarVerticalSpacingValue.textContent = currentLogoConfig.pdfStarVerticalSpacing;
+        
+                        // 3. Actualizar la previsualización del logo en el modal
+                        renderEditableLogo();
+        
+                        // 4. Informar al usuario. No se guarda en localStorage aquí.
+                        if (typeof showToast === 'function') {
+                            showToast('Logo restaurado a valores por defecto. Haz clic en "Aplicar y Cerrar" para guardar estos cambios.', 'info');
+                        }
+                    }
+                });
+            }
+            console.log("setupLogoEditorEventListeners: Configuración de listeners completada.");
+        }
+        
+        
+        
 
     </script>
 </body>
