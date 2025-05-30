@@ -1074,8 +1074,7 @@
 			-ms-user-select: none;     /* IE10+/Edge */
 			user-select: none;         /* Estándar */
 			cursor: pointer; /* Para mantener la indicación de que es clickeable */
-        
-
+			
     </style>
 </head>
 
@@ -1183,7 +1182,7 @@
                 <div class="modal-content max-w-lg">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
                         <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                            <i class="fas fa-shield-alt text-purple-500 mr-3"></i>Gestionar Configuración
+                            <i class="fas text-purple-500 mr-3"></i>Gestionar Configuración
                         </h3>
                         <button id="close-manage-config-modal" class="text-gray-400 hover:text-gray-600 transition-colors">
                             <i class="fas fa-times fa-lg"></i>
@@ -1252,7 +1251,7 @@
                     <div class="flex flex-row w-full gap-2 sm:contents">
                         <button id="open-legend-colors-modal-button-nav"
                                 class="view-toggle-button bg-teal-500 hover:bg-teal-600 text-white !justify-center flex-1 sm:flex-none sm:w-auto sm:order-1"
-                                title="Abrir Leyenda, Colores y Horarios de Turno">
+                                title="Abrir Leyenda, Colores, Horarios de Turno y Logo">
                             <i class="fas fa-palette"></i>
                             <span>Personalización</span>
                         </button>
@@ -1628,26 +1627,25 @@
     <div id="legend-colors-modal" class="modal hidden-by-default">
         <div class="modal-content max-w-3xl">
             <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
-                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-palette mr-2 text-teal-500"></i>Leyenda, Colores y Horarios de Turno</h3>
+                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-palette mr-2 text-teal-500"></i>Leyenda, Colores, Horarios de Turno y Logo</h3>
                 <button id="close-legend-colors-modal-button" class="text-gray-500 hover:text-gray-800 transition-colors">
                     <i class="fas fa-times fa-lg"></i>
                 </button>
             </div>
             <div id="legend-colors-modal-body">
                 <div id="legend-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
-                    <!-- El contenido de la leyenda (items de colores y tiempos) 
-                         es generado dinámicamente por JavaScript mediante la función updateLegend() 
-                         y se inserta aquí. En el HTML estático, este div está vacío inicialmente. -->
                 </div>
             </div>
-            <div id="legend-colors-modal-footer" class="mt-6 pt-4 border-t border-gray-200 flex justify-end"> 
-                <!-- La clase 'space-x-3' fue eliminada aquí como parte de la guía anterior, 
-                     ya que el espaciado ahora se maneja con 'gap' en el CSS de #legend-colors-modal-footer -->
+            <div id="legend-colors-modal-footer" class="mt-6 pt-4 border-t border-gray-200 flex flex-wrap justify-end gap-3">
                 <button id="modal-apply-colors-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 px-4 py-2" disabled>
                     <i class="fas fa-check mr-2"></i>Aplicar Cambios
                 </button>
                 <button id="modal-reset-colors-button" class="action-button bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-400 px-4 py-2" disabled>
                     <i class="fas fa-undo mr-2"></i>Restaurar
+                </button>
+            
+                <button id="open-logo-editor-from-legend-modal-button" class="action-button bg-teal-500 text-white hover:bg-teal-600 focus:ring-teal-400 px-4 py-2">
+                    <i class="fas fa-pencil-alt mr-2"></i>Editar Logo
                 </button>
                 <button id="modal-ok-legend-colors-button" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">
                     Cerrar
@@ -2350,6 +2348,7 @@
 			domCache.logoStarHorizontalOffsetValue = document.getElementById('logo-star-horizontal-offset-value');
 			domCache.logoStarVerticalSpacingInput = document.getElementById('logo-star-vertical-spacing-input');
 			domCache.logoStarVerticalSpacingValue = document.getElementById('logo-star-vertical-spacing-value'); 
+			domCache.openLogoEditorFromLegendModalButton = document.getElementById('open-logo-editor-from-legend-modal-button');
         
             // --- Controles de Importación, Año y Guardado/Exportación Principal ---
             domCache.csvFileInput = document.getElementById('csv-file-input');
@@ -2804,6 +2803,34 @@
                 });
             }
             
+            if (domCache.openLogoEditorFromLegendModalButton) {
+                domCache.openLogoEditorFromLegendModalButton.addEventListener('click', () => {
+                    // 1. Opcional: Ocultar el modal actual de leyenda/colores si quieres que solo uno esté abierto.
+                    //    Si prefieres que se puedan superponer, omite esta línea.
+                    if (domCache.legendColorsModal && typeof hideModal === 'function') {
+                        hideModal(domCache.legendColorsModal);
+                    }
+            
+                    // 2. Asegurarse de que la configuración del logo esté cargada en los inputs del editor
+                    if (typeof loadLogoConfig === 'function') {
+                        loadLogoConfig(); // Carga la configuración actual del logo (de localStorage o defaults)
+                    }
+            
+                    // 3. Renderizar la previsualización en el modal del editor de logo
+                    if (typeof renderEditableLogo === 'function') {
+                        renderEditableLogo(); // Actualiza la previsualización en el modal del editor
+                    }
+            
+                    // 4. Mostrar el modal de edición del logo
+                    if (domCache.logoEditorModal && typeof showModal === 'function') {
+                        showModal(domCache.logoEditorModal);
+                    } else {
+                        console.error("El modal del editor de logo (logoEditorModal) no está disponible.");
+                        if(typeof showToast === 'function') showToast('Error: No se pudo abrir el editor de logo.', 'error');
+                    }
+                });
+            }
+			
             // Asegúrate de que el modal de confirmación de importación también se cierre con Escape y clic fuera
             if (domCache.confirmImportAppStateModal) {
                 domCache.confirmImportAppStateModal.addEventListener('click', (event) => {
