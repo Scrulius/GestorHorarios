@@ -8968,94 +8968,140 @@
          * @param {object} importedState - El objeto de estado validado para aplicar.
          */
         function applyImportedApplicationState(importedState) {
+            console.log("applyImportedApplicationState: Iniciando aplicación de estado importado.", JSON.parse(JSON.stringify(importedState)));
+            // Guardar el año global actual como fallback si el snapshot no lo tiene
+            const currentGlobalYearBeforeRestore = yearOfSchedule; 
+        
             // 1. Resetear el estado actual (parcialmente, lo que será sobrescrito)
+            // Las pilas de Deshacer/Rehacer se limpian porque el nuevo estado es la base.
             undoStack = [];
             redoStack = [];
-            updateUndoRedoButtonsState();
-            // No reseteamos scheduleData, employeeNamesOrdered, etc., aquí directamente,
-            // ya que serán sobrescritos por los valores importados o los defaults.
-            hasUnsavedChanges = false; 
+            updateUndoRedoButtonsState(); // Actualiza la UI de los botones
+            hasUnsavedChanges = false; // El estado importado se considera "guardado" inicialmente
         
-            // 2. Aplicar los datos importados
+            // 2. Aplicar los datos importados del snapshot
             scheduleData = importedState.scheduleData || {};
             employeeNamesOrdered = importedState.employeeNamesOrdered || [];
             currentSelectedMonth = importedState.currentSelectedMonth || (new Date().getMonth() + 1);
-            yearOfSchedule = importedState.yearOfSchedule || new Date().getFullYear();
+            yearOfSchedule = importedState.yearOfSchedule || currentGlobalYearBeforeRestore;
             currentViewMode = importedState.currentViewMode || 'monthly';
         
-            if (domCache.generalNotesTextarea) {
-                domCache.generalNotesTextarea.value = importedState.generalNotes || "";
+            // Notas Generales
+            if (domCache.modalGeneralNotesTextarea) { 
+                domCache.modalGeneralNotesTextarea.value = importedState.generalNotes || "";
+            } else {
+                console.warn("applyImportedApplicationState: domCache.modalGeneralNotesTextarea no encontrado.");
             }
+        
+            // Colores y Tiempos de Turno
             currentShiftColors = importedState.currentShiftColors || JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
             currentUserShiftTimes = importedState.currentUserShiftTimes || JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
-            rulesConfig = importedState.rulesConfig || getDefaultRulesConfig();
+            
+            // Configuración de Normas
+            if (importedState.rulesConfig) {
+                rulesConfig = importedState.rulesConfig;
+            } else {
+                rulesConfig = getDefaultRulesConfig();
+            }
         
-            changeHistory = importedState.changeHistory || [];
-            // Los undo/redo stacks generalmente no se importan para evitar conflictos.
+            // Historial de Cambios - ¡CORRECCIÓN CRUCIAL AQUÍ!
+            if (Array.isArray(importedState.changeHistory)) {
+                try {
+                    changeHistory = importedState.changeHistory.map(item => {
+                        if (item && item.timestamp) {
+                            // Comprobar si ya es un objeto Date (poco probable después de JSON.parse, pero seguro)
+                            if (item.timestamp instanceof Date) {
+                                return item;
+                            }
+                            // Convertir string a objeto Date
+                            const newTimestamp = new Date(item.timestamp);
+                            if (isNaN(newTimestamp.getTime())) { // Comprobar si la conversión fue válida
+                                console.warn(`Timestamp inválido encontrado durante la importación del historial: ${item.timestamp}. Usando fecha actual como fallback.`);
+                                return { ...item, timestamp: new Date() }; // Fallback a fecha actual
+                            }
+                            return {
+                                ...item,
+                                timestamp: newTimestamp 
+                            };
+                        }
+                        return item; // Devolver el item como está si no tiene timestamp
+                    });
+                    console.log("applyImportedApplicationState: Historial de cambios procesado:", changeHistory);
+                } catch (e) {
+                    console.error("Error al procesar timestamps del historial durante la importación del estado:", e);
+                    changeHistory = []; // Fallback a un historial vacío si hay error
+                }
+            } else {
+                changeHistory = []; 
+            }
         
+            // Autoguardado
             isAutosaveEnabled = importedState.isAutosaveEnabled !== undefined ? importedState.isAutosaveEnabled : false;
             if (domCache.autosaveToggle) {
                 domCache.autosaveToggle.checked = isAutosaveEnabled;
+                // Es importante llamar a toggleAutosave para iniciar/detener el intervalo si es necesario
+                toggleAutosave(isAutosaveEnabled, true); // El segundo parámetro podría ser para no mostrar toast
             }
         
-            if (domCache.csvFileInput && importedState.uploadedCsvName) {
-                domCache.csvFileInput.dataset.uploadedFileName = importedState.uploadedCsvName;
-            } else if (domCache.csvFileInput) {
-                delete domCache.csvFileInput.dataset.uploadedFileName;
+            // Nombre del archivo CSV original (si existe)
+            if (domCache.csvFileInput) {
+                if (importedState.uploadedCsvName) {
+                    domCache.csvFileInput.dataset.uploadedFileName = importedState.uploadedCsvName;
+                     if(domCache.csvFileInputText) domCache.csvFileInputText.textContent = importedState.uploadedCsvName.length > 25 ? importedState.uploadedCsvName.substring(0,22) + "..." : importedState.uploadedCsvName;
+                     if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-check-circle mr-2 text-green-500';
+                } else {
+                    delete domCache.csvFileInput.dataset.uploadedFileName;
+                    if(domCache.csvFileInputText) domCache.csvFileInputText.textContent = 'Seleccionar archivo...';
+                    if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3';
+                }
             }
         
-            if (domCache.yearInput) {
-                domCache.yearInput.value = yearOfSchedule;
+            // Input del año en el título
+            if (domCache.titleYearInput) { 
+                domCache.titleYearInput.value = yearOfSchedule; 
+            } else {
+                 console.warn("applyImportedApplicationState: domCache.titleYearInput no encontrado.");
             }
         
-            // --- INICIO: Lógica para importar la configuración del logo ---
+            // Configuración del Logo
             if (importedState.hasOwnProperty('currentLogoConfig') && typeof importedState.currentLogoConfig === 'object' && importedState.currentLogoConfig !== null) {
-                // Fusionar con defaults para asegurar que todas las propiedades necesarias estén presentes,
-                // y para manejar casos donde el archivo importado podría tener una estructura de logo incompleta.
                 currentLogoConfig = { ...DEFAULT_LOGO_CONFIG, ...importedState.currentLogoConfig };
-                console.log("Configuración del logo encontrada en el archivo importado. Aplicando:", JSON.parse(JSON.stringify(currentLogoConfig)));
                 saveLogoConfig(); // Guardar esta configuración importada en el localStorage específico del logo
             } else {
-                // Si no hay currentLogoConfig en el archivo importado,
-                // currentLogoConfig mantendrá el valor que tenía (cargado de su propio localStorage o defaults).
-                // O, si queremos asegurar que se usen los defaults si no viene nada:
-                // currentLogoConfig = JSON.parse(JSON.stringify(DEFAULT_LOGO_CONFIG));
-                // saveLogoConfig(); 
-                // Por ahora, la lógica es no tocar la config del logo si no viene en el archivo.
-                // Si quieres que se resetee a defaults si no viene, descomenta las dos líneas anteriores.
-                console.log("No se encontró 'currentLogoConfig' en el archivo importado. La configuración del logo no se modificará desde este archivo de estado general.");
-                // Es importante llamar a loadLogoConfig() para asegurar que los inputs del modal se actualicen
-                // si el usuario abre el editor de logo después de una importación que NO contenía config de logo.
-                loadLogoConfig();
+                loadLogoConfig(); // Carga la config del logo desde su propio localStorage o defaults
             }
-            renderEditableLogo(); // Actualizar el logo visible en la cabecera y la previsualización del modal
-            // --- FIN: Lógica para importar la configuración del logo ---
+            if (typeof renderEditableLogo === 'function') renderEditableLogo();
         
             // 3. Actualizar toda la Interfaz de Usuario
             updateLegend(); 
             populateMonthTabs(); 
-            updateViewModeUI(); 
-            handleViewChange(); 
+            updateViewModeUI(); // Esto llamará a updateScheduleTitleDisplay
+            handleViewChange(); // Esto renderiza la tabla y llama a validateAndDisplayRuleViolations
+            
+            // Renderizar el historial DESPUÉS de que changeHistory haya sido procesado
             renderChangeHistory(); 
         
             if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
-                renderRulesModal();
+                renderRulesModal(); // Actualizar el modal de normas si está visible
             }
         
             initializeAndRenderNewStatistics(); 
-            updateUnsavedChangesIndicator(); 
-            enableControls(isDataLoadedForStats()); 
+            updateUnsavedChangesIndicator(); // Debería ser false después de una importación exitosa
+            enableControls(isDataLoadedForStats()); // Habilitar controles si hay datos
         
-            // Guardar todo el estado importado (incluyendo el schedule, notas, etc., pero no el logo aquí, ya se guardó)
-            // en sus respectivas claves de localStorage.
-            // La función saveScheduleToLocalStorage ya guarda la mayoría de estas cosas.
-            // El logo se guarda con saveLogoConfig().
+            // Guardar todo el estado importado en localStorage para persistencia.
+            // Es importante que las funciones de guardado individual (colores, tiempos, etc.)
+            // se llamen si no están cubiertas por saveScheduleToLocalStorage.
             saveScheduleToLocalStorage(true); // true para limpiar el historial de undo/redo si no se importó
-            hasUnsavedChanges = false; 
+            saveRulesConfigToLocalStorage(); // Guardar normas importadas
+            // saveLogoConfig() ya se llamó arriba si se importó config de logo.
+            
+            hasUnsavedChanges = false; // Confirmar que no hay cambios sin guardar después de todo
             updateUnsavedChangesIndicator();
             if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = true;
         
-            console.log("Estado de la aplicación importado y aplicado.");
+            console.log("applyImportedApplicationState: Estado de la aplicación importado y aplicado completamente.");
+            showToast("Configuración de la aplicación importada correctamente.", "success");
         }
 
         function updateScheduleTitleDisplay() {
