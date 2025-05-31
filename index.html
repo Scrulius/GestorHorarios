@@ -1823,16 +1823,74 @@
     <div id="legend-colors-modal" class="modal hidden-by-default">
         <div class="modal-content max-w-3xl">
             <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
-                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-palette mr-2 text-teal-500"></i>Leyenda, Colores, Horarios de Turno y Logo</h3>
+                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-palette mr-2 text-teal-500"></i>Leyenda, Colores, Horarios de Turno y Fuentes PDF</h3>
                 <button id="close-legend-colors-modal-button" class="text-gray-500 hover:text-gray-800 transition-colors">
                     <i class="fas fa-times fa-lg"></i>
                 </button>
             </div>
+    
             <div id="legend-colors-modal-body">
                 <div id="legend-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
+                    
+                </div>
+        
+                <div class="mt-8 pt-6 border-t border-gray-300">
+                    <h4 class="text-lg font-semibold text-indigo-700 mb-5">Tamaños de Fuente para PDF (pt)</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-5 text-sm">
+            
+                        <div>
+                            <label for="pdf-font-main-title" class="block text-sm font-medium text-gray-700 mb-1">Título Principal:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-main-title" name="pdf-font-main-title" min="8" max="72" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <span id="pdf-font-main-title-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                        <div>
+                            <label for="pdf-font-section-title" class="block text-sm font-medium text-gray-700 mb-1">Títulos de Sección:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-section-title" name="pdf-font-section-title" min="8" max="48" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <span id="pdf-font-section-title-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                        <div>
+                            <label for="pdf-font-table-header" class="block text-sm font-medium text-gray-700 mb-1">Cabecera de Tabla:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-table-header" name="pdf-font-table-header" min="6" max="24" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <span id="pdf-font-table-header-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                        <div>
+                            <label for="pdf-font-table-cell" class="block text-sm font-medium text-gray-700 mb-1">Celdas de Tabla:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-table-cell" name="pdf-font-table-cell" min="5" max="18" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <span id="pdf-font-table-cell-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="pdf-font-employee-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre Empleado (Tabla):</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-employee-name" name="pdf-font-employee-name" min="6" max="20" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <span id="pdf-font-employee-name-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="pdf-font-footer" class="block text-sm font-medium text-gray-700 mb-1">Pie de Página PDF:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-footer" name="pdf-font-footer" min="5" max="14" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <span id="pdf-font-footer-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                    </div>
                 </div>
             </div>
-            <div id="legend-colors-modal-footer" class="mt-6 pt-4 border-t border-gray-200 flex flex-wrap justify-end gap-3">
+    
+            <div id="legend-colors-modal-footer" class="mt-8 pt-6 border-t border-gray-300 flex flex-wrap justify-end gap-3">
                 <button id="modal-apply-colors-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 px-4 py-2" disabled>
                     <i class="fas fa-check mr-2"></i>Aplicar Cambios
                 </button>
@@ -1849,6 +1907,7 @@
             </div>
         </div>
     </div>
+    
     
     <div id="rules-modal" class="modal hidden-by-default">
         <div class="modal-content max-w-2xl">
@@ -2045,6 +2104,17 @@
 
     <script>
         // --- CONSTANTES Y CONFIGURACIÓN ---
+		
+        const DEFAULT_PDF_FONT_SIZES = {
+            mainTitle: 22,       // Título principal del documento PDF
+            sectionTitle: 16,    // Títulos de sección (ej. "Semana X", "Mes Y")
+            tableHeader: 10,     // Cabeceras de las columnas de la tabla
+            tableCell: 9,        // Contenido de las celdas de turno
+            employeeName: 9,     // Nombre del empleado en la primera columna de la tabla
+            footer: 8            // Texto del pie de página (si lo tienes)
+        };
+        let currentPdfFontSizes = JSON.parse(JSON.stringify(DEFAULT_PDF_FONT_SIZES));
+        const LOCAL_STORAGE_KEY_PDF_FONT_SIZES = 'scheduleAppPdfFontSizes_v1';
 		
         // --- CONSTANTES Y CONFIGURACIÓN DEL LOGO ---
         const DEFAULT_LOGO_CONFIG = {
@@ -2555,6 +2625,7 @@
             domCache.creatorNameElement = document.getElementById('creator-name');
             domCache.footerHeartElement = document.getElementById('footer-heart');
 			
+		
             // Editor de Logo
 			domCache.logoEditorModal = document.getElementById('logo-editor-modal'); // Nuevo
 			domCache.closeLogoEditorModalButton = document.getElementById('close-logo-editor-modal'); // Nuevo
@@ -2569,6 +2640,7 @@
             domCache.logoStarSpacingValue = document.getElementById('logo-star-spacing-value'); // Para mostrar el valor del range
             domCache.logoPdfScaleInput = document.getElementById('logo-pdf-scale-input');
             domCache.logoPdfScaleValue = document.getElementById('logo-pdf-scale-value'); // Para mostrar el valor del range
+			
 			// Slider y Span para Espaciado Vertical PDF (¡CORREGIDO!)
 			domCache.logoPdfStarVerticalSpacingInput = document.getElementById('logo-pdf-star-vertical-spacing-input');
 			domCache.logoPdfStarVerticalSpacingValue = document.getElementById('logo-pdf-star-vertical-spacing-value');
@@ -2580,6 +2652,21 @@
 			domCache.logoStarVerticalSpacingValue = document.getElementById('logo-star-vertical-spacing-value'); 
 			domCache.openLogoEditorFromLegendModalButton = document.getElementById('open-logo-editor-from-legend-modal-button');
         
+            domCache.pdfFontMainTitleInput = document.getElementById('pdf-font-main-title');
+            domCache.pdfFontSectionTitleInput = document.getElementById('pdf-font-section-title');
+            domCache.pdfFontTableHeaderInput = document.getElementById('pdf-font-table-header');
+            domCache.pdfFontTableCellInput = document.getElementById('pdf-font-table-cell');
+            domCache.pdfFontEmployeeNameInput = document.getElementById('pdf-font-employee-name');
+            domCache.pdfFontFooterInput = document.getElementById('pdf-font-footer');
+        
+            // Spans para mostrar valores actuales de fuentes PDF
+            domCache.pdfFontMainTitleValue = document.getElementById('pdf-font-main-title-value');
+            domCache.pdfFontSectionTitleValue = document.getElementById('pdf-font-section-title-value');
+            domCache.pdfFontTableHeaderValue = document.getElementById('pdf-font-table-header-value');
+            domCache.pdfFontTableCellValue = document.getElementById('pdf-font-table-cell-value');
+            domCache.pdfFontEmployeeNameValue = document.getElementById('pdf-font-employee-name-value');
+            domCache.pdfFontFooterValue = document.getElementById('pdf-font-footer-value');
+		
             // --- Controles de Importación, Año y Guardado/Exportación Principal ---
             domCache.csvFileInput = document.getElementById('csv-file-input');
 			domCache.titleYearInput = document.getElementById('title-year-input');
@@ -3028,15 +3115,16 @@
         
         // Dentro de tu archivo JavaScript
         
+
         function setupEventListeners() {
             // --- Listeners Existentes (DEBES MANTENER LOS QUE YA TENÍAS Y FUNCIONABAN) ---
-			
+        
             if (domCache.cancelImportAppStateButton) {
                 domCache.cancelImportAppStateButton.addEventListener('click', () => {
                     hideModal(domCache.confirmImportAppStateModal);
                 });
             }
-            
+        
             if (domCache.confirmImportAppStateActionButton) {
                 domCache.confirmImportAppStateActionButton.addEventListener('click', () => {
                     hideModal(domCache.confirmImportAppStateModal);
@@ -3047,26 +3135,18 @@
                     }
                 });
             }
-            
+        
             if (domCache.openLogoEditorFromLegendModalButton) {
                 domCache.openLogoEditorFromLegendModalButton.addEventListener('click', () => {
-                    // 1. Opcional: Ocultar el modal actual de leyenda/colores si quieres que solo uno esté abierto.
-                    //    Si prefieres que se puedan superponer, omite esta línea.
                     if (domCache.legendColorsModal && typeof hideModal === 'function') {
                         hideModal(domCache.legendColorsModal);
                     }
-            
-                    // 2. Asegurarse de que la configuración del logo esté cargada en los inputs del editor
                     if (typeof loadLogoConfig === 'function') {
-                        loadLogoConfig(); // Carga la configuración actual del logo (de localStorage o defaults)
+                        loadLogoConfig(); 
                     }
-            
-                    // 3. Renderizar la previsualización en el modal del editor de logo
                     if (typeof renderEditableLogo === 'function') {
-                        renderEditableLogo(); // Actualiza la previsualización en el modal del editor
+                        renderEditableLogo(); 
                     }
-            
-                    // 4. Mostrar el modal de edición del logo
                     if (domCache.logoEditorModal && typeof showModal === 'function') {
                         showModal(domCache.logoEditorModal);
                     } else {
@@ -3075,111 +3155,105 @@
                     }
                 });
             }
-			
+        
             if (domCache.openHistoryModalButton) {
                 domCache.openHistoryModalButton.addEventListener('click', () => {
-                    renderChangeHistory(); // Asegúrate que renderiza en el nuevo ul
-                    updateUndoRedoButtonsState(); // Actualiza estado de botones en el modal
+                    renderChangeHistory(); 
+                    updateUndoRedoButtonsState(); 
                     showModal(domCache.historyModal);
                 });
             }
             if (domCache.openNotesModalButton) {
                 domCache.openNotesModalButton.addEventListener('click', () => {
-                    // Cargar el contenido actual de las notas en el textarea del modal
-                    const savedNotes = localStorage.getItem(LOCAL_STORAGE_KEY_NOTES); // O de tu variable global
+                    const savedNotes = localStorage.getItem(LOCAL_STORAGE_KEY_NOTES); 
                     if (domCache.modalGeneralNotesTextarea && savedNotes !== null) {
                         domCache.modalGeneralNotesTextarea.value = savedNotes;
                     }
                     showModal(domCache.notesModal, domCache.modalGeneralNotesTextarea);
                 });
             }
-            
+        
             if (domCache.closeHistoryModalButton) {
                 domCache.closeHistoryModalButton.addEventListener('click', () => hideModal(domCache.historyModal));
             }
-            if (domCache.okHistoryModalButton) { // Botón "Aceptar" también cierra
+            if (domCache.okHistoryModalButton) { 
                 domCache.okHistoryModalButton.addEventListener('click', () => hideModal(domCache.historyModal));
             }
-            if (domCache.historyModal) { // Clic fuera del contenido
+            if (domCache.historyModal) { 
                 domCache.historyModal.addEventListener('click', (event) => {
                     if (event.target === domCache.historyModal) hideModal(domCache.historyModal);
                 });
             }
-            
+        
             if (domCache.closeNotesModalButton) {
                 domCache.closeNotesModalButton.addEventListener('click', () => hideModal(domCache.notesModal));
             }
-            if (domCache.okNotesModalButton) { // Botón "Aceptar" también cierra
+            if (domCache.okNotesModalButton) { 
                 domCache.okNotesModalButton.addEventListener('click', () => {
-                    // Aquí podrías añadir lógica para guardar explícitamente si no es dinámico
                     hideModal(domCache.notesModal);
                 });
             }
-            if (domCache.notesModal) { // Clic fuera del contenido
+            if (domCache.notesModal) { 
                 domCache.notesModal.addEventListener('click', (event) => {
                     if (event.target === domCache.notesModal) hideModal(domCache.notesModal);
                 });
             }
-            
-            // Modifica tus listeners existentes para usar los nuevos IDs
-            if (domCache.modalUndoButton) { // Antes era domCache.undoButton
+        
+            if (domCache.modalUndoButton) { 
                 domCache.modalUndoButton.addEventListener('click', undoChange);
             }
-            if (domCache.modalRedoButton) { // Antes era domCache.redoButton
+            if (domCache.modalRedoButton) { 
                 domCache.modalRedoButton.addEventListener('click', redoChange);
             }
-			
+        
             if (domCache.modalGeneralNotesTextarea) {
                 domCache.modalGeneralNotesTextarea.addEventListener('input', () => {
                     hasUnsavedChanges = true;
                     updateUnsavedChangesIndicator();
-                    // Guardado dinámico
                     localStorage.setItem(LOCAL_STORAGE_KEY_NOTES, domCache.modalGeneralNotesTextarea.value);
             
-                    // Lógica de debounce para el historial (si la tienes)
                     clearTimeout(notesDebounceTimer);
                     notesDebounceTimer = setTimeout(() => {
                         const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
-                        if (!lastUndoState || (lastUndoState.generalNotes !== undefined && lastUndoState.generalNotes !== domCache.modalGeneralNotesTextarea.value)) { // CORREGIDO AQUÍ TAMBIÉN
-                            // saveStateForUndo("Notas generales modificadas.");
+                        if (!lastUndoState || (lastUndoState.generalNotes !== undefined && lastUndoState.generalNotes !== domCache.modalGeneralNotesTextarea.value)) { 
+                            // saveStateForUndo("Notas generales modificadas."); // Considera si quieres que cada cambio de nota sea un estado de deshacer
                         }
                     }, 1500);
                 });
             }
-			
-            // Asegúrate de que el modal de confirmación de importación también se cierre con Escape y clic fuera
+        
             if (domCache.confirmImportAppStateModal) {
                 domCache.confirmImportAppStateModal.addEventListener('click', (event) => {
                     if (event.target === domCache.confirmImportAppStateModal) {
                         hideModal(domCache.confirmImportAppStateModal);
                     }
                 });
-                // La lógica de Escape en tu listener global de 'keydown' debería cubrirlo si es genérica para '.modal'.
             }
-			
-            if (domCache.exportAppStateButton) {
+        
+            // Comprueba si estos botones existen en tu HTML antes de añadir listeners
+            if (domCache.exportAppStateButton) { 
                 domCache.exportAppStateButton.addEventListener('click', prepareExportApplicationState);
             }
-            if (domCache.importAppStateButton) {
+            if (domCache.importAppStateButton) { 
                 domCache.importAppStateButton.addEventListener('click', prepareImportApplicationState);
             }
             if (domCache.importAppStateFileInput) {
                 domCache.importAppStateFileInput.addEventListener('change', handleImportApplicationStateFile);
             }			
-			
+        
             if (domCache.csvFileInput) {
                 domCache.csvFileInput.addEventListener('change', handleFileUpload);
             }
             if (domCache.titleYearInput) {
-                domCache.titleYearInput.addEventListener('change', handleYearChange); // O handleYearChangeInTitle
-                domCache.titleYearInput.addEventListener('blur', handleYearChange); // Para guardar si pierde el foco
+                domCache.titleYearInput.addEventListener('change', handleYearChange); 
+                domCache.titleYearInput.addEventListener('blur', handleYearChange); 
                 domCache.titleYearInput.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
-                        event.preventDefault(); // Prevenir envío de formulario si estuviera en uno
-                        domCache.titleYearInput.blur(); // Disparar el evento blur, que llamará a handleYearChange
+                        event.preventDefault(); 
+                        domCache.titleYearInput.blur(); 
                     } else if (event.key === 'Escape') {
-                        domCache.titleYearInput.value = yearOfSchedule; // Revertir al valor actual
-                        domCache.titleYearInput.blur(); // Quitar el foco
+                        domCache.titleYearInput.value = yearOfSchedule; 
+                        domCache.titleYearInput.blur(); 
                     }
                 });
             }
@@ -3207,18 +3281,17 @@
             if (domCache.viewAnnualButton) {
                 domCache.viewAnnualButton.addEventListener('click', () => switchViewMode('annual'));
             }
-            if (domCache.autosaveToggle) { // Asegúrate de que domCache.autosaveToggle esté definido
+            if (domCache.autosaveToggle) { 
                 domCache.autosaveToggle.addEventListener('change', (event) => {
                     toggleAutosave(event.target.checked);
                 });
             }
-            if (domCache.saveLocalHelpIcon) { // Asegúrate de que domCache.saveLocalHelpIcon esté definido
+            if (domCache.saveLocalHelpIcon) { 
                 domCache.saveLocalHelpIcon.addEventListener('click', () => {
                     showModal(domCache.saveLocalHelpModal);
                 });
             }
-            
-            // Listeners de la tabla de horario principal
+        
             if (domCache.scheduleTableBody) {
                 domCache.scheduleTableBody.addEventListener('dblclick', handleTableDblClick);
                 domCache.scheduleTableBody.addEventListener('dragstart', handleDragStart);
@@ -3228,13 +3301,9 @@
                 domCache.scheduleTableBody.addEventListener('dragend', handleDragEnd);
         
                 domCache.scheduleTableBody.addEventListener('mousedown', handleCellMouseDown);
-                // Nota: los listeners para mousemove y mouseup en 'document' se añaden una vez y no necesitan estar en domCache.
-                // Ya los tienes en la guía original, asegúrate de que estén fuera de esta función si se añaden directamente a 'document'.
-                // Si estaban dentro, mantenlos aquí. Para este ejemplo, asumo que se añaden una vez globalmente.
-        
+                
                 domCache.scheduleTableBody.addEventListener('touchstart', handleCellTouchStart, { passive: false });
-                // Similarmente para touchmove y touchend en 'document'.
-        
+                
                 domCache.scheduleTableBody.addEventListener('contextmenu', (event) => {
                     const targetCell = event.target.closest('td.shift-cell');
                     if (targetCell && selectedCells.length > 0) {
@@ -3243,26 +3312,22 @@
                         showToast('Selección limpiada.', 'info', 1500);
                         return;
                     }
-                    // La lógica de wasLongPress para contextmenu puede ser compleja y propensa a errores,
-                    // considera si es estrictamente necesaria o si el doble clic/pulsación larga es suficiente.
                 });
             }
         
-            // Listener global para clics fuera de elementos (para cerrar paleta, limpiar selección)
             document.addEventListener('mousedown', (event) => {
                 if (activeColorPalette && !activeColorPalette.contains(event.target) &&
                     !event.target.closest('.legend-color-swatch')) {
                     closeColorPalette();
                 }
-                // Lógica para limpiar selección si se hace clic fuera de la tabla/toolbar/modales
                 const isClickOnTableBody = event.target.closest('#schedule-table-body');
                 const isClickOnToolbar = event.target.closest('#multiselect-toolbar');
-                const isClickOnModalContent = event.target.closest('.modal-content'); // Clase genérica para tus modales
-                const isClickOnLegendItem = event.target.closest('.legend-item-container'); // En el modal de leyenda
+                const isClickOnModalContent = event.target.closest('.modal-content'); 
+                const isClickOnLegendItem = event.target.closest('.legend-item-container'); 
                 const isClickOnControlsSection = event.target.closest('#controls-section');
                 const isClickOnNewStatsSection = event.target.closest('#statistics-section');
-                const isClickOnViewModeButtonsGroup = event.target.closest('#view-mode-buttons-group'); // Contenedor de botones de vista/leyenda/normas
-                const isClickOnFooterButton = event.target.closest('#clear-local-storage-button'); // El nuevo botón
+                const isClickOnViewModeButtonsGroup = event.target.closest('#view-mode-buttons-group'); // Asumiendo que tienes este ID o una clase similar
+                const isClickOnFooterButton = event.target.closest('#clear-local-storage-button'); 
         
                 if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModalContent && 
                     !isClickOnLegendItem && !isClickOnControlsSection && !isClickOnNewStatsSection &&
@@ -3271,25 +3336,6 @@
                 }
             });
             
-            // Listener para notas generales
-            if (domCache.generalNotesTextarea) {
-                domCache.generalNotesTextarea.addEventListener('input', () => {
-                    hasUnsavedChanges = true;
-                    updateUnsavedChangesIndicator();
-                    if (Object.keys(scheduleData).length > 0 || domCache.generalNotesTextarea.value.trim()) {
-                        if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = false;
-                    }
-                    clearTimeout(notesDebounceTimer);
-                    notesDebounceTimer = setTimeout(() => {
-                        const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
-                        if (!lastUndoState || lastUndoState.generalNotes !== domCache.generalNotesTextarea.value) {
-                            // saveStateForUndo("Notas generales modificadas."); // Descomenta si quieres que cada cambio en notas sea un estado de deshacer
-                        }
-                    }, 1500);
-                });
-            }
-        
-            // --- Listeners para el modal de Normas ---
             if (domCache.personsPerShiftEnabledToggle) {
                 domCache.personsPerShiftEnabledToggle.addEventListener('change', (event) => {
                     if (domCache.personsPerShiftSettingsInputs) {
@@ -3306,13 +3352,13 @@
                     handleRuleInputChange();
                 });
             }
-			
+            
             if (domCache.scheduleTableHead) {
                 domCache.scheduleTableHead.addEventListener('mouseover', handleRuleViolationMouseOver);
                 domCache.scheduleTableHead.addEventListener('mouseout', handleRuleViolationMouseOut);
             }
             
-
+        
             const ruleInputs = [
                 domCache.personsMorningMin, domCache.personsMorningMax,
                 domCache.personsAfternoonMin, domCache.personsAfternoonMax,
@@ -3328,8 +3374,6 @@
                 domCache.saveRulesButton.addEventListener('click', saveRulesConfigFromModal);
             }
         
-            // --- Listeners para Modales (Añadir Empleado, Borrar Empleado, Nombre de Archivo, etc.) ---
-            // (Asegúrate de que estos IDs y la lógica coincidan con tu implementación actual)
             if (domCache.modalConfirmAddEmployee) {
                 domCache.modalConfirmAddEmployee.addEventListener('click', handleAddEmployeeFromModal);
             }
@@ -3348,7 +3392,7 @@
             if (domCache.modalCancelDeleteEmployee) {
                 domCache.modalCancelDeleteEmployee.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
                     if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
-                    employeeToDeleteName = null; // Asegúrate de que employeeToDeleteName esté definido globalmente
+                    employeeToDeleteName = null; 
                 }));
             }
             if (domCache.deleteEmployeeModal) {
@@ -3439,10 +3483,9 @@
             if (domCache.modalConfirmLoadCsv) {
                 domCache.modalConfirmLoadCsv.addEventListener('click', () => {
                     hideModal(domCache.confirmLoadCsvModal);
-                    if (currentConfirmAction === 'applyEmptyTemplate') { // currentConfirmAction debe estar definido globalmente
+                    if (currentConfirmAction === 'applyEmptyTemplate') { 
                         applyEmptyScheduleTemplate();
                     } else {
-                        // Lógica para cargar archivo CSV (ya la tienes)
                         const fileInput = domCache.csvFileInput;
                         if (fileInput && fileInput.files.length > 0) {
                             const file = fileInput.files[0];
@@ -3504,17 +3547,17 @@
                 });
             }
         
-            if (domCache.closeSaveLocalHelpModalIcon) { // Asegúrate de que domCache.closeSaveLocalHelpModalIcon esté definido
+            if (domCache.closeSaveLocalHelpModalIcon) { 
                 domCache.closeSaveLocalHelpModalIcon.addEventListener('click', () => {
                     hideModal(domCache.saveLocalHelpModal);
                 });
             }
-            if (domCache.closeSaveLocalHelpModalButton) { // Asegúrate de que domCache.closeSaveLocalHelpModalButton esté definido
+            if (domCache.closeSaveLocalHelpModalButton) { 
                 domCache.closeSaveLocalHelpModalButton.addEventListener('click', () => {
                     hideModal(domCache.saveLocalHelpModal);
                 });
             }
-            if (domCache.saveLocalHelpModal) { // Asegúrate de que domCache.saveLocalHelpModal esté definido
+            if (domCache.saveLocalHelpModal) { 
                 domCache.saveLocalHelpModal.addEventListener('click', (event) => {
                     if (event.target === domCache.saveLocalHelpModal) {
                         hideModal(domCache.saveLocalHelpModal);
@@ -3522,8 +3565,9 @@
                 });
             }
             
-            // Listeners para la sección de estadísticas (ya los tienes en setupNewStatisticsEventListeners)
-            setupNewStatisticsEventListeners(); // Llama a tu función existente
+            if (typeof setupNewStatisticsEventListeners === 'function') {
+                setupNewStatisticsEventListeners(); 
+            }
         
             if (domCache.modalConfirmFilenameStatsPdf) {
                 domCache.modalConfirmFilenameStatsPdf.addEventListener('click', handleStatsPdfFilenameConfirm);
@@ -3552,41 +3596,35 @@
                     event.returnValue = '';
                 }
             });
-        
-            if (domCache.undoButton) {
-                domCache.undoButton.addEventListener('click', undoChange);
-            }
-            if (domCache.redoButton) {
-                domCache.redoButton.addEventListener('click', redoChange);
-            }
             
-            // Listeners para los botones de abrir modales de Leyenda y Normas (los que están en la barra de navegación)
             if (domCache.openLegendColorsModalButton) { 
                 domCache.openLegendColorsModalButton.addEventListener('click', () => {
-                    updateLegend(); // Actualiza el contenido del modal de leyenda antes de mostrarlo
-                    const legendChanged = JSON.stringify(currentShiftColors) !== JSON.stringify(DEFAULT_SHIFT_COLORS) ||
-                                          JSON.stringify(currentUserShiftTimes) !== JSON.stringify(DEFAULT_SHIFT_TIMES);
-                    if(domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = !legendChanged;
-                    if(domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = !legendChanged;
+                    updateLegend(); 
+                    const colorsChanged = typeof DEFAULT_SHIFT_COLORS !== 'undefined' && typeof currentShiftColors !== 'undefined' && JSON.stringify(currentShiftColors) !== JSON.stringify(DEFAULT_SHIFT_COLORS);
+                    const timesChanged = typeof DEFAULT_SHIFT_TIMES !== 'undefined' && typeof currentUserShiftTimes !== 'undefined' && JSON.stringify(currentUserShiftTimes) !== JSON.stringify(DEFAULT_SHIFT_TIMES);
+                    const pdfFontsChanged = JSON.stringify(currentPdfFontSizes) !== JSON.stringify(DEFAULT_PDF_FONT_SIZES);
+                    
+                    if(domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = !(colorsChanged || timesChanged || pdfFontsChanged);
+                    if(domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = !(colorsChanged || timesChanged || pdfFontsChanged);
+                    updatePdfFontInputs(); 
                     showModal(domCache.legendColorsModal);
                 });
             }
             if (domCache.openRulesModalButton) { 
                 domCache.openRulesModalButton.addEventListener('click', () => {
-                    renderRulesModal(); // Actualiza el contenido del modal de normas antes de mostrarlo
-                    validateAndDisplayRuleViolations(); // Muestra las violaciones actuales
+                    renderRulesModal(); 
+                    validateAndDisplayRuleViolations(); 
                     showModal(domCache.rulesModal);
                 });
             }
         
-            // Listeners para los botones DENTRO del modal de Leyenda y Colores
             if (domCache.closeLegendColorsModalButton) {
                 domCache.closeLegendColorsModalButton.addEventListener('click', () => hideModal(domCache.legendColorsModal));
             }
-            if (domCache.modalOkLegendColorsButton) { // El botón "Cerrar" del modal de leyenda
+            if (domCache.modalOkLegendColorsButton) { 
                 domCache.modalOkLegendColorsButton.addEventListener('click', () => hideModal(domCache.legendColorsModal));
             }
-            if (domCache.legendColorsModal) { // Para cerrar al hacer clic fuera
+            if (domCache.legendColorsModal) { 
                 domCache.legendColorsModal.addEventListener('click', (event) => {
                     if (event.target === domCache.legendColorsModal) hideModal(domCache.legendColorsModal);
                 });
@@ -3598,115 +3636,86 @@
                 domCache.modalResetColorsButton.addEventListener('click', resetColorsAndTimes);
             }
         
-            // Listeners para los botones DENTRO del modal de Normas
             if (domCache.closeRulesModalButton) {
                 domCache.closeRulesModalButton.addEventListener('click', () => hideModal(domCache.rulesModal));
             }
-            if (domCache.modalOkRulesButton) { // El botón "Cerrar" del modal de normas
+            if (domCache.modalOkRulesButton) { 
                 domCache.modalOkRulesButton.addEventListener('click', () => hideModal(domCache.rulesModal));
             }
-            if (domCache.rulesModal) { // Para cerrar al hacer clic fuera
+            if (domCache.rulesModal) { 
                 domCache.rulesModal.addEventListener('click', (event) => {
                     if (event.target === domCache.rulesModal) hideModal(domCache.rulesModal);
                 });
             }
-            // Listener para el nuevo botón "Gestionar Configuración App"
             if (domCache.manageAppConfigButton) {
                 domCache.manageAppConfigButton.addEventListener('click', () => {
-                    showModal(domCache.manageConfigModal); // Usa tu función showModal existente
+                    showModal(domCache.manageConfigModal); 
                 });
             }
             
-            // Listener para el botón de cerrar el nuevo modal
             if (domCache.closeManageConfigModalButton) {
                 domCache.closeManageConfigModalButton.addEventListener('click', () => {
-                    hideModal(domCache.manageConfigModal); // Usa tu función hideModal existente
+                    hideModal(domCache.manageConfigModal); 
                 });
             }
             
-            // Listener para el botón "Exportar Configuración Actual" DENTRO DEL MODAL
             if (domCache.modalExportAppConfigButton) {
                 domCache.modalExportAppConfigButton.addEventListener('click', () => {
-                    prepareExportApplicationState(); // Llama a tu función de exportación existente
+                    prepareExportApplicationState(); 
                     hideModal(domCache.manageConfigModal);
                 });
             }
             
-            // Listener para el botón "Importar Configuración desde Archivo" DENTRO DEL MODAL
             if (domCache.modalImportAppConfigButton) {
                 domCache.modalImportAppConfigButton.addEventListener('click', () => {
-                    // --- INICIO DE LA NUEVA LÓGICA ---
                     if (isDataLoadedForSave() || hasUnsavedChanges) {
-                        // Si hay datos o cambios sin guardar, muestra el NUEVO modal de confirmación.
                         showModal(domCache.confirmImportAppStateModal); 
                     } else {
-                        // Si no hay datos ni cambios, no es necesario confirmar,
-                        // así que podemos proceder directamente a abrir el diálogo de selección de archivo.
-                        if (domCache.importAppStateFileInput) { // Asegúrate de que el input de archivo exista
-                            domCache.importAppStateFileInput.value = null; // Resetea por si se selecciona el mismo archivo
-                            domCache.importAppStateFileInput.click();    // Simula un clic para abrir el diálogo de archivo
+                        if (domCache.importAppStateFileInput) { 
+                            domCache.importAppStateFileInput.value = null; 
+                            domCache.importAppStateFileInput.click();    
                         }
                     }
-                    // Cierra el modal "Gestionar Configuración" porque ya hemos tomado una acción 
-                    // (mostrar otro modal o abrir el diálogo de archivo).
                     hideModal(domCache.manageConfigModal); 
-                    // --- FIN DE LA NUEVA LÓGICA ---
                 });
             }
             
-            // Modifica el listener del input de archivo CSV para el texto
             if (domCache.csvFileInput && domCache.csvFileInputText) {
-                domCache.csvFileInput.addEventListener('change', function(event) { // Añade 'event'
+                domCache.csvFileInput.addEventListener('change', function(event) { 
                     if (this.files && this.files.length > 0) {
                         let fileName = this.files[0].name;
                         if (fileName.length > 25) {
                             fileName = fileName.substring(0, 22) + "...";
                         }
                         domCache.csvFileInputText.textContent = fileName;
-                        // Asegúrate de que el icono vuelva a ser 'fa-upload' si se cambia a 'fa-check'
                         if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3';
                     } else {
                         domCache.csvFileInputText.textContent = 'Seleccionar archivo...';
                         if(domCache.csvFileInputIcon) domCache.csvFileInputIcon.className = 'fas fa-upload mr-2 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3';
                     }
-                    // Llama a tu función handleFileUpload original si es necesario
-                    // handleFileUpload(event); // Descomenta y asegúrate que 'handleFileUpload' exista y acepte el evento
                 });
             }
-            // El listener para domCache.saveRulesButton ya está añadido arriba con los inputs de las normas.
         
-            // Listener global para teclas (Deshacer, Rehacer, Escape)
             document.addEventListener('keydown', (event) => {
                 if (event.ctrlKey || event.metaKey) {
                     if (event.key === 'z' || event.key === 'Z') {
                         event.preventDefault();
-                        // CORRECCIÓN: Verificar directamente si hay algo en la pila de deshacer
                         if (undoStack.length > 0) { 
                             undoChange();
-                        } else {
-                            // Opcional: un pequeño aviso si intentan deshacer sin nada que deshacer
-                            // showToast('Nada que deshacer.', 'info', 1500); 
                         }
                     } else if (event.key === 'y' || event.key === 'Y') {
                         event.preventDefault();
-                        // CORRECCIÓN: Verificar directamente si hay algo en la pila de rehacer
                         if (redoStack.length > 0) {
                             redoChange();
-                        } else {
-                            // Opcional: un pequeño aviso
-                            // showToast('Nada que rehacer.', 'info', 1500);
                         }
                     }
                 } else if (event.key === 'Escape') {
-                    // Cierra el modal activo. Esta lógica debe ser robusta para manejar cualquier modal abierto.
-                    // Ejemplo:
                     if (selectedCells.length > 0) clearSelection();
                     
                     const activeModals = document.querySelectorAll('.modal:not(.hidden-by-default)');
                     if (activeModals.length > 0) {
-                        const topModal = activeModals[activeModals.length - 1]; // Cierra el más visible
+                        const topModal = activeModals[activeModals.length - 1]; 
                         hideModal(topModal);
-                        // Limpieza específica si es el modal de borrado con cuenta atrás
                         if (topModal.id === 'confirm-clear-local-storage-modal' && clearLocalStorageCountdownInterval) {
                             clearInterval(clearLocalStorageCountdownInterval);
                             clearLocalStorageCountdownInterval = null;
@@ -3715,12 +3724,10 @@
                              clearInterval(deleteCountdownInterval);
                              employeeToDeleteName = null;
                         }
-                        // Añade aquí cualquier otra limpieza específica de intervalo para otros modales si es necesario
                     }
                 }
             });
         
-            // --- NUEVOS LISTENERS PARA EL BOTÓN DE BORRAR DATOS LOCALES ---
             if (domCache.clearLocalStorageButton) {
                 domCache.clearLocalStorageButton.addEventListener('click', showConfirmClearLocalStorageModal);
             }
@@ -3747,11 +3754,24 @@
                     }
                 });
             }
-            // El listener para Escape ya debería cubrir el nuevo modal si usas la lógica de `activeModals`.
              document.addEventListener('mousemove', handleDocumentMouseMove);
              document.addEventListener('mouseup', handleDocumentMouseUp);
              document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
              document.addEventListener('touchend', handleDocumentTouchEnd);
+        
+            // --- NUEVOS LISTENERS PARA TAMAÑOS DE FUENTE PDF ---
+            if (typeof setupPdfFontEventListeners === 'function') {
+                setupPdfFontEventListeners(); // Llamar a la función que configura los listeners para los inputs de fuentes PDF
+            } else {
+                console.warn("La función setupPdfFontEventListeners no está definida. Los listeners para fuentes PDF no se configurarán.");
+            }
+            
+            // --- LISTENERS PARA EL EDITOR DE LOGO (SI ES UNA FUNCIÓN SEPARADA) ---
+            if (typeof setupLogoEditorEventListeners === 'function') {
+                setupLogoEditorEventListeners();
+            } else {
+                console.warn("La función setupLogoEditorEventListeners no está definida. Los listeners para el editor de logo no se configurarán.");
+            }
         }
         
 
@@ -3762,44 +3782,51 @@
             if (domCache.logoContainer) {
                 domCache.logoContainer.innerHTML = SVG_FINAL_LOGO_MARKUP;
             }
-            setupEventListeners();
+        
+            // --- CARGAR CONFIGURACIONES INICIALES ---
             loadYearFromLocalStorage();
             loadCustomColors();
             loadCustomShiftTimes();
-			loadRulesConfigFromLocalStorage();
+            loadRulesConfigFromLocalStorage(); // Carga normas
+            loadLogoConfig();                // Carga config del logo
+            loadPdfFontSizes();              // <--- ¡AÑADIR ESTA LÍNEA AQUÍ! Carga config de fuentes PDF
+        
+            // --- CONFIGURAR LISTENERS (AHORA setupEventListeners llamará a setupPdfFontEventListeners) ---
+            setupEventListeners(); 
+            // setupLogoEditorEventListeners(); // Si esta ya se llama en tu DOMContentLoaded, está bien. 
+                                             // Si no, y la tienes separada, llámala aquí o dentro de setupEventListeners.
+            
+            // --- RENDERIZADO INICIAL DE LA UI ---
             updateLegend();
-            loadChangeHistory();
-			loadLogoConfig(); // Carga la config del logo y actualiza inputs
-			setupLogoEditorEventListeners(); // Configura los listeners para el editor
-			renderEditableLogo(); // Renderiza el logo inicial en la cabecera
-
+            renderEditableLogo(); 
             setupMultiselectToolbar();
             updateMultiselectToolbar();
-
-			const dataLoaded = loadDataFromLocalStorage(); 
-			if (dataLoaded) {
-				handleViewChange(); 
-				initializeAndRenderNewStatistics(); 
-			} else {
-				enableControls(false);
-				renderAddEmployeeButtonInTable();
-				initializeAndRenderNewStatistics(); 
-			}
-
-            renderChangeHistory();
+            loadChangeHistory(); // Cargar historial después de que los datos base estén listos
+        
+            const dataLoaded = loadDataFromLocalStorage(); 
+            if (dataLoaded) {
+                handleViewChange(); 
+                initializeAndRenderNewStatistics(); 
+            } else {
+                enableControls(false);
+                renderAddEmployeeButtonInTable();
+                initializeAndRenderNewStatistics(); 
+            }
+        
+            renderChangeHistory(); // Renderizar el historial cargado
             updateViewModeUI();
             updateCalendarExportButtonsState();
             updateUnsavedChangesIndicator();
             updateUndoRedoButtonsState();
-
+        
             const savedAutosaveState = localStorage.getItem(LOCAL_STORAGE_KEY_AUTOSAVE);
             if (savedAutosaveState !== null) {
-                toggleAutosave(savedAutosaveState === 'true');
+                toggleAutosave(savedAutosaveState === 'true', true); // true para no mostrar toast inicial
             } else {
-                toggleAutosave(false);
+                toggleAutosave(false, true); // Desactivado por defecto, sin toast
             }
-
-            // Inicialización de la nueva sección de estadísticas (se hará con el JS específico)
+            
+            console.log("Aplicación inicializada.");
         });
 
         // --- MODALES ---
@@ -4226,52 +4253,92 @@
         // --- FIN DE LA FUNCIÓN MODIFICADA loadCustomShiftTimes ---
 
         function applyAndSaveColorsAndTimes() {
-            localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
-            localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
-        
-            // Efecto visual flash (opcional, pero estaba en tu código)
-            if (domCache.legendItemsContainer) { // Verificar que el contenedor exista
-                const legendItems = domCache.legendItemsContainer.querySelectorAll('.legend-item-container');
-                legendItems.forEach(item => {
-                    item.classList.add('legend-item-flash');
-                    setTimeout(() => item.classList.remove('legend-item-flash'), 700);
-                });
+            // Guardar colores de turno (asumiendo que tienes estas variables y claves)
+            if (typeof currentShiftColors !== 'undefined' && typeof LOCAL_STORAGE_KEY_COLORS !== 'undefined') {
+                localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
+            }
+            // Guardar tiempos de turno (asumiendo que tienes estas variables y claves)
+            if (typeof currentUserShiftTimes !== 'undefined' && typeof LOCAL_STORAGE_KEY_SHIFT_TIMES !== 'undefined') {
+                localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
             }
         
-            updateLegend(); // Re-renderiza la leyenda con los nuevos colores/tiempos aplicados
-            handleViewChange(); // Re-renderiza la tabla de horario para reflejar los cambios de color
-            initializeAndRenderNewStatistics(); // Re-renderiza estadísticas que puedan depender de colores/tiempos
-            showToast('Colores y horarios de turno aplicados y guardados.', 'success');
+            savePdfFontSizes(); // Guardar los tamaños de fuente PDF
         
-            if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = true;
-            // El botón de restaurar se habilita porque ahora los colores/tiempos son diferentes de los defecto (o podrían serlo)
-            if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = false;
+            // Actualizar el estado de los botones de restaurar/aplicar
+            const colorsChanged = typeof DEFAULT_SHIFT_COLORS !== 'undefined' && typeof currentShiftColors !== 'undefined' && JSON.stringify(currentShiftColors) !== JSON.stringify(DEFAULT_SHIFT_COLORS);
+            const timesChanged = typeof DEFAULT_SHIFT_TIMES !== 'undefined' && typeof currentUserShiftTimes !== 'undefined' && JSON.stringify(currentUserShiftTimes) !== JSON.stringify(DEFAULT_SHIFT_TIMES);
+            const pdfFontsChanged = JSON.stringify(currentPdfFontSizes) !== JSON.stringify(DEFAULT_PDF_FONT_SIZES);
         
-            hasUnsavedChanges = true; // Los cambios en leyenda/colores cuentan como cambios no guardados
-            updateUnsavedChangesIndicator();
-            saveStateForUndo("Colores y horarios de leyenda modificados.");
+            if (domCache.modalApplyColorsButton) {
+                domCache.modalApplyColorsButton.disabled = true; 
+            }
+            if (domCache.modalResetColorsButton) {
+                domCache.modalResetColorsButton.disabled = !(colorsChanged || timesChanged || pdfFontsChanged);
+            }
+        
+            if (typeof hasUnsavedChanges !== 'undefined') hasUnsavedChanges = true; 
+            if (typeof updateUnsavedChangesIndicator === 'function') updateUnsavedChangesIndicator();
+        
+            if (typeof saveStateForUndo === 'function') {
+                saveStateForUndo("Personalización de colores, horarios o fuentes PDF modificada.");
+            }
+        
+            if (typeof showToast === 'function') {
+                showToast('Personalización aplicada y guardada.', 'success');
+            }
+        
+            // Re-renderizar la leyenda y la tabla si los colores de turno cambiaron.
+            if ((colorsChanged || timesChanged) && typeof updateLegend === 'function') {
+                updateLegend();
+            }
+            if (colorsChanged && typeof handleViewChange === 'function') { // handleViewChange re-renderiza la tabla
+                handleViewChange(); 
+            }
+            if (typeof initializeAndRenderNewStatistics === 'function' && (colorsChanged || timesChanged)) { // Las estadísticas pueden usar colores/tiempos
+               initializeAndRenderNewStatistics();
+            }
         }
 
-        function resetColorsAndTimes() {
-            currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
-            currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
-            localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS); 
-            localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES); 
+        function resetColorsAndTimes() { 
+            // Resetear colores de turno
+            if (typeof currentShiftColors !== 'undefined' && typeof DEFAULT_SHIFT_COLORS !== 'undefined' && typeof LOCAL_STORAGE_KEY_COLORS !== 'undefined') {
+                currentShiftColors = JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
+                localStorage.removeItem(LOCAL_STORAGE_KEY_COLORS);
+            }
+            // Resetear tiempos de turno
+            if (typeof currentUserShiftTimes !== 'undefined' && typeof DEFAULT_SHIFT_TIMES !== 'undefined' && typeof LOCAL_STORAGE_KEY_SHIFT_TIMES !== 'undefined') {
+                currentUserShiftTimes = JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
+                localStorage.removeItem(LOCAL_STORAGE_KEY_SHIFT_TIMES);
+            }
+            if (typeof updateLegend === 'function') updateLegend(); // Actualizar la leyenda en el modal
         
-            updateLegend(); 
-            handleViewChange(); 
-            initializeAndRenderNewStatistics();
-            showToast('Colores y horarios de turno restaurados a los valores por defecto.', 'info');
+            // Resetear tamaños de fuente PDF
+            currentPdfFontSizes = JSON.parse(JSON.stringify(DEFAULT_PDF_FONT_SIZES));
+            localStorage.removeItem(LOCAL_STORAGE_KEY_PDF_FONT_SIZES);
+            updatePdfFontInputs(); 
         
-            // Después de restaurar, no hay cambios pendientes respecto a los defecto para "Aplicar"
-            if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = true; 
-            // Y como son los defecto, el botón "Restaurar" también se deshabilita
-            if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = true;
+            if (domCache.modalResetColorsButton) {
+                domCache.modalResetColorsButton.disabled = true;
+            }
+            if (domCache.modalApplyColorsButton) {
+                domCache.modalApplyColorsButton.disabled = true; 
+            }
         
-            hasUnsavedChanges = true; 
-            updateUnsavedChangesIndicator();
-            saveStateForUndo("Colores y horarios de leyenda restaurados a defecto.");
+            if (typeof hasUnsavedChanges !== 'undefined') hasUnsavedChanges = true; 
+            if (typeof updateUnsavedChangesIndicator === 'function') updateUnsavedChangesIndicator();
+        
+            if (typeof saveStateForUndo === 'function') {
+                saveStateForUndo("Personalización restaurada a valores por defecto.");
+            }
+        
+            if (typeof showToast === 'function') {
+                showToast('Personalización restaurada a valores por defecto.', 'info');
+            }
+        
+            if (typeof handleViewChange === 'function') handleViewChange();
+            if (typeof initializeAndRenderNewStatistics === 'function') initializeAndRenderNewStatistics();
         }
+        
 
 
         function formatTimeForInput(hours, minutes) {
@@ -6052,52 +6119,53 @@
             let svgElements = [];
             let svgWidth = 0;
             let svgHeight = 0;
-            const pagePadding = 30;
-            
-            const tempLogoForSizing = generateLogoSVGString(
-                currentLogoConfig.linea1, 
-                currentLogoConfig.linea2, 
-                currentLogoConfig.starColor,
-                currentLogoConfig.starVerticalSpacing, 
-                currentLogoConfig.pdfScale,    
-                currentLogoConfig.pdfStarVerticalSpacing, 
-                currentLogoConfig.starCount,
-                currentLogoConfig.starHorizontalOffset // Pasar el offset horizontal para PDF también
-                                                       // Si necesitas un offset diferente para PDF, añade un nuevo control y config.
-            );
-            const tempParser = new DOMParser();
-            const tempSvgDoc = tempParser.parseFromString(tempLogoForSizing, "image/svg+xml");
-            const tempSvgElement = tempSvgDoc.documentElement;
-            const logoRenderWidth = parseFloat(tempSvgElement.getAttribute('width'));
-            const logoRenderHeight = parseFloat(tempSvgElement.getAttribute('height'));
+            const pagePadding = 30; // Reducido para más contenido
         
-            const logoTopMargin = 20;
+            // Usar tamaños de fuente configurables con fallback a los defaults
+            const mainTitleSize = currentPdfFontSizes.mainTitle || DEFAULT_PDF_FONT_SIZES.mainTitle;
+            const sectionTitleSize = currentPdfFontSizes.sectionTitle || DEFAULT_PDF_FONT_SIZES.sectionTitle;
+            const tableHeaderSize = currentPdfFontSizes.tableHeader || DEFAULT_PDF_FONT_SIZES.tableHeader;
+            const tableCellSize = currentPdfFontSizes.tableCell || DEFAULT_PDF_FONT_SIZES.tableCell;
+            const employeeNameSize = currentPdfFontSizes.employeeName || DEFAULT_PDF_FONT_SIZES.employeeName;
+            const footerSize = currentPdfFontSizes.footer || DEFAULT_PDF_FONT_SIZES.footer;
+            const textLineHeightFactor = 1.3; // Ajustar según necesidad
+        
+            // Generación dinámica del logo (asumiendo que tienes esta función y currentLogoConfig)
+            const logoSvgMarkup = (typeof generateLogoSVGString === 'function' && typeof currentLogoConfig !== 'undefined') 
+                                ? generateLogoSVGString(
+                                    currentLogoConfig.linea1, currentLogoConfig.linea2, currentLogoConfig.starColor,
+                                    currentLogoConfig.starVerticalSpacing, currentLogoConfig.pdfScale, 
+                                    currentLogoConfig.pdfStarVerticalSpacing, currentLogoConfig.starCount, 
+                                    currentLogoConfig.starHorizontalOffset
+                                  ) 
+                                : '<text x="10" y="20">Logo Placeholder</text>'; // Fallback
+        
+            const tempParser = new DOMParser();
+            const tempSvgDoc = tempParser.parseFromString(logoSvgMarkup, "image/svg+xml");
+            const tempSvgElement = tempSvgDoc.documentElement;
+            const logoRenderWidth = parseFloat(tempSvgElement.getAttribute('width')) || 100; // Fallback width
+            const logoRenderHeight = parseFloat(tempSvgElement.getAttribute('height')) || 30; // Fallback height
+        
+            const logoTopMargin = 15;
             const mainTitleTopMargin = 10;
-            const sectionTitleFontSize = 16;
-            const mainTitleFontSize = 18;
-            const tableTopMargin = 15;
-            const spaceBetweenTables = 30; 
-            const employeeColWidth = 90;
-            const cellHeight = 28; 
-            const headerHeight = 38; 
-            const cellFontSize = 10;
-            const employeeNameFontSize = 9; 
-            const headerEmployeeFontSize = 10;
-            const headerDayNumberFontSize = 8;
-            const headerWeekdayFontSize = 7;
-            const textYAdjust = cellFontSize * 0.35; 
-            const safetyBufferBottom = 40; 
+            const tableTopMargin = 12;
+            const spaceBetweenTables = 25; 
+            const employeeColWidth = 80; // Ajustado
+            const cellHeight = Math.max(22, tableCellSize * 1.8); // Altura de celda basada en fuente
+            const headerHeight = Math.max(30, tableHeaderSize * 2.2); 
+            const textYAdjust = tableCellSize * 0.35; 
+            const safetyBufferBottom = 30; 
             let currentY = pagePadding;
         
             if (type === 'weekly') {
-                const svgCellWidthWeekly = 65; 
+                const svgCellWidthWeekly = 60; 
                 svgWidth = pagePadding * 2 + employeeColWidth + (7 * svgCellWidthWeekly);
             } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
-                const svgCellWidthAnnual = 35; 
+                const svgCellWidthAnnual = 30; // Ajustado
                 const maxDaysPossible = 31; 
                 svgWidth = pagePadding * 2 + employeeColWidth + (maxDaysPossible * svgCellWidthAnnual);
             } else { 
-                const svgCellWidthMonthly = 35;
+                const svgCellWidthMonthly = 32; // Ajustado
                 const monthForWidth = (itemsToRender && itemsToRender.length > 0 && typeof itemsToRender[0] === 'number') ? itemsToRender[0] : currentSelectedMonth;
                 const daysInCurrentMonth = getDaysInMonth(monthForWidth, yearToRender);
                 svgWidth = pagePadding * 2 + employeeColWidth + (daysInCurrentMonth * svgCellWidthMonthly);
@@ -6105,11 +6173,10 @@
         
             currentY += logoTopMargin;
             const logoXPositionInPdf = (svgWidth / 2) - (logoRenderWidth / 2); 
-            
-            svgElements.push(`<g transform="translate(${logoXPositionInPdf}, ${currentY})">${tempLogoForSizing}</g>`);
+            svgElements.push(`<g transform="translate(${logoXPositionInPdf}, ${currentY})">${logoSvgMarkup}</g>`);
             currentY += logoRenderHeight; 
         
-            if (pageNumber === 1) {
+            if (pageNumber === 1 || type !== 'weekly') { // Mostrar título principal en cada página para mensual/anual
                 currentY += mainTitleTopMargin;
                 let mainDocumentTitle = "";
                 if (type === 'weekly') {
@@ -6120,36 +6187,36 @@
                     const monthForTitle = (itemsToRender && itemsToRender.length > 0 && typeof itemsToRender[0] === 'number') ? itemsToRender[0] : currentSelectedMonth;
                     mainDocumentTitle = `Horario Mensual - ${MONTH_NAMES[monthForTitle - 1]} ${yearToRender}`;
                 }
-                svgElements.push(`<text x="${svgWidth / 2}" y="${currentY + mainTitleFontSize / 2}" font-family="Inter, sans-serif" font-size="${mainTitleFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${mainDocumentTitle}</text>`);
-                currentY += mainTitleFontSize;
+                svgElements.push(`<text x="${svgWidth / 2}" y="${currentY + mainTitleSize / 2}" font-family="Inter, sans-serif" font-size="${mainTitleSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">${mainDocumentTitle}</text>`);
+                currentY += mainTitleSize * textLineHeightFactor;
             }
-            
+        
             itemsToRender.forEach((itemData, itemIndexInPage) => {
                 if (itemIndexInPage > 0) { 
                     currentY += spaceBetweenTables;
                 }
                 currentY += tableTopMargin; 
         
-                let sectionTitle = "";
+                let sectionTitleText = "";
                 if (type === 'weekly') {
                     const originalWeekIndex = originalItemIndices[itemIndexInPage];
                     const week = itemData; 
                     const firstDayOfWeek = week[0];
                     const lastDayOfWeek = week[week.length - 1];
-                    sectionTitle = `Semana ${originalWeekIndex + 1}: ${firstDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short'})} - ${lastDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}`;
+                    sectionTitleText = `Semana ${originalWeekIndex + 1}: ${firstDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short'})} - ${lastDayOfWeek.toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}`;
                 } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
                     const monthToRender = itemData; 
-                    sectionTitle = `${MONTH_NAMES[monthToRender - 1]} ${yearToRender}`;
+                    sectionTitleText = `${MONTH_NAMES[monthToRender - 1]} ${yearToRender}`;
                 }
         
-                if (sectionTitle) {
-                    svgElements.push(`<text x="${svgWidth / 2}" y="${currentY + sectionTitleFontSize / 2}" font-family="Inter, sans-serif" font-size="${sectionTitleFontSize}px" font-weight="600" text-anchor="middle" fill="#374151" dominant-baseline="middle">${sectionTitle}</text>`);
-                    currentY += sectionTitleFontSize + (tableTopMargin / 2);
+                if (sectionTitleText) {
+                    svgElements.push(`<text x="${svgWidth / 2}" y="${currentY + sectionTitleSize / 2}" font-family="Inter, sans-serif" font-size="${sectionTitleSize}px" font-weight="600" text-anchor="middle" fill="#374151" dominant-baseline="middle">${sectionTitleText}</text>`);
+                    currentY += sectionTitleSize * textLineHeightFactor + (tableTopMargin / 2);
                 }
         
                 let tableHeaderX = pagePadding;
                 svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${employeeColWidth}" height="${headerHeight}" fill="#f3f4f6" stroke="#d1d5db"/>`);
-                svgElements.push(`<text x="${tableHeaderX + employeeColWidth/2}" y="${currentY + headerHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${headerEmployeeFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Empleado</text>`);
+                svgElements.push(`<text x="${tableHeaderX + employeeColWidth/2}" y="${currentY + headerHeight/2 + (tableHeaderSize*0.3)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937" dominant-baseline="middle">Empleado</text>`);
                 tableHeaderX += employeeColWidth;
         
                 if (type === 'weekly') {
@@ -6159,9 +6226,9 @@
                         svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthWeekly}" height="${headerHeight}" fill="#f3f4f6" stroke="#d1d5db"/>`);
                         const dayStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit' });
                         const monthStr = SHORT_MONTH_NAMES[dateObj.getMonth()];
-                        const dayNameStr = WEEK_DAY_NAMES[dateObj.getDay()].substring(0,3);
-                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthWeekly/2}" y="${currentY + headerHeight * 0.38 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerDayNumberFontSize}px" font-weight="bold" text-anchor="middle" fill="#1f2937">${dayStr} ${monthStr}</text>`);
-                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthWeekly/2}" y="${currentY + headerHeight * 0.72 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerWeekdayFontSize}px" font-weight="bold" text-anchor="middle" fill="#4b5563">${dayNameStr}</text>`);
+                        const dayNameStr = WEEK_DAY_NAMES[dateObj.getDay()].substring(0,3); // Asumiendo que WEEK_DAY_NAMES existe
+                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthWeekly/2}" y="${currentY + headerHeight * 0.38 + (tableHeaderSize*0.2)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize*0.9}px" font-weight="bold" text-anchor="middle" fill="#1f2937">${dayStr} ${monthStr}</text>`);
+                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthWeekly/2}" y="${currentY + headerHeight * 0.72 + (tableHeaderSize*0.2)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize*0.8}px" font-weight="normal" text-anchor="middle" fill="#4b5563">${dayNameStr}</text>`);
                         tableHeaderX += svgCellWidthWeekly;
                     });
                 } else if (type === 'monthlyAnnual' && currentViewMode === 'annual') {
@@ -6170,9 +6237,9 @@
                     const svgCellWidthAnnual = (svgWidth - pagePadding * 2 - employeeColWidth) / 31; 
                     for (let day = 1; day <= daysInCurrentMonth; day++) {
                         svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthAnnual}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0"/>`);
-                        const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
-                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual/2}" y="${currentY + headerHeight * 0.38 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerDayNumberFontSize}px" font-weight="bold" text-anchor="middle">${day}</text>`);
-                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual/2}" y="${currentY + headerHeight * 0.72 + textYAdjust * 0.7}" font-family="Inter, sans-serif" font-size="${headerWeekdayFontSize}px" text-anchor="middle">${weekDayInitial}</text>`);
+                        const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()]; // Asumiendo SHORT_WEEK_DAY_NAMES
+                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual/2}" y="${currentY + headerHeight * 0.38 + (tableHeaderSize*0.2)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize*0.9}px" font-weight="bold" text-anchor="middle">${day}</text>`);
+                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthAnnual/2}" y="${currentY + headerHeight * 0.72 + (tableHeaderSize*0.2)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize*0.8}px" text-anchor="middle">${weekDayInitial}</text>`);
                         tableHeaderX += svgCellWidthAnnual;
                     }
                      for (let day = daysInCurrentMonth + 1; day <= 31; day++) { 
@@ -6186,8 +6253,8 @@
                     for (let day = 1; day <= daysInSelectedMonth; day++) {
                          svgElements.push(`<rect x="${tableHeaderX}" y="${currentY}" width="${svgCellWidthMonthly}" height="${headerHeight}" fill="#f9fafb" stroke="#e0e0e0"/>`);
                         const weekDayInitial = SHORT_WEEK_DAY_NAMES[new Date(yearToRender, monthToRender - 1, day).getDay()];
-                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly/2}" y="${currentY + headerHeight * 0.38 + textYAdjust * 0.5}" font-family="Inter, sans-serif" font-size="${headerDayNumberFontSize}px" font-weight="bold" text-anchor="middle">${day}</text>`);
-                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly/2}" y="${currentY + headerHeight * 0.72 + textYAdjust * 0.5}" font-family="Inter, sans-serif" font-size="${headerWeekdayFontSize}px" text-anchor="middle">${weekDayInitial}</text>`);
+                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly/2}" y="${currentY + headerHeight * 0.38 + (tableHeaderSize*0.2)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize*0.9}px" font-weight="bold" text-anchor="middle">${day}</text>`);
+                        svgElements.push(`<text x="${tableHeaderX + svgCellWidthMonthly/2}" y="${currentY + headerHeight * 0.72 + (tableHeaderSize*0.2)}" font-family="Inter, sans-serif" font-size="${tableHeaderSize*0.8}px" text-anchor="middle">${weekDayInitial}</text>`);
                         tableHeaderX += svgCellWidthMonthly;
                     }
                 }
@@ -6197,7 +6264,7 @@
                     const rowY = currentY + rowIndex * cellHeight;
                     let currentCellX = pagePadding;
                     svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${employeeColWidth}" height="${cellHeight}" fill="${rowIndex % 2 === 0 ? '#ffffff' : '#f9fafb'}" stroke="#d1d5db"/>`);
-                    svgElements.push(`<text x="${currentCellX + employeeColWidth/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${employeeNameFontSize}px" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">${empName}</text>`);
+                    svgElements.push(`<text x="${currentCellX + 10}" y="${rowY + cellHeight/2 + (employeeNameSize*0.3)}" font-family="Inter, sans-serif" font-size="${employeeNameSize}px" font-weight="500" fill="#1f2937" dominant-baseline="middle" text-anchor="start">${empName}</text>`);
                     currentCellX += employeeColWidth;
         
                     if (type === 'weekly') {
@@ -6206,18 +6273,18 @@
                         week.forEach(dateObj => {
                             const day = dateObj.getDate(); const month = dateObj.getMonth() + 1;
                             let shift = scheduleData[empName]?.[month]?.[day] || "";
-                            const shiftTimeConfig = currentUserShiftTimes[shift];
+                            const shiftTimeConfig = currentUserShiftTimes[shift]; // Asumiendo currentUserShiftTimes
                             let displayShift = shift; 
                             if (shiftTimeConfig && (shift === 'M' || shift === 'T' || shift === 'N' || shift === 'M2' || shift === 'T2' || shift === 'N2')) {
                                 displayShift = `${formatTimeForInput(shiftTimeConfig.start[0], shiftTimeConfig.start[1])}-${formatTimeForInput(shiftTimeConfig.end[0], shiftTimeConfig.end[1])}`;
-                            } else if (SHIFT_TYPE_FULL_NAMES[shift]) {
+                            } else if (typeof SHIFT_TYPE_FULL_NAMES !== 'undefined' && SHIFT_TYPE_FULL_NAMES[shift]) { // Asumiendo SHIFT_TYPE_FULL_NAMES
                                 displayShift = SHIFT_TYPE_FULL_NAMES[shift];
                             }
-                            
-                            const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+        
+                            const colorConf = (typeof SHIFT_TYPES !== 'undefined' && SHIFT_TYPES.includes(shift)) ? currentShiftColors[shift] : currentShiftColors.empty; // Asumiendo SHIFT_TYPES y currentShiftColors
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthWeekly}" height="${cellHeight}" fill="${colorConf.hexBg || '#ffffff'}" stroke="#d1d5db"/>`);
                             if (displayShift) {
-                                svgElements.push(`<text x="${currentCellX + svgCellWidthWeekly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter, sans-serif" font-size="${cellFontSize -1}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}">${displayShift}</text>`);
+                                svgElements.push(`<text x="${currentCellX + svgCellWidthWeekly/2}" y="${rowY + cellHeight/2 + (tableCellSize*0.3)}" font-family="Inter, sans-serif" font-size="${tableCellSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText || '#000000'}">${displayShift}</text>`);
                             }
                             currentCellX += svgCellWidthWeekly;
                         });
@@ -6230,10 +6297,10 @@
                         for (let day = 1; day <= daysInCurrentMonth; day++) {
                             const shift = employeeMonthData[day] || "";
                             let displayShiftInPdfCell = shift; 
-                            const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+                            const colorConf = (typeof SHIFT_TYPES !== 'undefined' && SHIFT_TYPES.includes(shift)) ? currentShiftColors[shift] : currentShiftColors.empty;
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthAnnual}" height="${cellHeight}" fill="${colorConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
                             if(displayShiftInPdfCell) { 
-                                svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
+                                svgElements.push(`<text x="${currentCellX + svgCellWidthAnnual/2}" y="${rowY + cellHeight/2 + (tableCellSize*0.3)}" font-family="Inter,sans-serif" font-size="${tableCellSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
                             }
                             currentCellX += svgCellWidthAnnual;
                         }
@@ -6249,10 +6316,10 @@
                          for (let day = 1; day <= daysInSelectedMonth; day++) {
                             const shift = employeeMonthData[day] || "";
                             let displayShiftInPdfCell = shift;
-                            const colorConf = SHIFT_TYPES.includes(shift) ? currentShiftColors[shift] : currentShiftColors.empty;
+                            const colorConf = (typeof SHIFT_TYPES !== 'undefined' && SHIFT_TYPES.includes(shift)) ? currentShiftColors[shift] : currentShiftColors.empty;
                             svgElements.push(`<rect x="${currentCellX}" y="${rowY}" width="${svgCellWidthMonthly}" height="${cellHeight}" fill="${colorConf.hexBg || '#fff'}" stroke="#e0e0e0"/>`);
                             if(displayShiftInPdfCell) {
-                                svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly/2}" y="${rowY + cellHeight/2 + textYAdjust}" font-family="Inter,sans-serif" font-size="${cellFontSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
+                                svgElements.push(`<text x="${currentCellX + svgCellWidthMonthly/2}" y="${rowY + cellHeight/2 + (tableCellSize*0.3)}" font-family="Inter,sans-serif" font-size="${tableCellSize}px" font-weight="${(shift && shift.trim() !== "") ? "bold" : "normal"}" text-anchor="middle" fill="${colorConf.hexText||'#000'}">${displayShiftInPdfCell}</text>`);
                             }
                             currentCellX += svgCellWidthMonthly;
                         }
@@ -6260,18 +6327,15 @@
                 });
                 currentY += (employeeNamesOrdered.length * cellHeight);
             }); 
-            
+        
             svgHeight = currentY + pagePadding + safetyBufferBottom;
             const footerText = ``;
-            const footerFontSize = 10;
-            const footerY = svgHeight - pagePadding / 2;
-            svgElements.push(`<text x="${svgWidth - pagePadding}" y="${footerY}" font-family="Inter, sans-serif" font-size="${footerFontSize}px" text-anchor="end" fill="#4A5568">${footerText}</text>`);
+            const footerY = svgHeight - (pagePadding / 2) - 5; // Ajustado para que no se corte
+            svgElements.push(`<text x="${svgWidth - pagePadding}" y="${footerY}" font-family="Inter, sans-serif" font-size="${footerSize}px" text-anchor="end" fill="#4A5568">${footerText}</text>`);
             svgElements.unshift(`<rect width="${svgWidth}" height="${svgHeight}" fill="white"/>`);
-            
+        
             return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="font-family: 'Inter', sans-serif;">${svgElements.join('')}</svg>`;
         }
-        
-        
 
         function getWeeksForMonth(year, month) {
             const weeks = [];
@@ -8108,84 +8172,83 @@
         // --- Funciones de Generación de SVG (Adaptadas del Prototipo) ---
 
         function getImpressiveStatsSvgString(data, headers, order, title, subtitle, logoSvgMarkupIgnored, colorsForSvg) {
-            console.log("[PDF STATS DEBUG] getImpressiveStatsSvgString - Datos recibidos para dibujar SVG:", JSON.parse(JSON.stringify(data)));
-            const headerTextOffsetY = 5; 
-            const cellTextOffsetY = 5; 
-            const pagePadding = 60;
-            const contentWidth = 1200; 
+            // Usar tamaños de fuente configurables con fallback a los defaults
+            const mainTitleSize = currentPdfFontSizes.mainTitle || DEFAULT_PDF_FONT_SIZES.mainTitle;
+            const subtitleSize = currentPdfFontSizes.sectionTitle || DEFAULT_PDF_FONT_SIZES.sectionTitle; // Usar sectionTitle para subtítulo de reporte
+            const sectionTitleSize = currentPdfFontSizes.sectionTitle || DEFAULT_PDF_FONT_SIZES.sectionTitle;
+            const tableHeaderSize = currentPdfFontSizes.tableHeader || DEFAULT_PDF_FONT_SIZES.tableHeader;
+            const tableCellSize = currentPdfFontSizes.tableCell || DEFAULT_PDF_FONT_SIZES.tableCell;
+            // const employeeNameSize = currentPdfFontSizes.employeeName || DEFAULT_PDF_FONT_SIZES.employeeName; // Ya incluido en tableCellSize o tableHeaderSize
+            const footerSize = currentPdfFontSizes.footer || DEFAULT_PDF_FONT_SIZES.footer;
+            const chartTitleSize = currentPdfFontSizes.sectionTitle * 0.9 || DEFAULT_PDF_FONT_SIZES.sectionTitle * 0.9; // Ligeramente más pequeño que el título de sección
+            const chartLabelSize = currentPdfFontSizes.tableCell * 0.9 || DEFAULT_PDF_FONT_SIZES.tableCell * 0.9; // Ligeramente más pequeño que celda de tabla
+            const textLineHeightFactor = 1.4;
+        
+        
+            const headerTextOffsetY = tableHeaderSize * 0.15; 
+            const cellTextOffsetY = tableCellSize * 0.15; 
+            const pagePadding = 50; // Reducido
+            const contentWidth = 1100; // Reducido para más margen
             const finalSvgWidth = contentWidth + 2 * pagePadding; 
         
-            // Generar el logo dinámicamente con la configuración actual
-            const dynamicLogoSvg = generateLogoSVGString(
-                currentLogoConfig.linea1, currentLogoConfig.linea2, currentLogoConfig.starColor,
-                currentLogoConfig.starVerticalSpacing, 
-                currentLogoConfig.pdfScale,    
-                currentLogoConfig.pdfStarVerticalSpacing, 
-                currentLogoConfig.starCount,
-                currentLogoConfig.starHorizontalOffset 
-            );
+            const dynamicLogoSvg = (typeof generateLogoSVGString === 'function' && typeof currentLogoConfig !== 'undefined')
+                                ? generateLogoSVGString(
+                                    currentLogoConfig.linea1, currentLogoConfig.linea2, currentLogoConfig.starColor,
+                                    currentLogoConfig.starVerticalSpacing, currentLogoConfig.pdfScale, 
+                                    currentLogoConfig.pdfStarVerticalSpacing, currentLogoConfig.starCount, 
+                                    currentLogoConfig.starHorizontalOffset
+                                  )
+                                : '<text x="10" y="20">Logo Placeholder</text>';
             const tempParserStats = new DOMParser();
-            const tempSvgDocStats = tempParserStats.parseFromString(dynamicLogoSvg, "image/svg+xml");
-            const tempSvgElementStats = tempSvgDocStats.documentElement;
-            const logoRenderWidth = parseFloat(tempSvgElementStats.getAttribute('width'));
-            const logoRenderHeight = parseFloat(tempSvgElementStats.getAttribute('height'));
+            const tempSvgDocStats = tempParserStats.parseFromString(dynamicLogoSvg, "image/svg+xml").documentElement;
+            const logoRenderWidth = parseFloat(tempSvgDocStats.getAttribute('width')) || 100;
+            const logoRenderHeight = parseFloat(tempSvgDocStats.getAttribute('height')) || 30;
         
-            const titleFontSize = 28;
-            const subtitleFontSize = 16; 
-            const sectionTitleFontSize = 20; 
-            const tableHeaderFontSize = 11; 
-            const tableCellFontSize = 10;   
-            // --- ¡CORRECCIÓN AQUÍ! AÑADIR ESTAS LÍNEAS ---
-            const chartTitleFontSize = 18;   // Tamaño de fuente para títulos de gráficos (ej. "Distribución General...")
-            const chartLabelFontSize = 10;  // Tamaño de fuente para etiquetas de ejes o leyendas de gráficos
-            // --- FIN DE LÍNEAS A AÑADIR ---
-            const textLineHeight = 1.4; 
-            const sectionSpacing = 40; 
             let currentY = pagePadding;
             let svgElements = [];
         
             svgElements.push(`<style>
                 text { font-family: 'Inter', sans-serif; }
-                .report-title { font-size: ${titleFontSize}px; font-weight: 700; fill: #1A202C; text-anchor: middle; }
-                .report-subtitle { font-size: ${subtitleFontSize}px; fill: #4A5568; text-anchor: middle; }
-                .section-title { font-size: ${sectionTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle;}
-                .table-header-text { font-size: ${tableHeaderFontSize}px; font-weight: bold; fill: #1A202C; text-anchor: middle; dominant-baseline: middle; }
-                .table-cell-text { font-size: ${tableCellFontSize}px; fill: #2D3748; text-anchor: middle; dominant-baseline: middle; font-weight: 500; }
-                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; } /* Eliminado padding-left, se maneja con X */
+                .report-title { font-weight: 700; fill: #1A202C; text-anchor: middle; }
+                .report-subtitle { fill: #4A5568; text-anchor: middle; }
+                .section-title { font-weight: 600; fill: #2C5282; text-anchor: middle;}
+                .table-header-text { font-weight: bold; fill: #1A202C; text-anchor: middle; dominant-baseline: middle; }
+                .table-cell-text { fill: #2D3748; text-anchor: middle; dominant-baseline: middle; font-weight: 500; }
+                .table-cell-text.name { text-anchor: start; font-weight: bold; fill: #1A202C; }
                 .table-header-rect { fill: #EBF4FF; stroke: #BEE3F8; stroke-width: 1; } 
                 .table-cell-rect { stroke: #E2E8F0; stroke-width: 1; }
-                .chart-title { font-size: ${chartTitleFontSize}px; font-weight: 600; fill: #2C5282; text-anchor: middle; }
-                .chart-label { font-size: ${chartLabelFontSize}px; fill: #4A5568; text-anchor: middle; }
+                .chart-title { font-weight: 600; fill: #2C5282; text-anchor: middle; }
+                .chart-label { fill: #4A5568; text-anchor: middle; }
                 .chart-axis-line { stroke: #A0AEC0; stroke-width: 1; }
                 .chart-grid-line { stroke: #E2E8F0; stroke-width: 0.5; stroke-dasharray: 3,3; }
                 .legend-item rect { stroke: #CBD5E0; stroke-width:0.5; } 
-                .legend-item text { font-size: 10px; fill: #2D3748; dominant-baseline: middle; }
+                .legend-item text { fill: #2D3748; dominant-baseline: middle; }
             </style>`); 
         
             const logoX = (finalSvgWidth / 2) - (logoRenderWidth / 2); 
-            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${dynamicLogoSvg}</g>`); // Usar el logo dinámico
+            svgElements.push(`<g transform="translate(${logoX}, ${currentY})">${dynamicLogoSvg}</g>`);
             currentY += logoRenderHeight + 20; 
         
-            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-title">${title}</text>`);
-            currentY += titleFontSize * textLineHeight;
-            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-subtitle">${subtitle}</text>`);
-            currentY += subtitleFontSize * textLineHeight + sectionSpacing; 
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-title" font-size="${mainTitleSize}px">${title}</text>`);
+            currentY += mainTitleSize * textLineHeightFactor;
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="report-subtitle" font-size="${subtitleSize}px">${subtitle}</text>`);
+            currentY += subtitleSize * textLineHeightFactor + 30; 
         
-            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="section-title">Tabla de Estadísticas</text>`);
-            currentY += sectionTitleFontSize * textLineHeight + 20;
+            svgElements.push(`<text x="${finalSvgWidth / 2}" y="${currentY}" class="section-title" font-size="${sectionTitleSize}px">Tabla de Estadísticas</text>`);
+            currentY += sectionTitleSize * textLineHeightFactor + 15;
         
-            const tableCellHeight = tableCellFontSize * textLineHeight * 2.2; 
-            const tableHeaderHeight = tableHeaderFontSize * textLineHeight * 2.2; 
+            const tableCellHeight = tableCellSize * textLineHeightFactor * 1.8; 
+            const tableHeaderHeight = tableHeaderSize * textLineHeightFactor * 1.8; 
         
             const tempSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             document.body.appendChild(tempSvg); 
             const colWidths = {};
-            let minNumericColWidth = 65; 
+            let minNumericColWidth = Math.max(40, tableCellSize * 3); // Ajustado
             order.forEach(key => {
                 let maxWidth = 0;
                 const thTest = Object.assign(document.createElementNS("http://www.w3.org/2000/svg", "text"), {
                     textContent: headers[key] || key,
-                    style: `font-size:${tableHeaderFontSize}px; font-weight:bold; font-family:Inter, sans-serif;`
+                    style: `font-size:${tableHeaderSize}px; font-weight:bold; font-family:Inter, sans-serif;`
                 });
                 tempSvg.appendChild(thTest);
                 maxWidth = Math.max(maxWidth, thTest.getComputedTextLength());
@@ -8193,14 +8256,14 @@
                 (data || []).forEach(row => { 
                     const tdTest = Object.assign(document.createElementNS("http://www.w3.org/2000/svg", "text"), {
                         textContent: String(row[key] !== undefined ? row[key] : '-'),
-                        style: `font-size:${tableCellFontSize}px; font-weight:500; font-family:Inter, sans-serif;`
+                        style: `font-size:${tableCellSize}px; font-weight:500; font-family:Inter, sans-serif;`
                     });
                     tempSvg.appendChild(tdTest);
                     maxWidth = Math.max(maxWidth, tdTest.getComputedTextLength());
                     tempSvg.removeChild(tdTest);
                 });
-                colWidths[key] = Math.max(minNumericColWidth, maxWidth + 20); 
-                if (key === 'name') colWidths[key] = Math.max(180, colWidths[key]); 
+                colWidths[key] = Math.max(minNumericColWidth, maxWidth + 15); // Padding reducido
+                if (key === 'name') colWidths[key] = Math.max(150, colWidths[key]); // Ajustado
             });
             document.body.removeChild(tempSvg);
         
@@ -8210,7 +8273,7 @@
             let currentTableX = tableStartX;
             order.forEach(key => {
                 svgElements.push(`<rect x="${currentTableX}" y="${currentY}" width="${colWidths[key]}" height="${tableHeaderHeight}" class="table-header-rect" />`);
-                svgElements.push(`<text x="${currentTableX + colWidths[key] / 2}" y="${currentY + tableHeaderHeight / 2 + headerTextOffsetY}" class="table-header-text">${headers[key] || key}</text>`);
+                svgElements.push(`<text x="${currentTableX + colWidths[key] / 2}" y="${currentY + tableHeaderHeight / 2 + headerTextOffsetY}" class="table-header-text" font-size="${tableHeaderSize}px">${headers[key] || key}</text>`);
                 currentTableX += colWidths[key];
             });
             currentY += tableHeaderHeight;
@@ -8235,30 +8298,37 @@
         
                     svgElements.push(`<rect x="${currentTableX}" y="${currentY}" width="${colWidths[key]}" height="${tableCellHeight}" class="table-cell-rect" fill="${cellFill}" />`);
                     const textClass = key === 'name' ? 'table-cell-text name' : 'table-cell-text';
-                    const textX = key === 'name' ? currentTableX + 10 : currentTableX + colWidths[key] / 2; 
+                    const textX = key === 'name' ? currentTableX + 8 : currentTableX + colWidths[key] / 2; // Padding reducido para nombre
                     const textY = currentY + tableCellHeight / 2 + cellTextOffsetY; 
-                    svgElements.push(`<text x="${textX}" y="${textY}" class="${textClass}" fill="${textColor}">${cellValue}</text>`);
+                    svgElements.push(`<text x="${textX}" y="${textY}" class="${textClass}" font-size="${tableCellSize}px" fill="${textColor}">${cellValue}</text>`);
                     currentTableX += colWidths[key];
                 });
                 currentY += tableCellHeight;
             });
-            currentY += sectionSpacing; 
+            currentY += 30; // Espacio antes del gráfico
         
             const chartAreaY = currentY;
-            const chartAreaWidth = contentWidth;
-            const chartHeight = 300;
+            const chartAreaWidth = contentWidth * 0.85; // Gráfico un poco más pequeño
+            const chartHeight = 280; // Reducido
         
-            // Aquí es donde se usa chartTitleFontSize, y ahora está definida
-            svgElements.push(`<text x="${pagePadding + chartAreaWidth / 2}" y="${chartAreaY}" class="chart-title">Distribución General de Turnos por Empleado</text>`);
-            currentY = chartAreaY + chartTitleFontSize * textLineHeight + 20; // Uso de chartTitleFontSize
-            svgElements.push(drawStackedShiftDistributionBarChartSvg(data, pagePadding, currentY, chartAreaWidth, chartHeight, headers, colorsForSvg));
+            svgElements.push(`<text x="${pagePadding + chartAreaWidth / 2}" y="${chartAreaY}" class="chart-title" font-size="${chartTitleSize}px">Distribución General de Turnos</text>`);
+            currentY = chartAreaY + chartTitleSize * textLineHeightFactor + 15;
+            if (typeof drawStackedShiftDistributionBarChartSvg === 'function') { // Verificar si la función existe
+                svgElements.push(drawStackedShiftDistributionBarChartSvg(data, pagePadding + (contentWidth - chartAreaWidth)/2 , currentY, chartAreaWidth, chartHeight, headers, colorsForSvg, chartLabelSize, tableCellSize));
+            } else {
+                svgElements.push(`<text x="${pagePadding + chartAreaWidth / 2}" y="${currentY + chartHeight/2}" class="chart-label" font-size="${chartLabelSize}px">Gráfico no disponible.</text>`);
+            }
             currentY += chartHeight + pagePadding;
         
-            const finalSvgHeight = currentY; 
+            const finalSvgHeight = Math.max(currentY, 800); // Altura mínima para el PDF
+            const footerTextPdf = `Generado: ${new Date().toLocaleDateString('es-ES')} ${new Date().toLocaleTimeString('es-ES')}`;
+            const footerYPdf = finalSvgHeight - (pagePadding / 2) - 5;
+            svgElements.push(`<text x="${finalSvgWidth - pagePadding}" y="${footerYPdf}" font-family="Inter, sans-serif" font-size="${footerSize}px" text-anchor="end" fill="#4A5568">${footerTextPdf}</text>`);
+        
             svgElements.unshift(`<rect width="${finalSvgWidth}" height="${finalSvgHeight}" fill="white"/>`);
             return `<svg width="${finalSvgWidth}" height="${finalSvgHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${svgElements.join('')}</svg>`;
         }
-
+        
 
         function drawStackedShiftDistributionBarChartSvg(allEmployeeData, x, y, width, height, headers, colorsForSvg) {
             let chartElements = [];
@@ -8945,20 +9015,23 @@
          */
         function getApplicationStateSnapshot() {
             const uploadedFileName = domCache.csvFileInput ? domCache.csvFileInput.dataset.uploadedFileName : null;
+            const generalNotesValue = domCache.modalGeneralNotesTextarea ? domCache.modalGeneralNotesTextarea.value : 
+                                      (domCache.generalNotesTextarea ? domCache.generalNotesTextarea.value : ""); // Fallback si tienes otro textarea
         
             return {
-                version: "1.0.1", // Puedes incrementar la versión si haces cambios significativos en la estructura del estado
+                version: "1.1.0", // Incrementa si haces cambios significativos en la estructura del estado
                 timestamp: new Date().toISOString(),
                 scheduleData: scheduleData,
                 employeeNamesOrdered: employeeNamesOrdered,
                 currentSelectedMonth: currentSelectedMonth,
                 yearOfSchedule: yearOfSchedule,
                 currentViewMode: currentViewMode,
-                generalNotes: domCache.generalNotesTextarea ? domCache.generalNotesTextarea.value : "",
+                generalNotes: generalNotesValue,
                 currentShiftColors: currentShiftColors,
                 currentUserShiftTimes: currentUserShiftTimes,
                 rulesConfig: rulesConfig,
-                currentLogoConfig: currentLogoConfig, // <-- AÑADIDO AQUÍ
+                currentLogoConfig: currentLogoConfig, 
+                currentPdfFontSizes: currentPdfFontSizes, // Añadido
                 changeHistory: changeHistory,
                 undoStack: undoStack,
                 redoStack: redoStack,
@@ -8966,6 +9039,7 @@
                 uploadedCsvName: uploadedFileName
             };
         }
+        
         
         /**
          * Inicia el proceso de exportación del estado completo de la aplicación.
@@ -9110,83 +9184,51 @@
          * Esto implica actualizar todas las variables de estado relevantes y re-renderizar la UI.
          * @param {object} importedState - El objeto de estado validado para aplicar.
          */
+
         function applyImportedApplicationState(importedState) {
             console.log("applyImportedApplicationState: Iniciando aplicación de estado importado.", JSON.parse(JSON.stringify(importedState)));
-            // Guardar el año global actual como fallback si el snapshot no lo tiene
             const currentGlobalYearBeforeRestore = yearOfSchedule; 
         
-            // 1. Resetear el estado actual (parcialmente, lo que será sobrescrito)
-            // Las pilas de Deshacer/Rehacer se limpian porque el nuevo estado es la base.
-            undoStack = [];
-            redoStack = [];
-            updateUndoRedoButtonsState(); // Actualiza la UI de los botones
-            hasUnsavedChanges = false; // El estado importado se considera "guardado" inicialmente
+            undoStack = importedState.undoStack || []; 
+            redoStack = importedState.redoStack || [];
         
-            // 2. Aplicar los datos importados del snapshot
             scheduleData = importedState.scheduleData || {};
             employeeNamesOrdered = importedState.employeeNamesOrdered || [];
             currentSelectedMonth = importedState.currentSelectedMonth || (new Date().getMonth() + 1);
             yearOfSchedule = importedState.yearOfSchedule || currentGlobalYearBeforeRestore;
             currentViewMode = importedState.currentViewMode || 'monthly';
         
-            // Notas Generales
-            if (domCache.modalGeneralNotesTextarea) { 
-                domCache.modalGeneralNotesTextarea.value = importedState.generalNotes || "";
-            } else {
-                console.warn("applyImportedApplicationState: domCache.modalGeneralNotesTextarea no encontrado.");
+            const notesTextarea = domCache.modalGeneralNotesTextarea || domCache.generalNotesTextarea;
+            if (notesTextarea) { 
+                notesTextarea.value = importedState.generalNotes || "";
             }
         
-            // Colores y Tiempos de Turno
             currentShiftColors = importedState.currentShiftColors || JSON.parse(JSON.stringify(DEFAULT_SHIFT_COLORS));
             currentUserShiftTimes = importedState.currentUserShiftTimes || JSON.parse(JSON.stringify(DEFAULT_SHIFT_TIMES));
-            
-            // Configuración de Normas
-            if (importedState.rulesConfig) {
-                rulesConfig = importedState.rulesConfig;
-            } else {
-                rulesConfig = getDefaultRulesConfig();
-            }
+            rulesConfig = importedState.rulesConfig || (typeof getDefaultRulesConfig === 'function' ? getDefaultRulesConfig() : {}); 
+            currentLogoConfig = importedState.currentLogoConfig || JSON.parse(JSON.stringify(DEFAULT_LOGO_CONFIG)); 
+            currentPdfFontSizes = importedState.currentPdfFontSizes || JSON.parse(JSON.stringify(DEFAULT_PDF_FONT_SIZES)); 
         
-            // Historial de Cambios - ¡CORRECCIÓN CRUCIAL AQUÍ!
             if (Array.isArray(importedState.changeHistory)) {
                 try {
-                    changeHistory = importedState.changeHistory.map(item => {
-                        if (item && item.timestamp) {
-                            // Comprobar si ya es un objeto Date (poco probable después de JSON.parse, pero seguro)
-                            if (item.timestamp instanceof Date) {
-                                return item;
-                            }
-                            // Convertir string a objeto Date
-                            const newTimestamp = new Date(item.timestamp);
-                            if (isNaN(newTimestamp.getTime())) { // Comprobar si la conversión fue válida
-                                console.warn(`Timestamp inválido encontrado durante la importación del historial: ${item.timestamp}. Usando fecha actual como fallback.`);
-                                return { ...item, timestamp: new Date() }; // Fallback a fecha actual
-                            }
-                            return {
-                                ...item,
-                                timestamp: newTimestamp 
-                            };
-                        }
-                        return item; // Devolver el item como está si no tiene timestamp
-                    });
-                    console.log("applyImportedApplicationState: Historial de cambios procesado:", changeHistory);
+                    changeHistory = importedState.changeHistory.map(item => ({ 
+                        ...item,
+                        timestamp: new Date(item.timestamp) 
+                    })).filter(item => !isNaN(item.timestamp.getTime())); 
                 } catch (e) {
-                    console.error("Error al procesar timestamps del historial durante la importación del estado:", e);
-                    changeHistory = []; // Fallback a un historial vacío si hay error
+                    console.error("Error procesando timestamps del historial importado:", e);
+                    changeHistory = [];
                 }
             } else {
                 changeHistory = []; 
             }
         
-            // Autoguardado
             isAutosaveEnabled = importedState.isAutosaveEnabled !== undefined ? importedState.isAutosaveEnabled : false;
             if (domCache.autosaveToggle) {
                 domCache.autosaveToggle.checked = isAutosaveEnabled;
-                // Es importante llamar a toggleAutosave para iniciar/detener el intervalo si es necesario
-                toggleAutosave(isAutosaveEnabled, true); // El segundo parámetro podría ser para no mostrar toast
+                if (typeof toggleAutosave === 'function') toggleAutosave(isAutosaveEnabled, true); 
             }
         
-            // Nombre del archivo CSV original (si existe)
             if (domCache.csvFileInput) {
                 if (importedState.uploadedCsvName) {
                     domCache.csvFileInput.dataset.uploadedFileName = importedState.uploadedCsvName;
@@ -9199,53 +9241,59 @@
                 }
             }
         
-            // Input del año en el título
             if (domCache.titleYearInput) { 
                 domCache.titleYearInput.value = yearOfSchedule; 
-            } else {
-                 console.warn("applyImportedApplicationState: domCache.titleYearInput no encontrado.");
             }
         
-            // Configuración del Logo
-            if (importedState.hasOwnProperty('currentLogoConfig') && typeof importedState.currentLogoConfig === 'object' && importedState.currentLogoConfig !== null) {
-                currentLogoConfig = { ...DEFAULT_LOGO_CONFIG, ...importedState.currentLogoConfig };
-                saveLogoConfig(); // Guardar esta configuración importada en el localStorage específico del logo
+            // Guardar configuraciones individuales en localStorage
+            if (typeof saveLogoConfig === 'function') saveLogoConfig();
+            savePdfFontSizes(); 
+            if (typeof saveRulesConfigToLocalStorage === 'function') saveRulesConfigToLocalStorage();
+        
+            // Llamada a saveScheduleToLocalStorage para persistir el resto del estado importado
+            if (typeof saveScheduleToLocalStorage === 'function') {
+                saveScheduleToLocalStorage(false); // false para no limpiar el historial de undo/redo que acabamos de cargar
             } else {
-                loadLogoConfig(); // Carga la config del logo desde su propio localStorage o defaults
+                console.warn("saveScheduleToLocalStorage function is not defined. Some parts of the imported state might not be persisted to localStorage.");
+                // Si saveScheduleToLocalStorage no existe, al menos guardar las partes más críticas individualmente
+                if (typeof localStorage !== 'undefined') {
+                     if (typeof scheduleData !== 'undefined' && LOCAL_STORAGE_KEY_SCHEDULE) localStorage.setItem(LOCAL_STORAGE_KEY_SCHEDULE, JSON.stringify({schedule: scheduleData, employeeOrder: employeeNamesOrdered, selectedMonth: currentSelectedMonth, uploadedCsvName: domCache.csvFileInput?.dataset?.uploadedFileName || null }));
+                     if (notesTextarea && LOCAL_STORAGE_KEY_NOTES) localStorage.setItem(LOCAL_STORAGE_KEY_NOTES, notesTextarea.value);
+                     if (typeof currentViewMode !== 'undefined' && LOCAL_STORAGE_KEY_VIEW) localStorage.setItem(LOCAL_STORAGE_KEY_VIEW, currentViewMode);
+                     if (typeof yearOfSchedule !== 'undefined' && LOCAL_STORAGE_KEY_YEAR) localStorage.setItem(LOCAL_STORAGE_KEY_YEAR, yearOfSchedule.toString());
+                     if (typeof changeHistory !== 'undefined' && LOCAL_STORAGE_KEY_HISTORY) localStorage.setItem(LOCAL_STORAGE_KEY_HISTORY, JSON.stringify(changeHistory));
+                     if (typeof undoStack !== 'undefined' && LOCAL_STORAGE_KEY_UNDO_STACK) localStorage.setItem(LOCAL_STORAGE_KEY_UNDO_STACK, JSON.stringify(undoStack));
+                     if (typeof redoStack !== 'undefined' && LOCAL_STORAGE_KEY_REDO_STACK) localStorage.setItem(LOCAL_STORAGE_KEY_REDO_STACK, JSON.stringify(redoStack));
+                     // Los colores y tiempos ya se guardan individualmente si saveScheduleToLocalStorage no existe
+                     if (typeof currentShiftColors !== 'undefined' && LOCAL_STORAGE_KEY_COLORS) localStorage.setItem(LOCAL_STORAGE_KEY_COLORS, JSON.stringify(currentShiftColors));
+                     if (typeof currentUserShiftTimes !== 'undefined' && LOCAL_STORAGE_KEY_SHIFT_TIMES) localStorage.setItem(LOCAL_STORAGE_KEY_SHIFT_TIMES, JSON.stringify(currentUserShiftTimes));
+                }
+            }
+        
+            // Actualizar UI
+            if (typeof updateLegend === 'function') updateLegend(); 
+            updatePdfFontInputs(); 
+            if (typeof renderRulesModal === 'function' && domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
+                 renderRulesModal();
             }
             if (typeof renderEditableLogo === 'function') renderEditableLogo();
+            if (typeof populateMonthTabs === 'function') populateMonthTabs(); 
+            if (typeof updateViewModeUI === 'function') updateViewModeUI(); 
+            if (typeof handleViewChange === 'function') handleViewChange(); 
+            if (typeof renderChangeHistory === 'function') renderChangeHistory(); 
+            if (typeof initializeAndRenderNewStatistics === 'function') initializeAndRenderNewStatistics(); 
         
-            // 3. Actualizar toda la Interfaz de Usuario
-            updateLegend(); 
-            populateMonthTabs(); 
-            updateViewModeUI(); // Esto llamará a updateScheduleTitleDisplay
-            handleViewChange(); // Esto renderiza la tabla y llama a validateAndDisplayRuleViolations
-            
-            // Renderizar el historial DESPUÉS de que changeHistory haya sido procesado
-            renderChangeHistory(); 
+            hasUnsavedChanges = false; 
+            if (typeof updateUnsavedChangesIndicator === 'function') updateUnsavedChangesIndicator();
+            if (typeof updateUndoRedoButtonsState === 'function') updateUndoRedoButtonsState();
+            if (typeof enableControls === 'function' && typeof isDataLoadedForStats === 'function') enableControls(isDataLoadedForStats());
         
-            if (domCache.rulesModal && !domCache.rulesModal.classList.contains('hidden-by-default')) {
-                renderRulesModal(); // Actualizar el modal de normas si está visible
+            if (typeof showToast === 'function') {
+                showToast("Estado de la aplicación importado y aplicado correctamente.", "success");
             }
-        
-            initializeAndRenderNewStatistics(); 
-            updateUnsavedChangesIndicator(); // Debería ser false después de una importación exitosa
-            enableControls(isDataLoadedForStats()); // Habilitar controles si hay datos
-        
-            // Guardar todo el estado importado en localStorage para persistencia.
-            // Es importante que las funciones de guardado individual (colores, tiempos, etc.)
-            // se llamen si no están cubiertas por saveScheduleToLocalStorage.
-            saveScheduleToLocalStorage(true); // true para limpiar el historial de undo/redo si no se importó
-            saveRulesConfigToLocalStorage(); // Guardar normas importadas
-            // saveLogoConfig() ya se llamó arriba si se importó config de logo.
-            
-            hasUnsavedChanges = false; // Confirmar que no hay cambios sin guardar después de todo
-            updateUnsavedChangesIndicator();
-            if(domCache.saveLocalButton) domCache.saveLocalButton.disabled = true;
-        
-            console.log("applyImportedApplicationState: Estado de la aplicación importado y aplicado completamente.");
-            showToast("Configuración de la aplicación importada correctamente.", "success");
+            console.log("applyImportedApplicationState: Aplicación de estado completada.");
         }
+        
 
         function updateScheduleTitleDisplay() {
             // Comprobación robusta de la existencia de los elementos en domCache
@@ -9693,8 +9741,114 @@
             console.log("setupLogoEditorEventListeners: Configuración de listeners completada.");
         }
         
+        function loadPdfFontSizes() {
+            const savedFontSizesString = localStorage.getItem(LOCAL_STORAGE_KEY_PDF_FONT_SIZES);
+            let loadedFontSizes = {};
+            if (savedFontSizesString) {
+                try {
+                    loadedFontSizes = JSON.parse(savedFontSizesString);
+                } catch (e) {
+                    console.error("Error parseando tamaños de fuente PDF guardados:", e);
+                    loadedFontSizes = {}; // Usar objeto vacío si hay error para fusionar con defaults
+                }
+            }
+            // Fusionar con los defaults para asegurar que todas las claves existan
+            currentPdfFontSizes = { ...DEFAULT_PDF_FONT_SIZES, ...loadedFontSizes };
+            updatePdfFontInputs(); // Actualizar los inputs del modal con los valores cargados/defaults
+        }
         
+        function savePdfFontSizes() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY_PDF_FONT_SIZES, JSON.stringify(currentPdfFontSizes));
+                // No es necesario un toast aquí, se gestionará al aplicar cambios generales del modal
+            } catch (error) {
+                console.error("Error guardando tamaños de fuente PDF:", error);
+                if (typeof showToast === 'function') { // Verificar si showToast existe
+                    showToast("Error al guardar configuración de fuentes PDF.", "error");
+                }
+            }
+        }
         
+        function updatePdfFontInputs() {
+            // Asegurar que los elementos del DOM estén cacheados y existan
+            if (!domCache.pdfFontMainTitleInput || !domCache.pdfFontMainTitleValue) {
+                // console.warn("Elementos del DOM para fuentes PDF no listos en updatePdfFontInputs.");
+                return; 
+            }
+        
+            const updateInput = (inputElem, valueSpanElem, valueKey, defaultValueKey) => {
+                const valToSet = currentPdfFontSizes[valueKey] !== undefined && currentPdfFontSizes[valueKey] !== null 
+                                 ? currentPdfFontSizes[valueKey] 
+                                 : DEFAULT_PDF_FONT_SIZES[defaultValueKey];
+                if (inputElem) {
+                    inputElem.value = valToSet;
+                }
+                if (valueSpanElem) {
+                    valueSpanElem.textContent = `(Actual: ${valToSet}pt)`;
+                }
+            };
+        
+            updateInput(domCache.pdfFontMainTitleInput, domCache.pdfFontMainTitleValue, 'mainTitle', 'mainTitle');
+            updateInput(domCache.pdfFontSectionTitleInput, domCache.pdfFontSectionTitleValue, 'sectionTitle', 'sectionTitle');
+            updateInput(domCache.pdfFontTableHeaderInput, domCache.pdfFontTableHeaderValue, 'tableHeader', 'tableHeader');
+            updateInput(domCache.pdfFontTableCellInput, domCache.pdfFontTableCellValue, 'tableCell', 'tableCell');
+            updateInput(domCache.pdfFontEmployeeNameInput, domCache.pdfFontEmployeeNameValue, 'employeeName', 'employeeName');
+            updateInput(domCache.pdfFontFooterInput, domCache.pdfFontFooterValue, 'footer', 'footer');
+        }
+          
+        function setupPdfFontEventListeners() {
+            const inputsConfig = [
+                { input: domCache.pdfFontMainTitleInput, key: 'mainTitle', span: domCache.pdfFontMainTitleValue },
+                { input: domCache.pdfFontSectionTitleInput, key: 'sectionTitle', span: domCache.pdfFontSectionTitleValue },
+                { input: domCache.pdfFontTableHeaderInput, key: 'tableHeader', span: domCache.pdfFontTableHeaderValue },
+                { input: domCache.pdfFontTableCellInput, key: 'tableCell', span: domCache.pdfFontTableCellValue },
+                { input: domCache.pdfFontEmployeeNameInput, key: 'employeeName', span: domCache.pdfFontEmployeeNameValue },
+                { input: domCache.pdfFontFooterInput, key: 'footer', span: domCache.pdfFontFooterValue }
+            ];
+        
+            inputsConfig.forEach(item => {
+                if (item.input) {
+                    item.input.addEventListener('input', (e) => {
+                        const value = parseInt(e.target.value, 10);
+                        const min = parseInt(e.target.min, 10);
+                        const max = parseInt(e.target.max, 10);
+        
+                        // Validar que el valor esté dentro del rango permitido
+                        if (!isNaN(value) && value >= min && value <= max) {
+                            currentPdfFontSizes[item.key] = value;
+                            if (item.span) {
+                                item.span.textContent = `(Actual: ${value}pt)`;
+                            }
+                            // Habilitar botones de "Aplicar" y "Restaurar" en el modal
+                            if (domCache.modalApplyColorsButton) domCache.modalApplyColorsButton.disabled = false;
+                            if (domCache.modalResetColorsButton) domCache.modalResetColorsButton.disabled = false;
+                        } else if (e.target.value === '') {
+                            // Si el campo está vacío, no actualizamos currentPdfFontSizes inmediatamente,
+                            // pero podríamos querer resetear el span o indicar que está vacío.
+                            // Por ahora, el span no cambia hasta que haya un valor válido.
+                            // Podrías deshabilitar "Aplicar" si hay campos inválidos.
+                        } else {
+                            // El valor está fuera de rango o no es un número
+                            // Podrías mostrar un aviso o revertir al valor anterior.
+                            // Por ahora, simplemente no actualizamos currentPdfFontSizes si es inválido.
+                            // El span "(Actual: ...pt)" no se actualiza si el valor es inválido.
+                        }
+                    });
+                     // Adicionalmente, para manejar el caso de que el usuario borre el contenido:
+                    item.input.addEventListener('blur', (e) => {
+                        if (e.target.value === '') {
+                            // Si el campo está vacío al perder el foco, restaurar al valor por defecto o al último válido
+                            const defaultValue = DEFAULT_PDF_FONT_SIZES[item.key];
+                            e.target.value = currentPdfFontSizes[item.key] !== null && currentPdfFontSizes[item.key] !== undefined ? currentPdfFontSizes[item.key] : defaultValue;
+                            if (item.span) {
+                                 item.span.textContent = `(Actual: ${e.target.value}pt)`;
+                            }
+                        }
+                    });
+                }
+            });
+        }
+            
 
     </script>
 </body>
