@@ -67,16 +67,24 @@
             white-space: nowrap;
             font-size: 0.75rem;
             font-weight: 500;
-            border-right: 1px solid #f3f4f6; /* gray-100 */
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+			position: relative; /* Necesario para que z-index funcione correctamente */
+			transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; /* Transición suave para el escalado y la sombra */
         }
-        .shift-cell:last-child {
-            border-right: none;
-        }
+		
+		.shift-cell:hover {
+			transform: scale(1.15); /* Aumenta el tamaño de la celda al 115% */
+			box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Sombra sutil para efecto de elevación */
+			z-index: 5; /* Asegura que la celda se muestre por encima de otras al hacer hover */
+			/* Opcional: Podrías querer cambiar el color de fondo o borde también */
+			/* background-color: #e0e7ff !important; /* Ejemplo: un fondo índigo claro */
+		}
+		
+
         .cell-selected {
             outline: 2px dashed #4f46e5; /* indigo-600 */
             outline-offset: -2px;
