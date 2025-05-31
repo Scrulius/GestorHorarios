@@ -756,11 +756,27 @@
     
         /* ESTILOS DE LA SECCIÓN DE ESTADÍSTICAS (MANTENIDOS) */
         .stats-section { 
-            background-color: white; border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem; margin-bottom: 2rem;
+            background-color: white; 
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+            /* Sombra más sutil y moderna */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.03); 
+            padding: 1.5rem; /* Tailwind p-6. Puedes aumentarlo a p-8 (2rem) si quieres más espacio interno */
+            margin-bottom: 2rem; /* Tailwind mb-8 */
         }
-        .stats-section h2.section-main-title { font-size: 1.5rem; font-weight: 700; color: #1f2937; }
+        .stats-section h2.section-main-title {
+            font-size: 1.875rem; /* Tailwind text-2xl, o text-3xl (2.25rem) si quieres más grande */
+            font-weight: 700; /* Tailwind font-bold. Puedes probar con 800 (font-extrabold) */
+            color: #4F46E5;
+            /* Opcional: un borde inferior sutil */
+            /* border-bottom: 1px solid #e5e7eb; */ /* Tailwind border-gray-200 */
+            /* padding-bottom: 0.75rem; */ /* Tailwind pb-3, si añades el borde */
+        }
+		
+		.stats-section h2.section-main-title i {
+			color: #4F46E5; /* Tailwind text-indigo-600. Color del icono */
+			font-size: 1.5rem; /* Tamaño del icono, un poco más pequeño que el texto */
+		}
+		
         .stats-section h3.chart-title { font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem; }
         .table-header-controls {
             display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
@@ -771,10 +787,20 @@
         }
         .table-wrapper { overflow-x: auto; }
         #stats-table-head th {
-            background-color: #f9fafb; color: #374151; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.05em; padding: 0.75rem 1rem; text-align: left; white-space: nowrap;
+            background-color: #f3f4f6; /* Tailwind bg-slate-100 o bg-gray-100. Un poco más distintivo */
+            color: #374151; /* Tailwind text-gray-700 */
+            font-weight: 600; /* Tailwind font-semibold */
+            text-transform: uppercase;
+            letter-spacing: 0.05em; /* Tailwind tracking-wider */
+            padding: 0.75rem 1rem; /* Tailwind py-3 px-4 */
+            text-align: left; /* Por defecto */
+            white-space: nowrap;
+            border-bottom: 2px solid #e5e7eb; /* Tailwind border-b-2 border-gray-200. Borde inferior más marcado */
         }
-        #stats-table-head th i { margin-right: 0.375rem; }
+        #stats-table-head th i {
+            margin-right: 0.375rem; /* Tailwind mr-1.5 */
+            color: #6b7280; /* Tailwind text-gray-500. Color sutil para iconos */
+        }
         #tbody-idea1-expanded td {
             padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; font-size: 0.875rem;
             white-space: nowrap; text-align: center;
@@ -785,6 +811,30 @@
         #tbody-idea1-expanded tr:last-child td { border-bottom: none; }
         #tbody-idea1-expanded tr:hover { background-color: #f3f4f6; cursor: pointer; }
         #tbody-idea1-expanded tr:hover td.employee-name-cell { background-color: white !important; }
+        #tbody-idea1-expanded tr:nth-child(even) {
+            background-color: #f9fafb; /* Tailwind bg-slate-50 o bg-gray-50 */
+        }
+        #tbody-idea1-expanded tr:nth-child(odd) {
+            background-color: #ffffff; /* Tailwind bg-white */
+        }
+    
+        /* Asegúrate que el hover siga funcionando y tenga prioridad */
+        #tbody-idea1-expanded tr:hover {
+            background-color: #eff6ff !important; /* Tailwind bg-blue-50 o un color de hover de tu elección */
+            cursor: pointer;
+        }
+        /* Mantén tu estilo de hover para la celda del nombre si es necesario */
+        #tbody-idea1-expanded tr:hover td.employee-name-cell {
+            background-color: #eff6ff !important; /* O el mismo color que el hover de la fila */
+        }
+    
+        /* Ajuste para centrar texto en celdas numéricas del cuerpo de la tabla */
+        #tbody-idea1-expanded td:not(.employee-name-cell) {
+            text-align: center;
+        }
+        #tbody-idea1-expanded td.employee-name-cell {
+            text-align: left; /* Asegurar que el nombre del empleado esté a la izquierda */
+        }
         .kpi-card {
             background-color: white; border-radius: 0.375rem; padding: 0.5rem;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; text-align: center;
@@ -1540,9 +1590,10 @@
                                 <span id="pagination-info"></span> 
                             </div>
                             <div class="mt-8 text-center">
-                                <button id="show-general-stats-btn" class="px-8 py-3 bg-teal-600 text-white font-semibold rounded-lg shadow-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75 transition-all duration-150 ease-in-out transform hover:scale-105">
-                                    <i class="fas fa-chart-bar mr-2"></i>Ver Estadísticas Generales de la Plantilla
-                                </button>
+								<button id="show-general-stats-btn"
+										class="group action-button text-white font-semibold 
+											py-3 px-6 rounded-lg bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-500 shadow-lg hover:shadow-xl hover:scale-[1.03] hover:from-purple-700 hover:via-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform">
+									<i class="fas fa-chart-line"></i> <span>Ver Estadísticas Generales</span> </button>
                             </div>
                         </section>
         
@@ -3575,6 +3626,12 @@
                 });
             }
         
+			if (typeof Chart !== 'undefined') {
+				Chart.defaults.font.family = "'Inter', sans-serif";
+				Chart.defaults.font.size = 11; // Puedes ajustar este tamaño base
+				Chart.defaults.color = '#4b5563'; // Tailwind text-gray-600 - color de texto por defecto para ejes, leyendas
+			}
+		
             if (domCache.modalUndoButton) { 
                 domCache.modalUndoButton.addEventListener('click', undoChange);
             }
