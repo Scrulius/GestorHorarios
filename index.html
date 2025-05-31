@@ -1365,13 +1365,21 @@
                 </div>
             </div>
             <section id="schedule-table-section" class="bg-white rounded-xl shadow-xl">
-                <h2 id="current-month-year-display" class="text-2xl font-bold text-gray-800 p-5 border-b border-gray-200 bg-gray-50 rounded-t-xl relative flex items-center">
-                    <span id="current-month-year-text-prefix">Horario para</span> <span id="current-month-text" class="ml-1 mr-2"></span> <input type="number" id="title-year-input" value="2026" class="p-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-2xl font-bold text-gray-800 w-24 text-center" style="max-width: 100px;">
+                <h2 id="current-month-year-display" class="text-2xl font-bold text-gray-800 p-5 pr-28 sm:pr-32 border-b border-gray-200 bg-gray-50 rounded-t-xl relative flex items-center">
+                    <span id="current-month-year-text-prefix">Horario para</span> 
+                    <span id="current-month-text" class="ml-1 mr-2"></span> 
+                    <input type="number" id="title-year-input" value="2026" class="p-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-2xl font-bold text-gray-800 w-24 text-center" style="max-width: 100px;">
                     <span id="unsaved-indicator-table" class="unsaved-dot hidden-by-default ml-3" title="Hay cambios sin guardar"></span>
-                    <span id="help-icon-container" class="absolute top-1/2 right-5 transform -translate-y-1/2 cursor-pointer" title="Mostrar Consejos Útiles">
-                        <i class="fas fa-lightbulb text-gray-500 text-2xl"></i>
-                    </span>
+                    
+                    <button id="help-icon-container" 
+                            class="absolute top-1/2 right-4 transform -translate-y-1/2 flex items-center justify-center px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1"
+                            title="Mostrar Guía Rápida y Consejos">
+                        <i class="fas fa-lightbulb text-lg sm:text-xl text-amber-500"></i> 
+                        <span class="ml-2 hidden sm:inline text-xs sm:text-sm font-medium">Consejos</span>
+                    </button>
                 </h2>
+                
+                
                 
                 <div class="table-container">
                     <table id="schedule-table" class="min-w-full divide-y divide-gray-200">
