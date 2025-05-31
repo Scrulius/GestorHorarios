@@ -1319,13 +1319,13 @@
             </div> 
 			
             <div id="manage-config-modal" class="modal hidden-by-default">
-                <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-purple-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+                <div class="modal-content max-w-lg bg-gradient-to-br from-slate-100 to-purple-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
                     <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-purple-200">
                         <div class="flex items-center">
                             <i class="fas fa-cogs text-purple-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-12deg]"></i>
                             <div>
                                 <h3 class="text-2xl sm:text-3xl font-bold text-purple-700 leading-tight">Gestionar</h3>
-                                <p class="text-md sm:text-lg text-purple-500 font-medium leading-tight">Configuración App</p>
+                                <p class="text-md sm:text-lg text-purple-500 font-medium leading-tight">Configuración de la App</p>
                             </div>
                         </div>
                         <button id="close-manage-config-modal" class="text-slate-400 hover:text-purple-600 transition-colors duration-300">
@@ -1337,34 +1337,40 @@
                         <div class="text-center mb-5">
                             <i class="fas fa-database fa-2x text-purple-400 mb-2"></i>
                             <p class="text-slate-700 leading-relaxed text-sm">
-                                Asegura tu trabajo y personalizaciones. Transfiere datos y configuraciones.
+                                Administra la información completa de tu aplicación. Exporta para respaldar o transferir, o importa para restaurar un estado previo.
                             </p>
                         </div>
             
                         <div class="group bg-white/80 backdrop-blur-lg p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                            <h4 class="text-lg font-bold text-purple-600 mb-3 pb-1.5 border-b border-purple-200 flex items-center">
+                            <h4 class="text-lg font-bold text-purple-600 mb-2 pb-1.5 border-b border-purple-200 flex items-center">
                                 <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center shadow-sm">
                                     <i class="fas fa-cloud-download-alt text-sm"></i>
                                 </div>
-                                Exportar Config.
+                                Exportar Configuración
                             </h4>
+                            <p class="text-slate-600 text-xs mb-2">
+                                Crea un archivo <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">.json</code> con todos los datos de la aplicación (horarios, empleados, notas, personalizaciones, reglas, etc.).
+                            </p>
                             <p class="text-slate-600 text-xs mb-3">
-                                Genera un archivo <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">.json</code> con todo tu estado actual.
+                                Útil para copias de seguridad o para mover tus datos a otro dispositivo.
                             </p>
                             <button id="modal-export-app-config-button" class="action-button w-full bg-purple-500 hover:bg-purple-600 text-white focus:ring-4 focus:ring-purple-300/50 px-5 py-2 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
-                                <i class="fas fa-file-export mr-1.5"></i>Exportar Configuración
+                                <i class="fas fa-file-export mr-1.5"></i>Exportar Configuración Actual
                             </button>
                         </div>
             
                         <div class="group bg-white/80 backdrop-blur-lg p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                            <h4 class="text-lg font-bold text-sky-600 mb-3 pb-1.5 border-b border-sky-200 flex items-center">
+                            <h4 class="text-lg font-bold text-sky-600 mb-2 pb-1.5 border-b border-sky-200 flex items-center">
                                 <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center shadow-sm">
                                     <i class="fas fa-cloud-upload-alt text-sm"></i>
                                 </div>
-                                Importar Config.
+                                Importar Configuración
                             </h4>
-                            <p class="text-slate-600 text-xs mb-3">
-                                Carga un <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">.json</code> guardado. <strong class="text-red-600">¡Sobrescribirá datos!</strong>
+                            <p class="text-slate-600 text-xs mb-2">
+                                Restaura la aplicación desde un archivo <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">.json</code> previamente exportado.
+                            </p>
+                             <p class="text-slate-600 text-xs mb-3">
+                                <strong class="text-red-600 font-semibold">¡Atención!</strong> Al importar, se reemplazarán todos los datos y configuraciones actuales de la aplicación. Esta acción no se puede deshacer.
                             </p>
                             <button id="modal-import-app-config-button" class="action-button w-full bg-sky-500 hover:bg-sky-600 text-white focus:ring-4 focus:ring-sky-300/50 px-5 py-2 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
                                 <i class="fas fa-file-import mr-1.5"></i>Importar desde Archivo
@@ -1379,6 +1385,7 @@
                     </div>
                 </div>
             </div>
+            
             
         
             <div id="confirm-import-app-state-modal" class="modal hidden-by-default">
