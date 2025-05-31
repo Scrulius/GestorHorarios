@@ -19,6 +19,41 @@
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
         }
+
+        /* ESTILOS MODIFICADOS PARA LA ANIMACIÓN ELEGANTE DEL TÍTULO (MÁS OSCURO) */
+        .animated-gradient-title {
+            background-image: linear-gradient(
+                -225deg, /* Dirección del gradiente */
+                #4F46E5 0%,    /* Indigo 600 (más oscuro) */
+                #9333EA 25%,   /* Purple 600 (más oscuro) */
+                #0EA5E9 50%,   /* Sky 500 (un poco más oscuro) */
+                #4F46E5 75%,   /* Indigo 600 de nuevo para un ciclo suave */
+                #7C3AED 100%   /* Violet 600 para finalizar el ciclo y conectar con el inicio */
+            );
+            background-size: auto auto; /* El navegador determina el tamaño */
+            background-clip: border-box; /* Fallback */
+            background-size: 400% 400%; /* Tamaño del fondo del gradiente, más grande para una animación más suave */
+            color: #fff; /* Color de fallback si el navegador no soporta background-clip */
+            background-clip: text;
+            -webkit-background-clip: text; /* Para compatibilidad con Safari/Chrome */
+            -webkit-text-fill-color: transparent; /* Hace el texto transparente para mostrar el gradiente */
+            animation: textclip 8s linear infinite; /* Animación más lenta: 4 segundos */
+            display: inline-block; /* Necesario para que background-clip funcione correctamente con la animación */
+        }
+        
+        @keyframes textclip {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%; /* Vuelve al inicio para un ciclo perfecto */
+          }
+        }
+        
+
         #logo-container svg {
             width: 200px;
             height: auto;
@@ -49,7 +84,7 @@
             position: -webkit-sticky;
             position: sticky;
             left: 0;
-			top: 0; 
+			top: 0; /* ASEGÚRATE DE QUE top: 0; ESTÉ PRESENTE AQUÍ */
             z-index: 30;
             background-color: #f9fafb; /* gray-50 */
         }
@@ -1105,55 +1140,79 @@
 
 
     <div id="history-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-lg"> <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                    <i class="fas fa-history text-purple-500 mr-3"></i>Historial de Cambios
-                </h3>
-                <button id="close-history-modal-button" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times fa-lg"></i>
+        <div class="modal-content max-w-4xl bg-gradient-to-br from-slate-100 to-purple-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-purple-200">
+                <div class="flex items-center">
+                    <i class="fas fa-history text-purple-500 mr-3 sm:mr-4 text-4xl sm:text-5xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-6deg]"></i>
+                    <div>
+                        <h3 class="text-3xl sm:text-4xl font-bold text-purple-700 leading-tight">Historial</h3>
+                        <p class="text-lg sm:text-xl text-purple-500 font-medium leading-tight">de Cambios y Acciones</p>
+                    </div>
+                </div>
+                <button id="close-history-modal-button" class="text-slate-400 hover:text-purple-600 transition-colors duration-300">
+                    <i class="fas fa-times fa-3x"></i>
                 </button>
             </div>
     
-            <div class="flex justify-end items-center mb-3">
-                <button id="modal-undo-button" title="Deshacer (Ctrl+Z)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5 mr-2" disabled>
-                    <i class="fas fa-undo"></i> Deshacer
-                </button>
-                <button id="modal-redo-button" title="Rehacer (Ctrl+Y)" class="action-button bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-400 text-xs px-3 py-1.5" disabled>
-                    <i class="fas fa-redo"></i> Rehacer
-                </button>
+            <div class="space-y-6">
+                <div class="flex flex-col sm:flex-row justify-end items-center gap-3 mb-4">
+                    <button id="modal-undo-button" title="Deshacer (Ctrl+Z)" class="action-button w-full sm:w-auto bg-slate-500 hover:bg-slate-600 text-white focus:ring-4 focus:ring-slate-300/50 px-5 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-undo mr-2"></i> Deshacer
+                    </button>
+                    <button id="modal-redo-button" title="Rehacer (Ctrl+Y)" class="action-button w-full sm:w-auto bg-slate-500 hover:bg-slate-600 text-white focus:ring-4 focus:ring-slate-300/50 px-5 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-redo mr-2"></i> Rehacer
+                    </button>
+                </div>
+    
+                <div class="group bg-white/80 backdrop-blur-lg p-5 rounded-xl shadow-xl">
+                    <h4 class="text-xl font-semibold text-purple-600 mb-3 pb-2 border-b border-purple-200 flex items-center">
+                        <div class="w-8 h-8 mr-3 flex-shrink-0 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center shadow-sm">
+                            <i class="fas fa-list-ul"></i>
+                        </div>
+                        Registro de Actividad
+                    </h4>
+                    <div id="modal-change-history-list-container" class="max-h-80 overflow-y-auto bg-slate-50/50 p-3 rounded-lg border border-slate-200 custom-scrollbar">
+                        <ul id="modal-change-history-list" class="space-y-1.5">
+                            {/* Las entradas del historial se generan aquí por JavaScript */}
+                            <li class="text-center text-slate-500 italic py-4">No hay cambios recientes.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
     
-            <div id="modal-change-history-list-container" class="max-h-96 overflow-y-auto border border-gray-200 rounded-md p-3 bg-gray-50">
-                <ul id="modal-change-history-list">
-                    <li class="text-center text-gray-400">No hay cambios recientes.</li>
-                </ul>
-            </div>
-    
-            <div class="mt-6 text-right">
-                <button id="ok-history-modal-button" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">
+            <div class="mt-10 pt-6 border-t-2 border-purple-200 text-center">
+                <button id="ok-history-modal-button" class="action-button bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300/50 text-white px-10 py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
                     Aceptar
                 </button>
             </div>
         </div>
     </div>
     
+    
     <div id="notes-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-xl"> <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                    <i class="fas fa-pencil-alt text-orange-500 mr-3"></i>Notas Generales
-                </h3>
-                <button id="close-notes-modal-button" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times fa-lg"></i>
+        <div class="modal-content max-w-xs sm:max-w-md md:max-w-xl lg:max-w-3xl bg-gradient-to-br from-slate-100 to-blue-100 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-2xl flex flex-col"> 
+            <div class="flex justify-between items-center mb-4 sm:mb-6 pb-3 sm:pb-4 border-b-2 border-blue-200">
+                <div class="flex items-center">
+                    <i class="fas fa-pencil-alt text-blue-500 mr-2 sm:mr-3 text-2xl sm:text-3xl md:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-6deg]"></i> 
+                    <div>
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-blue-700 leading-tight">Notas</h3>
+                        <p class="text-sm sm:text-base md:text-lg text-blue-500 font-medium leading-tight">Generales del Horario</p>
+                    </div>
+                </div>
+                <button id="close-notes-modal-button" class="text-slate-400 hover:text-blue-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i> 
                 </button>
             </div>
     
-            <textarea id="modal-general-notes-textarea"
-                      class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm notes-textarea"
-                      rows="10"
-                      placeholder="Añade comentarios o recordatorios aquí..."></textarea>
+            <div class="flex-grow flex flex-col min-h-0 my-4 sm:my-0">
+                <textarea id="modal-general-notes-textarea"
+                          class="w-full flex-grow p-2.5 sm:p-3.5 border border-blue-200 rounded-lg sm:rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white/80 backdrop-blur-sm custom-scrollbar notes-textarea"
+                          rows="10" 
+                          placeholder="Añade comentarios, recordatorios o cualquier apunte relevante aquí..."></textarea>
+            </div>
     
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="ok-notes-modal-button" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">
+            <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t-2 border-blue-200 text-center">
+                <button id="ok-notes-modal-button" class="action-button w-full sm:w-auto bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300/50 text-white px-6 sm:px-10 py-2.5 sm:py-3 rounded-lg text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
                     Aceptar
                 </button>
             </div>
@@ -1164,8 +1223,8 @@
     <div class="container mx-auto max-w-full">
         <header class="mb-10 text-center">
             <div id="logo-container" class="flex justify-center mb-3">
-                </div>
-            <h1 id="main-title-text" class="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight inline-block">Gestor de Horarios Laborales</h1>
+                </div> 
+            <h1 id="main-title-text" class="text-4xl md:text-5xl font-bold tracking-tight inline-block animated-gradient-title">Gestor de Horarios Laborales</h1>
         </header>
 
         <section id="controls-section" class="mb-8">
@@ -1257,59 +1316,104 @@
                         </div>
                     </div>
                 </div>
-            </div> <div id="manage-config-modal" class="modal hidden-by-default">
-                <div class="modal-content max-w-lg">
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                            <i class="fas text-purple-500 mr-3"></i>Gestionar Configuración
-                        </h3>
-                        <button id="close-manage-config-modal" class="text-gray-400 hover:text-gray-600 transition-colors">
-                            <i class="fas fa-times fa-lg"></i>
+            </div> 
+			
+            <div id="manage-config-modal" class="modal hidden-by-default">
+                <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-purple-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-purple-200">
+                        <div class="flex items-center">
+                            <i class="fas fa-cogs text-purple-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-12deg]"></i>
+                            <div>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-purple-700 leading-tight">Gestionar</h3>
+                                <p class="text-md sm:text-lg text-purple-500 font-medium leading-tight">Configuración App</p>
+                            </div>
+                        </div>
+                        <button id="close-manage-config-modal" class="text-slate-400 hover:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-times fa-2x"></i>
                         </button>
                     </div>
-                    <div class="space-y-4">
-                        <div class="text-center mb-3">
+            
+                    <div class="space-y-5 text-slate-700">
+                        <div class="text-center mb-5">
                             <i class="fas fa-database fa-2x text-purple-400 mb-2"></i>
-                            <p class="text-gray-700 leading-relaxed">
-                                Asegura tu trabajo y personalización. Transfiere fácilmente todos tus datos.
+                            <p class="text-slate-700 leading-relaxed text-sm">
+                                Asegura tu trabajo y personalizaciones. Transfiere datos y configuraciones.
                             </p>
                         </div>
-                        <p class="text-sm text-gray-600">
-                            Con estas herramientas, puedes:
-                        </p>
-                        <ul class="list-disc list-inside text-sm text-gray-600 space-y-1.5 pl-4">
-                            <li><strong>Exportar Configuración:</strong> Genera un archivo de respaldo (<code>.json</code>) con todo: tu horario detallado, la lista de empleados, notas, los colores que has elegido, las reglas personalizadas y el logo. ¡Perfecto para tener una copia segura o para llevarte tus datos a otro ordenador!</li>
-                            <li><strong>Importar Configuración:</strong> ¿Tienes un archivo de configuración guardado? Cárgalo aquí para restaurar la aplicación exactamente como la tenías.</li>
-                        </ul>
-                        <div class="mt-6 pt-4 border-t border-gray-100 space-y-3">
-                            <button id="modal-export-app-config-button" class="action-button w-full bg-purple-500 hover:bg-purple-600 text-white focus:ring-2 focus:ring-purple-300 transition-transform hover:scale-105 active:scale-95">
-                                <i class="fas fa-cloud-download-alt mr-2"></i>Exportar Configuración Actual
+            
+                        <div class="group bg-white/80 backdrop-blur-lg p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                            <h4 class="text-lg font-bold text-purple-600 mb-3 pb-1.5 border-b border-purple-200 flex items-center">
+                                <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center shadow-sm">
+                                    <i class="fas fa-cloud-download-alt text-sm"></i>
+                                </div>
+                                Exportar Config.
+                            </h4>
+                            <p class="text-slate-600 text-xs mb-3">
+                                Genera un archivo <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">.json</code> con todo tu estado actual.
+                            </p>
+                            <button id="modal-export-app-config-button" class="action-button w-full bg-purple-500 hover:bg-purple-600 text-white focus:ring-4 focus:ring-purple-300/50 px-5 py-2 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                                <i class="fas fa-file-export mr-1.5"></i>Exportar Configuración
                             </button>
-                            <button id="modal-import-app-config-button" class="action-button w-full bg-sky-500 hover:bg-sky-600 text-white focus:ring-2 focus:ring-sky-300 transition-transform hover:scale-105 active:scale-95">
-                                <i class="fas fa-cloud-upload-alt mr-2"></i>Importar desde Archivo
+                        </div>
+            
+                        <div class="group bg-white/80 backdrop-blur-lg p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                            <h4 class="text-lg font-bold text-sky-600 mb-3 pb-1.5 border-b border-sky-200 flex items-center">
+                                <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center shadow-sm">
+                                    <i class="fas fa-cloud-upload-alt text-sm"></i>
+                                </div>
+                                Importar Config.
+                            </h4>
+                            <p class="text-slate-600 text-xs mb-3">
+                                Carga un <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">.json</code> guardado. <strong class="text-red-600">¡Sobrescribirá datos!</strong>
+                            </p>
+                            <button id="modal-import-app-config-button" class="action-button w-full bg-sky-500 hover:bg-sky-600 text-white focus:ring-4 focus:ring-sky-300/50 px-5 py-2 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                                <i class="fas fa-file-import mr-1.5"></i>Importar desde Archivo
                             </button>
                         </div>
                     </div>
+            
+                    <div class="mt-8 pt-5 border-t-2 border-purple-200 text-center">
+                        <button id="close-manage-config-modal-button-footer" class="action-button bg-slate-200 text-slate-700 hover:bg-slate-300 focus:ring-4 focus:ring-slate-400/50 px-8 py-2.5 rounded-lg text-md font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
+                            Cerrar
+                        </button>
+                    </div>
                 </div>
             </div>
+            
         
             <div id="confirm-import-app-state-modal" class="modal hidden-by-default">
-                <div class="modal-content max-w-md">
-                    <div class="text-center">
-                        <i class="fas fa-exclamation-triangle text-yellow-400 text-4xl mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Confirmar Importación</h3>
-                        <p class="text-sm text-gray-600 mb-6">
-                            Importar una nueva configuración de aplicación <strong class="font-semibold">sobrescribirá todos los datos actuales</strong> (horarios, notas, personalizaciones, etc.) y cualquier cambio no guardado se perderá.
-                        </p>
-                        <p class="text-sm text-gray-600 mb-1">¿Estás seguro de que deseas continuar?</p>
-                         <p class="text-xs text-gray-500 mb-6">(Esta acción no se puede deshacer una vez confirmada)</p>
+                <div class="modal-content max-w-lg bg-gradient-to-br from-slate-100 to-red-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+                    <div class="flex justify-between items-center mb-5 pb-4 border-b-2 border-red-200">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-3 sm:mr-4 text-3xl sm:text-4xl"></i>
+                            <div>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-red-700 leading-tight">Confirmar Importación</h3>
+                            </div>
+                        </div>
+                        <button id="cancel-import-app-state" class="text-slate-400 hover:text-red-600 transition-colors duration-300 p-1">
+                            <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                        </button>
                     </div>
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button id="cancel-import-app-state" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 focus:ring-2 focus:ring-gray-400">Cancelar</button>
-                        <button id="confirm-import-app-state-action" class="action-button bg-red-500 hover:bg-red-600 text-white focus:ring-2 focus:ring-red-300">Sí, Importar y Sobrescribir</button>
+            
+                    <div class="text-center space-y-3">
+                        <p class="text-slate-700 text-base sm:text-lg">
+                            Importar una nueva configuración de aplicación <strong class="font-semibold text-red-600">sobrescribirá todos los datos actuales</strong> (horarios, notas, personalizaciones, etc.) y cualquier cambio no guardado se perderá.
+                        </p>
+                        <p class="text-sm text-slate-500 mt-2">¿Estás seguro de que deseas continuar?</p>
+                        <p class="text-xs text-red-500 mt-1">(Esta acción no se puede deshacer una vez confirmada)</p>
+                    </div>
+            
+                    <div class="mt-8 pt-6 border-t-2 border-red-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                        <button id="cancel-import-app-state-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                            Cancelar
+                        </button>
+                        <button id="confirm-import-app-state-action" class="action-button w-full sm:w-auto bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i>Sí, Importar y Sobrescribir
+                        </button>
                     </div>
                 </div>
             </div>
+            
         
         </section>
         
@@ -1534,249 +1638,336 @@
     <div id="multiselect-toolbar" class="hidden-by-default"></div>
 
     <div id="add-employee-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <div class="text-center">
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Añadir Nuevo Empleado</h3>
-                <div>
-                    <input type="text" id="modal-employee-name-input" placeholder="Nombre del empleado" class="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                </div>
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button id="modal-cancel-add-employee" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                    <button id="modal-confirm-add-employee" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">Añadir</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="delete-employee-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <div class="text-center">
-                <h3 class="text-2xl font-bold text-red-600 mb-2">¡Atención!</h3>
-                <p class="text-gray-700 mb-4">Estás a punto de eliminar al empleado <strong id="employee-name-to-delete" class="font-semibold"></strong> y todos sus datos de horario.</p>
-                <p class="text-sm text-gray-500 mb-1">Esta acción es permanente.</p>
-                <p id="delete-countdown-message" class="text-red-500 font-semibold mb-4"></p>
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button id="modal-cancel-delete-employee" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                    <button id="modal-confirm-delete-employee" class="action-button bg-red-600 text-white hover:bg-red-700 px-4 py-2" disabled>Eliminar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="filename-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <h3 id="filename-modal-title" class="text-xl font-bold text-gray-900 mb-2">Nombre del Archivo</h3>
-            <p id="filename-modal-description" class="text-sm text-gray-600 mb-4"></p>
-            <div>
-                <input type="text" id="modal-filename-input" class="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="nombre_del_archivo">
-                <p class="text-xs text-gray-500 mt-1">No incluyas la extensión (ej: .csv o .pdf).</p>
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="modal-cancel-filename" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                <button id="modal-confirm-filename" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">Aceptar</button>
-            </div>
-        </div>
-    </div>
-    <div id="export-calendar-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Exportar Mes a Calendar</h3>
-            <div class="mb-4">
-                <label for="modal-calendar-employee-select" class="block text-sm font-medium text-gray-700 mb-1">Selecciona Empleado:</label>
-                <select id="modal-calendar-employee-select" class="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                </select>
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="modal-cancel-export-calendar" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                <button id="modal-confirm-export-calendar" class="action-button bg-orange-500 text-white hover:bg-orange-600 px-4 py-2">Exportar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="tips-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-6xl bg-gradient-to-br from-slate-100 to-indigo-100 p-6 sm:p-10 rounded-2xl shadow-2xl">
-            <div class="flex justify-between items-center mb-8 pb-5 border-b-2 border-indigo-200">
+        <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-sky-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-sky-200">
                 <div class="flex items-center">
-                    <i class="fas fa-star text-amber-400 mr-3 sm:mr-4 text-4xl sm:text-5xl transform transition-all duration-300 ease-in-out hover:scale-125 hover:rotate-[-10deg]"></i>
+                    <i class="fas fa-user-plus text-sky-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110"></i>
                     <div>
-                        <h3 class="text-3xl sm:text-4xl font-bold text-indigo-700 leading-tight">Guía Rápida</h3>
-                        <p class="text-lg sm:text-xl text-indigo-500 font-medium leading-tight">y Consejos Clave</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-sky-700 leading-tight">Añadir</h3>
+                        <p class="text-md sm:text-lg text-sky-500 font-medium leading-tight">Nuevo Empleado</p>
                     </div>
                 </div>
-                <button id="close-tips-modal" class="text-slate-400 hover:text-indigo-600 transition-colors duration-300">
-                    <i class="fas fa-times fa-3x"></i>
+                <button id="modal-cancel-add-employee" class="text-slate-400 hover:text-sky-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="space-y-5">
+                <div>
+                    <label for="modal-employee-name-input" class="block text-sm font-medium text-slate-700 mb-1.5">Nombre del Empleado:</label>
+                    <input type="text" id="modal-employee-name-input" placeholder="Escribe el nombre completo" class="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm transition-colors duration-150 ease-in-out bg-white/80 backdrop-blur-sm">
+                </div>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-sky-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-add-employee-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-add-employee" class="action-button w-full sm:w-auto bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:ring-sky-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-plus mr-2"></i>Añadir Empleado
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="delete-employee-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-red-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-5 pb-4 border-b-2 border-red-200">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-500 mr-3 sm:mr-4 text-3xl sm:text-4xl"></i>
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-red-700 leading-tight">¡Atención!</h3>
+                    </div>
+                </div>
+                <button id="modal-cancel-delete-employee" class="text-slate-400 hover:text-red-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="text-center space-y-3">
+                <p class="text-slate-700 text-base sm:text-lg">Estás a punto de eliminar al empleado <strong id="employee-name-to-delete" class="font-semibold text-red-600"></strong> y todos sus datos de horario.</p>
+                <p class="text-sm text-slate-500">Esta acción es <strong class="text-red-700 uppercase">permanente</strong> y no se podrá deshacer.</p>
+                <p id="delete-countdown-message" class="text-red-600 font-semibold text-md sm:text-lg my-3 h-6"></p>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-red-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-delete-employee-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-delete-employee" class="action-button w-full sm:w-auto bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="fas fa-trash-alt mr-2"></i>Eliminar Empleado
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="filename-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-sky-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-sky-200">
+                <div class="flex items-center">
+                    <i class="fas fa-file-signature text-sky-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110"></i>
+                    <div>
+                        <h3 id="filename-modal-title" class="text-2xl sm:text-3xl font-bold text-sky-700 leading-tight">Nombre del Archivo</h3>
+                    </div>
+                </div>
+                <button id="modal-cancel-filename" class="text-slate-400 hover:text-sky-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="space-y-4">
+                <p id="filename-modal-description" class="text-sm text-slate-600">Introduce un nombre base para tu archivo.</p>
+                <div>
+                    <label for="modal-filename-input" class="sr-only">Nombre del archivo</label>
+                    <input type="text" id="modal-filename-input" class="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm transition-colors duration-150 ease-in-out bg-white/80 backdrop-blur-sm" placeholder="nombre_del_archivo">
+                    <p id="filename-modal-extension-text" class="text-xs text-slate-500 mt-1.5">La extensión (ej: .csv o .pdf) se añadirá automáticamente.</p>
+                </div>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-sky-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-filename-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-filename" class="action-button w-full sm:w-auto bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:ring-sky-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-check mr-2"></i>Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="export-calendar-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-teal-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-teal-200">
+                <div class="flex items-center">
+                    <i class="fas fa-calendar-plus text-teal-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110"></i>
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-teal-700 leading-tight">Exportar a Calendar</h3>
+                        <p class="text-md sm:text-lg text-teal-500 font-medium leading-tight">Archivo .ics para el mes actual</p>
+                    </div>
+                </div>
+                <button id="modal-cancel-export-calendar" class="text-slate-400 hover:text-teal-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="space-y-5">
+                <div>
+                    <label for="modal-calendar-employee-select" class="block text-sm font-medium text-slate-700 mb-1.5">Selecciona Empleado:</label>
+                    <div class="relative">
+                        <select id="modal-calendar-employee-select" class="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm transition-colors duration-150 ease-in-out bg-white/80 backdrop-blur-sm appearance-none pr-10">
+                            {/* Las opciones se llenarán con JavaScript */}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                 <p class="text-xs text-slate-500 mt-1">Se exportarán los turnos del empleado seleccionado para el mes actualmente visible en el horario.</p>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-teal-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-export-calendar-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-export-calendar" class="action-button w-full sm:w-auto bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-file-export mr-2"></i>Exportar .ics
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    <div id="tips-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-xs sm:max-w-xl md:max-w-3xl lg:max-w-6xl bg-gradient-to-br from-slate-100 to-indigo-100 p-4 sm:p-6 md:p-10 rounded-xl sm:rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-indigo-200">
+                <div class="flex items-center">
+                    <i class="fas fa-star text-amber-400 mr-2 sm:mr-3 md:mr-4 text-3xl sm:text-4xl md:text-5xl transform transition-all duration-300 ease-in-out hover:scale-125 hover:rotate-[-10deg]"></i>
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl md:text-4xl font-bold text-indigo-700 leading-tight">Guía Rápida</h3>
+                        <p class="text-md sm:text-lg md:text-xl text-indigo-500 font-medium leading-tight">y Consejos Clave</p>
+                    </div>
+                </div>
+                <button id="close-tips-modal" class="text-slate-400 hover:text-indigo-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
                 </button>
             </div>
         
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6 text-slate-800 text-base leading-relaxed">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-5 md:gap-y-6 text-slate-800 text-sm sm:text-base leading-relaxed">
         
                 
-                <div class="space-y-6"> 
+                <div class="space-y-5 md:space-y-6"> 
         
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-rocket text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                <i class="fas fa-rocket text-lg sm:text-xl"></i>
                             </div>
                             Primeros Pasos
                         </h4>
-                        <ul class="space-y-3.5">
+                        <ul class="space-y-3 sm:space-y-3.5">
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-sm shadow-sm"> <i class="fas fa-file-import"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-file-import"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cargar Horario:</strong> Usa "Importar CSV" para un horario existente o "Nuevo Horario Vacío" para empezar de cero.</div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-sm shadow-sm"> <i class="fas fa-save"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-save"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Guardado Esencial:</strong>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Guardado Local:</strong> Almacena tu progreso en el navegador. ¡Ojo! Esto no modifica tu archivo CSV original.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Autoguardado:</strong> Actívalo y la app guardará los cambios automáticamente cada 30 segundos.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Guardado Local:</strong> Almacena tu progreso en el navegador. ¡Ojo! Esto no modifica tu archivo CSV original.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Autoguardado:</strong> Actívalo y la app guardará los cambios automáticamente cada 30 segundos.</p>
                                 </div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-sm shadow-sm"> <i class="fas fa-cogs"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-cogs"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Configuración App:</strong> Desde "Gestionar Configuración App", puedes exportar una copia completa de todo (horario, notas, colores, etc.) o importar una configuración guardada previamente.</div>
                             </li>
                         </ul>
                     </div>
         
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-sky-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                               <i class="fas fa-hand-pointer text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-sky-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                               <i class="fas fa-hand-pointer text-lg sm:text-xl"></i>
                             </div>
                             Manejo del Horario
                         </h4>
-                        <ul class="space-y-3.5">
+                        <ul class="space-y-3 sm:space-y-3.5">
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 text-sm shadow-sm"> <i class="fas fa-mouse-pointer"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-mouse-pointer"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Seleccionar Celdas:</strong>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Un Clic/Toque:</strong> Selecciona una celda.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Ctrl/Cmd + Clic (PC):</strong> Añade o quita celdas de la selección actual.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Clic + Arrastrar (PC/Móvil):</strong> Selecciona un bloque de celdas contiguas.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Limpiar Selección:</strong> Clic derecho (PC) o haz un toque fuera de la tablas.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Un Clic/Toque:</strong> Selecciona una celda.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Ctrl/Cmd + Clic (PC):</strong> Añade o quita celdas de la selección actual.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Clic + Arrastrar (PC/Móvil):</strong> Selecciona un bloque de celdas contiguas.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Limpiar Selección:</strong> Clic derecho (PC) o haz un toque fuera de la tablas.</p>
                                 </div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-700 text-sm shadow-sm"> <i class="fas fa-bolt"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-700 text-xs sm:text-sm shadow-sm"> <i class="fas fa-bolt"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Barra de Acciones Rápida (al seleccionar celdas):</strong>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Asigna turnos estándar (<code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">M</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">T</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">N</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">L</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">V</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">B</code>) con un clic.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Botón <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Otro</code>: Abre una ventana para escribir un texto personalizado (ej. "Reunión", "Curso", etc.).</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Asigna turnos estándar (<code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">M</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">T</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">N</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">L</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">V</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">B</code>) con un clic.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Botón <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Otro</code>: Abre una ventana para escribir un texto personalizado (ej. "Reunión", "Curso", etc.).</p>
                                 </div>
+                            </li>
+                             <li class="flex">
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-search-plus"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Feedback Visual:</strong> Al pasar el ratón sobre una celda de turno, esta se ampliará ligeramente para destacar sobre cuál estás interactuando.</div>
                             </li>
                         </ul>
                     </div>
                     
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                             <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-slate-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-keyboard text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                             <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-slate-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                <i class="fas fa-keyboard text-lg sm:text-xl"></i>
                             </div>
                             Atajos de Teclado (PC/Mac)
                         </h4>
-                        <ul class="space-y-3">
-                            <li class="flex items-center"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-2 py-1 rounded text-sm font-medium font-mono shadow-sm">Ctrl+Z</code> / <code class="bg-slate-300 px-2 py-1 rounded text-sm font-medium font-mono shadow-sm">Cmd+Z</code>: Deshacer última acción.</div></li>
-                            <li class="flex items-center"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-2 py-1 rounded text-sm font-medium font-mono shadow-sm">Ctrl+Y</code> / <code class="bg-slate-300 px-2 py-1 rounded text-sm font-medium font-mono shadow-sm">Cmd+Y</code>: Rehacer acción deshecha.</div></li>
-                            <li class="flex items-center"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-2 py-1 rounded text-sm font-medium font-mono shadow-sm">Ctrl/Cmd + Clic</code>: Añadir o quitar celdas de la selección.</div></li>
-                            <li class="flex items-center"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-2 py-1 rounded text-sm font-medium font-mono shadow-sm">Esc</code>: Limpiar selección de celdas o cerrar ventanas emergentes.</div></li>
+                        <ul class="space-y-2.5 sm:space-y-3">
+                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Ctrl+Z</code> / <code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Cmd+Z</code>: Deshacer última acción.</div></li>
+                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Ctrl+Y</code> / <code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Cmd+Y</code>: Rehacer acción deshecha.</div></li>
+                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Ctrl/Cmd + Clic</code>: Añadir o quitar celdas de la selección.</div></li>
+                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Esc</code>: Limpiar selección de celdas o cerrar ventanas emergentes.</div></li>
                         </ul>
                     </div>
                 </div>
         
                 
-                <div class="space-y-6"> 
+                <div class="space-y-5 md:space-y-6"> 
                     
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-green-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-users-cog text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-green-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                <i class="fas fa-users-cog text-lg sm:text-xl"></i>
                             </div>
                             Gestión de Empleados
                         </h4>
-                        <ul class="space-y-3">
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-green-100 rounded-full text-green-600 text-sm shadow-sm"><i class="fas fa-user-plus"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Añadir:</strong> Usa el botón "Añadir Empleado" al final de la tabla.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 text-sm shadow-sm"><i class="fas fa-pen"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Editar Nombre:</strong> Doble clic (PC) o pulsación larga (Móvil) sobre el nombre del empleado.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-purple-100 rounded-full text-purple-600 text-sm shadow-sm"><i class="fas fa-sort"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Reordenar:</strong> Simplemente arrastra el nombre del empleado a su nueva posición en la lista.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-red-100 rounded-full text-red-600 text-sm shadow-sm"><i class="fas fa-user-minus"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Eliminar:</strong> Haz clic en el icono de la papelera (<i class="fas fa-trash-alt"></i>) que aparece junto al nombre.</div></li>
+                        <ul class="space-y-3 sm:space-y-3.5">
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-green-100 rounded-full text-green-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-user-plus"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Añadir:</strong> Usa el botón "Añadir Empleado" al final de la tabla.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-pen"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Editar Nombre:</strong> Doble clic (PC) o pulsación larga (Móvil) sobre el nombre del empleado.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-purple-100 rounded-full text-purple-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-sort"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Reordenar:</strong> Simplemente arrastra el nombre del empleado a su nueva posición en la lista.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-red-100 rounded-full text-red-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-user-minus"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Eliminar:</strong> Haz clic en el icono de la papelera (<i class="fas fa-trash-alt"></i>) que aparece junto al nombre.</div></li>
                         </ul>
                     </div>
         
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-cyan-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-eye text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-cyan-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                <i class="fas fa-eye text-lg sm:text-xl"></i>
                             </div>
                             Vistas y Navegación
                         </h4>
-                        <ul class="space-y-3">
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-sm shadow-sm"><i class="fas fa-calendar-alt"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cambiar Vista:</strong> Alterna entre "Vista Mensual" y "Vista Anual" con los botones superiores.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-sm shadow-sm"><i class="fas fa-calendar-day"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Navegar Meses (Vista Mensual):</strong> Usa las pestañas (ENE, FEB...) para saltar rápidamente de un mes a otro.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-sm shadow-sm"><i class="fas fa-calendar-week"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cambiar Año:</strong> Haz clic directamente sobre el año en el título del horario (ej. "... Enero <strong>2024</strong>") para editarlo.</div></li>
+                        <ul class="space-y-3 sm:space-y-3.5">
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-calendar-alt"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cambiar Vista:</strong> Alterna entre "Vista Mensual" y "Vista Anual" con los botones superiores.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-calendar-day"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Navegar Meses (Vista Mensual):</strong> Usa las pestañas (ENE, FEB...) para saltar rápidamente de un mes a otro.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-calendar-week"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cambiar Año:</strong> Haz clic directamente sobre el año en el título del horario (ej. "... Enero <strong>2024</strong>") para editarlo.</div></li>
                         </ul>
                     </div>
         
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-paint-brush text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                <i class="fas fa-paint-brush text-lg sm:text-xl"></i>
                             </div>
                             Personalización y Configuración
                         </h4>
                         <ul class="space-y-3.5">
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-sm shadow-sm"><i class="fas fa-palette"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-palette"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Colores y Horarios de Turno</strong> (en "Personalización" <i class="fas fa-palette text-xs"></i>):
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Cambia los colores de fondo para cada tipo de turno.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Define las horas de inicio y fin de los turnos principales.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Cambia los colores de fondo para cada tipo de turno.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Define las horas de inicio y fin de los turnos principales.</p>
                                 </div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-sm shadow-sm"><i class="fas fa-signature"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-signature"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Editor de Logo</strong> (en "Personalización" <i class="fas fa-palette text-xs"></i> <i class="fas fa-chevron-right text-2xs mx-0.5"></i> "Editar Logo"):
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Modifica el texto, número de estrellas y colores de tu logo.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Ajusta su espaciado y tamaño para la web y exportaciones PDF.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Modifica el texto, número de estrellas y colores de tu logo.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Ajusta su espaciado y tamaño para la web y exportaciones PDF.</p>
                                 </div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-sm shadow-sm"><i class="fas fa-font"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-font"></i></div> 
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Tamaños de Fuente PDF</strong> (en "Personalización" <i class="fas fa-palette text-xs"></i>):
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Ajusta el tamaño (en puntos, "pt") de los textos en los PDF exportados.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1">- Puedes cambiar el tamaño para: Título Principal, Títulos de Sección, Cabeceras y Celdas de la Tabla, Nombres de Empleado y Pie de Página.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Ajusta el tamaño (en puntos, "pt") de los textos en los PDF exportados.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Puedes cambiar el tamaño para: Título Principal, Títulos de Sección, Cabeceras y Celdas de la Tabla, Nombres de Empleado y Pie de Página.</p>
                                 </div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-sm shadow-sm"><i class="fas fa-gavel"></i></div>
+                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-gavel"></i></div>
                                 <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Normas del Horario</strong> (en "Normas" <i class="fas fa-gavel text-xs"></i>):
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Personas por Turno:</strong> Define el mínimo y máximo de empleados necesarios para los turnos de Mañana, Tarde y Noche.</p>
-                                    <p class="text-slate-600 text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Máx. Días Consecutivos:</strong> Establece cuántos días seguidos puede trabajar un empleado antes de infringir la norma.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Personas por Turno:</strong> Define el mínimo y máximo de empleados necesarios para los turnos de Mañana, Tarde y Noche.</p>
+                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Máx. Días Consecutivos:</strong> Establece cuántos días seguidos puede trabajar un empleado antes de infringir la norma.</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
         
                     
-                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-2xl font-bold text-indigo-600 mb-5 pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-10 h-10 mr-3.5 flex-shrink-0 bg-teal-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-tools text-xl"></i>
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
+                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-teal-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                <i class="fas fa-tools text-lg sm:text-xl"></i>
                             </div>
                             Herramientas Adicionales
                         </h4>
-                        <ul class="space-y-3">
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-sm shadow-sm"><i class="fas fa-undo-alt"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Deshacer/Rehacer:</strong> Desde "Historial" <i class="fas fa-history text-xs"></i> o con <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+Z</code> / <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+Y</code>.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-sm shadow-sm"><i class="fas fa-history"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Historial de Cambios:</strong> Consulta el registro de todas las modificaciones realizadas.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-sm shadow-sm"><i class="fas fa-sticky-note"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Notas Generales:</strong> Un espacio para añadir comentarios o recordatorios sobre el horario.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-sm shadow-sm"><i class="fas fa-file-export"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Exportaciones:</strong> Genera archivos CSV, .ics (para Calendar) y PDF del horario o las estadísticas.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-7 h-7 mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-sm shadow-sm"><i class="fas fa-chart-bar"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Estadísticas:</strong> Analiza datos de turnos, días trabajados, fines de semana libres y más. Puedes filtrar por mes/año y ver detalles por empleado.</div></li>
+                        <ul class="space-y-3 sm:space-y-3.5">
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-undo-alt"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Deshacer/Rehacer:</strong> Desde "Historial" <i class="fas fa-history text-xs"></i> o con <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+Z</code> / <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+Y</code>.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-history"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Historial de Cambios:</strong> Consulta el registro de todas las modificaciones realizadas.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-sticky-note"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Notas Generales:</strong> Un espacio para añadir comentarios o recordatorios sobre el horario.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-file-export"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Exportaciones:</strong> Genera archivos CSV, .ics (para Calendar) y PDF del horario o las estadísticas.</div></li>
+                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-chart-bar"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Estadísticas:</strong> Analiza datos de turnos, días trabajados, fines de semana libres y más. Puedes filtrar por mes/año y ver detalles por empleado.</div></li>
                         </ul>
                     </div>
                 </div>
             </div>
         
-            <div class="mt-12 pt-8 border-t-2 border-indigo-200 text-center">
-                <button id="ok-tips-modal" class="bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300/50 text-white px-12 py-3.5 rounded-lg text-xl font-semibold shadow-xl hover:shadow-2xl transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-100">
+            <div class="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t-2 border-indigo-200 text-center">
+                <button id="ok-tips-modal" class="action-button w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300/50 text-white px-8 sm:px-12 py-3 sm:py-3.5 rounded-lg text-md sm:text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
                     ¡Entendido!
                 </button>
             </div>
@@ -1786,139 +1977,255 @@
         
 
     <div id="custom-event-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <h3 id="custom-event-modal-title" class="text-xl font-bold text-gray-900 mb-4">Editar Evento</h3>
-            <div>
-                <input type="text" id="modal-custom-event-input" class="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Introduce evento o texto">
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="modal-cancel-custom-event" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                <button id="modal-confirm-custom-event" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">Guardar</button>
-            </div>
-        </div>
-    </div>
-    <div id="confirm-load-csv-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Confirmar Carga de Nuevo Horario</h3>
-            <p id="confirm-load-csv-message" class="text-sm text-gray-600 mb-4">Ya hay un horario cargado. Si cargas un nuevo archivo CSV, los cambios no guardados se perderán. ¿Deseas continuar?</p>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="modal-cancel-load-csv" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                <button id="modal-confirm-load-csv" class="action-button bg-red-600 text-white hover:bg-red-700 px-4 py-2">Cargar Nuevo</button>
-            </div>
-        </div>
-    </div>
-    <div id="save-local-help-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-md"> <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-900">Información sobre Guardado Local</h3>
-                <button id="close-save-local-help-modal-icon" class="text-gray-500 hover:text-gray-800">
-                    <i class="fas fa-times fa-lg"></i>
-                </button>
-            </div>
-            <div class="text-sm text-gray-700 space-y-3">
-                <p>La función 'Guardado Local' almacena el estado actual de tu horario (incluyendo todos los turnos, empleados, las normas, el nombre del archivo CSV importado originalmente (si aplica), las notas y las configuraciones de colores) directamente en el almacenamiento de tu navegador web.</p>
-                <p>Esto te permite cerrar la aplicación y, al volver a abrirla en el mismo navegador y ordenador, cargar tus datos guardados para continuar tu trabajo.</p>
-                <p class="font-semibold text-indigo-700">Importante: Esta acción <strong class="text-red-600">NO modifica ni sobrescribe el archivo CSV original</strong> que pudiste haber importado desde tu ordenador. Los navegadores web, por razones de seguridad, no permiten que las páginas web editen archivos directamente en tu disco duro.</p>
-                <p>Para obtener una copia de tu horario actual como un archivo CSV en tu ordenador (para guardarlo o compartirlo), debes usar la función '<strong class="text-blue-600">Exportar CSV</strong>'. Esto descargará un nuevo archivo con los datos más recientes.</p>
-            </div>
-            <div class="mt-6 text-right">
-                <button id="close-save-local-help-modal-button" class="action-button bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2">Entendido</button>
-            </div>
-        </div>
-    </div>
-	<div id="filename-modal-stats-pdf" class="modal hidden-by-default">
-		<div class="modal-content">
-			<h3 id="filename-modal-title-stats-pdf" class="text-lg font-semibold mb-3">Nombre del Archivo PDF</h3>
-			<input type="text" id="modal-filename-input-stats-pdf" class="w-full p-2 border border-gray-300 rounded-md mb-4" placeholder="nombre_del_archivo_pdf">
-			<p id="filename-modal-extension-stats-pdf" class="text-xs text-gray-500 mb-3">Extensión: .pdf</p>
-			<div class="flex justify-end gap-3 mt-6">
-				<button id="modal-cancel-filename-stats-pdf" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-				<button id="modal-confirm-filename-stats-pdf" class="action-button bg-sky-600 text-white hover:bg-sky-700 px-4 py-2">Aceptar</button>
-			</div>
-		</div>
-	</div>
-	
-    <div id="legend-colors-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-3xl">
-            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
-                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-palette mr-2 text-teal-500"></i>Leyenda, Colores, Horarios de Turno y Fuentes PDF</h3>
-                <button id="close-legend-colors-modal-button" class="text-gray-500 hover:text-gray-800 transition-colors">
-                    <i class="fas fa-times fa-lg"></i>
-                </button>
-            </div>
-    
-            <div id="legend-colors-modal-body">
-                <div id="legend-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
-                    
-                </div>
-        
-                <div class="mt-8 pt-6 border-t border-gray-300">
-                    <h4 class="text-lg font-semibold text-indigo-700 mb-5">Tamaños de Fuente para PDF (pt)</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-5 text-sm">
-            
-                        <div>
-                            <label for="pdf-font-main-title" class="block text-sm font-medium text-gray-700 mb-1">Título Principal:</label>
-                            <div class="flex items-center">
-                                <input type="number" id="pdf-font-main-title" name="pdf-font-main-title" min="8" max="72" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <span id="pdf-font-main-title-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
-                            </div>
-                        </div>
-            
-                        <div>
-                            <label for="pdf-font-section-title" class="block text-sm font-medium text-gray-700 mb-1">Títulos de Sección:</label>
-                            <div class="flex items-center">
-                                <input type="number" id="pdf-font-section-title" name="pdf-font-section-title" min="8" max="48" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <span id="pdf-font-section-title-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
-                            </div>
-                        </div>
-            
-                        <div>
-                            <label for="pdf-font-table-header" class="block text-sm font-medium text-gray-700 mb-1">Cabecera de Tabla:</label>
-                            <div class="flex items-center">
-                                <input type="number" id="pdf-font-table-header" name="pdf-font-table-header" min="6" max="24" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <span id="pdf-font-table-header-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
-                            </div>
-                        </div>
-            
-                        <div>
-                            <label for="pdf-font-table-cell" class="block text-sm font-medium text-gray-700 mb-1">Celdas de Tabla:</label>
-                            <div class="flex items-center">
-                                <input type="number" id="pdf-font-table-cell" name="pdf-font-table-cell" min="5" max="18" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <span id="pdf-font-table-cell-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="pdf-font-employee-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre Empleado (Tabla):</label>
-                            <div class="flex items-center">
-                                <input type="number" id="pdf-font-employee-name" name="pdf-font-employee-name" min="6" max="20" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <span id="pdf-font-employee-name-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="pdf-font-footer" class="block text-sm font-medium text-gray-700 mb-1">Pie de Página PDF:</label>
-                            <div class="flex items-center">
-                                <input type="number" id="pdf-font-footer" name="pdf-font-footer" min="5" max="14" step="1" class="w-20 p-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <span id="pdf-font-footer-value" class="ml-2 text-gray-500 text-xs">(Actual: --pt)</span>
-                            </div>
-                        </div>
-            
+        <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-teal-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-teal-200">
+                <div class="flex items-center">
+                    <i class="fas fa-edit text-teal-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110"></i>
+                    <div>
+                        <h3 id="custom-event-modal-title" class="text-2xl sm:text-3xl font-bold text-teal-700 leading-tight">Editar Evento</h3>
                     </div>
                 </div>
+                <button id="modal-cancel-custom-event" class="text-slate-400 hover:text-teal-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
             </div>
     
-            <div id="legend-colors-modal-footer" class="mt-8 pt-6 border-t border-gray-300 flex flex-wrap justify-end gap-3">
-                <button id="modal-apply-colors-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 px-4 py-2" disabled>
-                    <i class="fas fa-check mr-2"></i>Aplicar Cambios
+            <div class="space-y-5">
+                <div>
+                    <label for="modal-custom-event-input" class="sr-only">Texto del evento</label>
+                    <input type="text" id="modal-custom-event-input" class="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm transition-colors duration-150 ease-in-out bg-white/80 backdrop-blur-sm" placeholder="Introduce evento o texto (sin comas)">
+                     <p class="text-xs text-red-600 mt-1.5">Importante: No usar comas (,) en el texto.</p>
+                </div>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-teal-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-custom-event-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
                 </button>
-                <button id="modal-reset-colors-button" class="action-button bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-400 px-4 py-2" disabled>
-                    <i class="fas fa-undo mr-2"></i>Restaurar
+                <button id="modal-confirm-custom-event" class="action-button w-full sm:w-auto bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-save mr-2"></i>Guardar
                 </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="confirm-load-csv-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-lg bg-gradient-to-br from-slate-100 to-yellow-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-5 pb-4 border-b-2 border-yellow-300">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-3 sm:mr-4 text-3xl sm:text-4xl"></i>
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-yellow-700 leading-tight">Confirmar Carga</h3>
+                    </div>
+                </div>
+                <button id="modal-cancel-load-csv" class="text-slate-400 hover:text-yellow-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="text-center space-y-3">
+                <p id="confirm-load-csv-message" class="text-slate-700 text-base sm:text-lg">Ya hay un horario cargado. Si cargas un nuevo archivo CSV o aplicas una plantilla vacía, los cambios no guardados se perderán. ¿Deseas continuar?</p>
+                <p class="text-sm text-slate-500 mt-2">Esta acción reemplazará el horario actual.</p>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-yellow-300 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-load-csv-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-load-csv" class="action-button w-full sm:w-auto bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-400/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-file-import mr-2"></i>Cargar Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="save-local-help-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-lg bg-gradient-to-br from-slate-100 to-emerald-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-emerald-200">
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle text-emerald-500 mr-3 sm:mr-4 text-3xl sm:text-4xl"></i>
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-emerald-700 leading-tight">Guardado Local</h3>
+                        <p class="text-md sm:text-lg text-emerald-500 font-medium leading-tight">Información Importante</p>
+                    </div>
+                </div>
+                <button id="close-save-local-help-modal-icon" class="text-slate-400 hover:text-emerald-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="text-sm sm:text-base text-slate-700 space-y-4 leading-relaxed">
+                <p>La función <strong class="font-semibold text-emerald-700">'Guardado Local'</strong> almacena el estado actual de tu horario (incluyendo todos los turnos, empleados, las normas, el nombre del archivo CSV importado originalmente si aplica, las notas y las configuraciones de colores, logo y fuentes PDF) directamente en el almacenamiento de tu navegador web.</p>
+                <p>Esto te permite cerrar la aplicación y, al volver a abrirla en el mismo navegador y ordenador, cargar tus datos guardados para continuar tu trabajo.</p>
+                <p class="font-semibold text-indigo-700">Importante: Esta acción <strong class="text-red-600 uppercase">no modifica ni sobrescribe el archivo CSV original</strong> que pudiste haber importado desde tu ordenador. Los navegadores web, por razones de seguridad, no permiten que las páginas web editen archivos directamente en tu disco duro.</p>
+                <p>Para obtener una copia de tu horario actual como un archivo CSV en tu ordenador (para guardarlo o compartirlo), debes usar la función '<strong class="text-sky-600">Exportar Horario a CSV</strong>'. Esto descargará un nuevo archivo con los datos más recientes.</p>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-emerald-200 text-center">
+                <button id="close-save-local-help-modal-button" class="action-button w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300/50 text-white px-10 py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
+                    ¡Entendido!
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div id="filename-modal-stats-pdf" class="modal hidden-by-default">
+        <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-sky-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-sky-200">
+                <div class="flex items-center">
+                    <i class="fas fa-file-pdf text-sky-500 mr-3 sm:mr-4 text-3xl sm:text-4xl transform transition-all duration-300 ease-in-out hover:scale-110"></i>
+                    <div>
+                        <h3 id="filename-modal-title-stats-pdf" class="text-2xl sm:text-3xl font-bold text-sky-700 leading-tight">Nombre del Archivo PDF</h3>
+                    </div>
+                </div>
+                <button id="modal-cancel-filename-stats-pdf" class="text-slate-400 hover:text-sky-600 transition-colors duration-300 p-1">
+                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                </button>
+            </div>
+    
+            <div class="space-y-4">
+                <p class="text-sm text-slate-600">Introduce un nombre base para tu archivo de estadísticas.</p>
+                <div>
+                    <label for="modal-filename-input-stats-pdf" class="sr-only">Nombre del archivo PDF de estadísticas</label>
+                    <input type="text" id="modal-filename-input-stats-pdf" class="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm transition-colors duration-150 ease-in-out bg-white/80 backdrop-blur-sm" placeholder="informe_estadisticas">
+                    <p id="filename-modal-extension-stats-pdf" class="text-xs text-slate-500 mt-1.5">Extensión: .pdf (se añadirá automáticamente)</p>
+                </div>
+            </div>
+    
+            <div class="mt-8 pt-6 border-t-2 border-sky-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="modal-cancel-filename-stats-pdf-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-filename-stats-pdf" class="action-button w-full sm:w-auto bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:ring-sky-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-check mr-2"></i>Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="legend-colors-modal" class="modal hidden-by-default">
+        <div class="modal-content max-w-lg bg-gradient-to-br from-slate-100 to-indigo-100 p-3 sm:p-4 rounded-xl shadow-xl">
+            <div class="flex justify-between items-center mb-4 sm:mb-5 pb-2.5 sm:pb-3 border-b-2 border-indigo-200">
+                <div class="flex items-center">
+                    <i class="fas fa-swatchbook text-sky-500 mr-2 sm:mr-2.5 text-xl sm:text-2xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-6deg]"></i>
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-indigo-700 leading-tight">Personalización General</h3>
+                        <p class="text-xs sm:text-sm text-indigo-500 font-medium leading-tight">Ajustes Visuales y PDF</p>
+                    </div>
+                </div>
+                <button id="close-legend-colors-modal-button" class="text-slate-400 hover:text-indigo-600 transition-colors duration-300 p-0.5 sm:p-1">
+                    <i class="fas fa-times text-lg sm:fa-xl"></i>
+                </button>
+            </div>
+    
+            <div id="legend-colors-modal-body" class="space-y-3 sm:space-y-4">
+    
+                <div class="group bg-white/70 backdrop-blur-md p-2.5 sm:p-3 rounded-lg shadow-lg hover:shadow-md transition-shadow duration-300 ease-out">
+                    <h4 class="text-sm sm:text-md font-bold text-indigo-600 mb-2 sm:mb-3 pb-1 sm:pb-1.5 border-b border-indigo-100 flex items-center">
+                        <div class="w-5 h-5 mr-2 flex-shrink-0 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center shadow-sm">
+                            <i class="fas fa-palette text-xs"></i>
+                        </div>
+                        Colores y Horarios de Turno
+                    </h4>
+                    <div id="legend-items-container" class="grid grid-cols-1 sm:grid-cols-2 gap-x-2 sm:gap-x-3 gap-y-2 sm:gap-y-2.5 text-xs">
+                        {/* El contenido se genera por JavaScript. Ejemplo de estructura:
+                        <div class="flex flex-col p-1.5 bg-slate-50/80 rounded shadow-sm border border-slate-200 hover:border-indigo-200 transition-colors">
+                            <div class="flex items-center mb-1">
+                                <span class="legend-color-swatch w-4 h-4 rounded border border-slate-300 shadow-inner mr-1.5 cursor-pointer transition-transform hover:scale-110" style="background-color: #86efac;" data-shift-type="M" title="Cambiar color para Mañana (M)"></span>
+                                <span class="font-semibold text-slate-700 text-[0.7rem]">Mañana (M)</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[0.65rem]">
+                                <input type="time" value="07:00" data-shift-type="M" data-time-type="start" class="w-full p-0.5 border border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span class="text-slate-500 mx-0.5">-</span>
+                                <input type="time" value="15:00" data-shift-type="M" data-time-type="end" class="w-full p-0.5 border border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                            </div>
+                        </div>
+                        */}
+                    </div>
+                </div>
+                
+                <div class="group bg-white/70 backdrop-blur-md p-2.5 sm:p-3 rounded-lg shadow-lg hover:shadow-md transition-shadow duration-300 ease-out">
+                    <h4 class="text-sm sm:text-md font-bold text-indigo-600 mb-2 sm:mb-3 pb-1 sm:pb-1.5 border-b border-indigo-100 flex items-center">
+                        <div class="w-5 h-5 mr-2 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center shadow-sm">
+                            <i class="fas fa-font text-xs"></i>
+                        </div>
+                        Tamaños de Fuente para PDF (pt)
+                    </h4>
+                    <div class="grid grid-cols-2 gap-x-2 sm:gap-x-3 gap-y-2 sm:gap-y-2.5 text-xs">
             
-                <button id="open-logo-editor-from-legend-modal-button" class="action-button bg-teal-500 text-white hover:bg-teal-600 focus:ring-teal-400 px-4 py-2">
-                    <i class="fas fa-pencil-alt mr-2"></i>Editar Logo
+                        <div class="space-y-0.5">
+                            <label for="pdf-font-main-title" class="block text-[0.65rem] sm:text-xs font-medium text-slate-700">Título Principal:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-main-title" name="pdf-font-main-title" min="8" max="72" step="1" class="w-12 p-1 border border-slate-300 rounded shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span id="pdf-font-main-title-value" class="ml-1.5 text-slate-500 text-[0.6rem] sm:text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                        <div class="space-y-0.5">
+                            <label for="pdf-font-section-title" class="block text-[0.65rem] sm:text-xs font-medium text-slate-700">Títulos Sección:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-section-title" name="pdf-font-section-title" min="8" max="48" step="1" class="w-12 p-1 border border-slate-300 rounded shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span id="pdf-font-section-title-value" class="ml-1.5 text-slate-500 text-[0.6rem] sm:text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                        <div class="space-y-0.5">
+                            <label for="pdf-font-table-header" class="block text-[0.65rem] sm:text-xs font-medium text-slate-700">Cabecera Tabla:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-table-header" name="pdf-font-table-header" min="6" max="24" step="1" class="w-12 p-1 border border-slate-300 rounded shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span id="pdf-font-table-header-value" class="ml-1.5 text-slate-500 text-[0.6rem] sm:text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+            
+                        <div class="space-y-0.5">
+                            <label for="pdf-font-table-cell" class="block text-[0.65rem] sm:text-xs font-medium text-slate-700">Celdas Tabla:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-table-cell" name="pdf-font-table-cell" min="5" max="18" step="1" class="w-12 p-1 border border-slate-300 rounded shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span id="pdf-font-table-cell-value" class="ml-1.5 text-slate-500 text-[0.6rem] sm:text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-0.5">
+                            <label for="pdf-font-employee-name" class="block text-[0.65rem] sm:text-xs font-medium text-slate-700">Nombre Empleado:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-employee-name" name="pdf-font-employee-name" min="6" max="20" step="1" class="w-12 p-1 border border-slate-300 rounded shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span id="pdf-font-employee-name-value" class="ml-1.5 text-slate-500 text-[0.6rem] sm:text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-0.5">
+                            <label for="pdf-font-footer" class="block text-[0.65rem] sm:text-xs font-medium text-slate-700">Pie Página PDF:</label>
+                            <div class="flex items-center">
+                                <input type="number" id="pdf-font-footer" name="pdf-font-footer" min="5" max="14" step="1" class="w-12 p-1 border border-slate-300 rounded shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[0.65rem]">
+                                <span id="pdf-font-footer-value" class="ml-1.5 text-slate-500 text-[0.6rem] sm:text-xs">(Actual: --pt)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="group bg-white/70 backdrop-blur-md p-2.5 sm:p-3 rounded-lg shadow-lg hover:shadow-md transition-shadow duration-300 ease-out">
+                    <h4 class="text-sm sm:text-md font-bold text-indigo-600 mb-1.5 sm:mb-2 flex items-center">
+                        <div class="w-5 h-5 mr-2 flex-shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+                            <i class="fas fa-signature text-xs"></i>
+                        </div>
+                        Logo de la Aplicación
+                    </h4>
+                    <button id="open-logo-editor-from-legend-modal-button" class="action-button w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:ring-2 focus:ring-indigo-400/50 px-3 py-1.5 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                        <i class="fas fa-pencil-alt mr-1 sm:mr-1.5"></i>Personalizar Logo
+                    </button>
+                </div>
+    
+            </div>
+    
+            <div id="legend-colors-modal-footer" class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t-2 border-indigo-200 flex flex-col sm:flex-row justify-end gap-2">
+                <button id="modal-apply-colors-button" class="action-button w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400/50 px-2.5 py-1.5 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="fas fa-check mr-1"></i>Aplicar Cambios
                 </button>
-                <button id="modal-ok-legend-colors-button" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">
+                <button id="modal-reset-colors-button" class="action-button w-full sm:w-auto bg-slate-500 text-white hover:bg-slate-600 focus:ring-2 focus:ring-slate-400/50 px-2.5 py-1.5 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="fas fa-undo mr-1"></i>Restaurar
+                </button>
+                <button id="modal-ok-legend-colors-button" class="action-button w-full sm:w-auto bg-slate-200 text-slate-700 hover:bg-slate-300 focus:ring-2 focus:ring-slate-400/50 px-2.5 py-1.5 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
                     Cerrar
                 </button>
             </div>
@@ -1926,17 +2233,34 @@
     </div>
     
     
+    
+    
+    
     <div id="rules-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-2xl">
-            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
-                <h3 class="text-xl font-bold text-gray-900"><i class="fas fa-gavel mr-2 text-sky-500"></i>Configuración de Normas del Horario</h3>
-                <button id="close-rules-modal-button" class="text-gray-500 hover:text-gray-800 transition-colors">
-                    <i class="fas fa-times fa-lg"></i>
+        <div class="modal-content max-w-5xl bg-gradient-to-br from-slate-100 to-sky-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-8 pb-5 border-b-2 border-sky-200">
+                <div class="flex items-center">
+                    <i class="fas fa-gavel text-sky-500 mr-3 sm:mr-4 text-4xl sm:text-5xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-6deg]"></i>
+                    <div>
+                        <h3 class="text-3xl sm:text-4xl font-bold text-sky-700 leading-tight">Normas</h3>
+                        <p class="text-lg sm:text-xl text-sky-500 font-medium leading-tight">del Horario Laboral</p>
+                    </div>
+                </div>
+                <button id="close-rules-modal-button" class="text-slate-400 hover:text-sky-600 transition-colors duration-300">
+                    <i class="fas fa-times fa-3x"></i>
                 </button>
             </div>
-            
-            <div id="rules-modal-body" class="flex flex-col md:flex-row gap-6"> <div class="flex-1 min-w-0"> <div class="rule-block border p-4 rounded-lg bg-white shadow h-full flex flex-col"> <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-lg font-semibold text-gray-800">Personas por Turno</h4>
+    
+            <div id="rules-modal-body" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015] flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-xl font-bold text-sky-600 flex items-center">
+                                <div class="w-9 h-9 mr-3 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center shadow-sm transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                Personas por Turno
+                            </h4>
                             <label for="persons-per-shift-enabled-toggle" class="flex items-center cursor-pointer">
                                 <div class="relative switch">
                                     <input type="checkbox" id="persons-per-shift-enabled-toggle" class="sr-only peer">
@@ -1944,179 +2268,223 @@
                                 </div>
                             </label>
                         </div>
-                        <p class="text-xs text-gray-500 mb-4">
-                            Define el rango de empleados (mínimo - máximo) requeridos por turno.
-                            M2, T2, N2 cuentan como M, T, N respectivamente. Deja un campo vacío si no hay límite.
-                        </p>
-                        <div id="persons-per-shift-settings-inputs" class="space-y-3"> <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
-                                <label for="persons-morning-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Mañanas (M/M2):</label>
-                                <input type="number" id="persons-morning-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                                <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
-                                <input type="number" id="persons-morning-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                        <p class="text-slate-600 text-[0.9rem] mb-4">Define el rango de empleados (mín-máx) requeridos. M2, T2, N2 cuentan como M, T, N. Vacío = sin límite.</p>
+                        <div id="persons-per-shift-settings-inputs" class="space-y-3.5 transition-all duration-300 ease-out">
+                            <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
+                                <label for="persons-morning-min" class="text-sm font-medium text-slate-700 sm:col-span-2">Mañanas (M/M2):</label>
+                                <input type="number" id="persons-morning-min" placeholder="Mín." min="0" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2">
+                                <span class="text-center sm:col-span-1 hidden sm:inline text-slate-500">-</span>
+                                <input type="number" id="persons-morning-max" placeholder="Máx." min="0" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2 mt-1 sm:mt-0">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
-                                <label for="persons-afternoon-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Tardes (T/T2):</label>
-                                <input type="number" id="persons-afternoon-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                                <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
-                                <input type="number" id="persons-afternoon-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                                <label for="persons-afternoon-min" class="text-sm font-medium text-slate-700 sm:col-span-2">Tardes (T/T2):</label>
+                                <input type="number" id="persons-afternoon-min" placeholder="Mín." min="0" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2">
+                                <span class="text-center sm:col-span-1 hidden sm:inline text-slate-500">-</span>
+                                <input type="number" id="persons-afternoon-max" placeholder="Máx." min="0" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2 mt-1 sm:mt-0">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 items-center">
-                                <label for="persons-night-min" class="text-sm font-medium text-gray-600 sm:col-span-2">Noches (N/N2):</label>
-                                <input type="number" id="persons-night-min" placeholder="Mín." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                                <span class="text-center sm:col-span-1 hidden sm:inline">-</span>
-                                <input type="number" id="persons-night-max" placeholder="Máx." min="0" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2 mt-1 sm:mt-0">
+                                <label for="persons-night-min" class="text-sm font-medium text-slate-700 sm:col-span-2">Noches (N/N2):</label>
+                                <input type="number" id="persons-night-min" placeholder="Mín." min="0" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2">
+                                <span class="text-center sm:col-span-1 hidden sm:inline text-slate-500">-</span>
+                                <input type="number" id="persons-night-max" placeholder="Máx." min="0" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2 mt-1 sm:mt-0">
                             </div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-gray-200 flex-grow min-h-0"> <h5 class="font-semibold text-gray-700 mb-2 text-sm">Violaciones (Personas por Turno):</h5>
-                            <div id="persons-per-shift-violations-summary" class="text-xs text-gray-600 overflow-y-auto rule-violation-summary-area">
+                        <div class="mt-auto pt-4 border-t border-sky-100">
+                            <h5 class="font-semibold text-slate-700 mb-1.5 text-sm">Violaciones Detectadas:</h5>
+                            <div id="persons-per-shift-violations-summary" class="text-xs text-slate-600 overflow-y-auto rule-violation-summary-area max-h-28 bg-slate-50/50 p-2 rounded-md border border-slate-200 custom-scrollbar">
                                 <p>No se han detectado violaciones o la norma está desactivada.</p>
                             </div>
                         </div>
                     </div>
-                </div>
-            
-                <div class="flex-1 min-w-0">
-                    <div class="rule-block border p-4 rounded-lg bg-white shadow h-full flex flex-col">
-                       <div class="flex justify-between items-center mb-3">
-                           <h4 class="text-lg font-semibold text-gray-800">Máx. Días Consecutivos</h4>
-                           <label for="max-consecutive-days-enabled-toggle" class="flex items-center cursor-pointer">
-                               <div class="relative switch">
-                                   <input type="checkbox" id="max-consecutive-days-enabled-toggle" class="sr-only peer">
-                                   <span class="slider"></span>
-                               </div>
-                           </label>
-                       </div>
-                       <p class="text-xs text-gray-500 mb-4">
-                           Define el número máximo de días que un empleado puede trabajar consecutivamente.
-                       </p>
-                       <div id="max-consecutive-days-settings-inputs" class="space-y-3"> <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-x-3">
-                               <label for="max-consecutive-days-input" class="text-sm font-medium text-gray-600 sm:col-span-1">Máx. Días:</label>
-                               <input type="number" id="max-consecutive-days-input" placeholder="Ej: 7" min="1" class="w-full p-1.5 border border-gray-300 rounded-md text-sm sm:col-span-2">
-                           </div>
-                       </div>
-                       <div class="mt-4 pt-3 border-t border-gray-200 flex-grow min-h-0">
-                            <h5 class="font-semibold text-gray-700 mb-2 text-sm">Violaciones (Días Consecutivos):</h5>
-                            <div id="max-consecutive-days-violations-summary" class="text-xs text-gray-600 overflow-y-auto rule-violation-summary-area">
+    
+                    <div class="group bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015] flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-xl font-bold text-sky-600 flex items-center">
+                                <div class="w-9 h-9 mr-3 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center shadow-sm transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                Máx. Días Consecutivos
+                            </h4>
+                            <label for="max-consecutive-days-enabled-toggle" class="flex items-center cursor-pointer">
+                                <div class="relative switch">
+                                    <input type="checkbox" id="max-consecutive-days-enabled-toggle" class="sr-only peer">
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+                        </div>
+                        <p class="text-slate-600 text-[0.9rem] mb-4">Define el número máximo de días que un empleado puede trabajar de forma seguida.</p>
+                        <div id="max-consecutive-days-settings-inputs" class="space-y-3.5 transition-all duration-300 ease-out">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-x-3">
+                                <label for="max-consecutive-days-input" class="text-sm font-medium text-slate-700 sm:col-span-1">Máx. Días:</label>
+                                <input type="number" id="max-consecutive-days-input" placeholder="Ej: 7" min="1" class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:col-span-2">
+                            </div>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-sky-100">
+                            <h5 class="font-semibold text-slate-700 mb-1.5 text-sm">Violaciones Detectadas:</h5>
+                            <div id="max-consecutive-days-violations-summary" class="text-xs text-slate-600 overflow-y-auto rule-violation-summary-area max-h-28 bg-slate-50/50 p-2 rounded-md border border-slate-200 custom-scrollbar">
                                 <p>No se han detectado violaciones o la norma está desactivada.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            
-            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button id="save-rules-button" class="action-button bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-400 px-4 py-2" disabled>
+                
+            <div class="mt-10 pt-6 border-t-2 border-sky-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button id="save-rules-button" class="action-button bg-sky-600 text-white hover:bg-sky-700 focus:ring-4 focus:ring-sky-300/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     <i class="fas fa-save mr-2"></i>Guardar Normas
                 </button>
-                <button id="modal-ok-rules-button" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">
+                <button id="modal-ok-rules-button" class="action-button bg-slate-200 text-slate-700 hover:bg-slate-300 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
                     Cerrar
                 </button>
             </div>
         </div>
     </div>
 	
-	
-	    <div id="confirm-clear-local-storage-modal" class="modal hidden-by-default">
-        <div class="modal-content">
-            <div class="text-center">
-                <h3 class="text-2xl font-bold text-red-600 mb-2">¡ATENCIÓN!</h3>
-                <p class="text-gray-700 mb-4">Estás a punto de borrar <strong class="font-semibold">TODOS los datos locales</strong> de esta aplicación (horarios, notas, colores, historial, normas, etc.).</p>
-                <p class="text-sm text-gray-500 mb-1">Esta acción es <strong class="text-red-700">PERMANENTE</strong> y no se podrá deshacer.</p>
-                <p id="clear-local-storage-countdown-message" class="text-red-500 font-semibold mb-4"></p>
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button id="modal-cancel-clear-local-storage" class="action-button bg-gray-300 text-gray-700 hover:bg-gray-400 px-4 py-2">Cancelar</button>
-                    <button id="modal-confirm-clear-local-storage" class="action-button bg-red-600 text-white hover:bg-red-700 px-4 py-2" disabled>Confirmar Borrado</button>
+        <div id="confirm-clear-local-storage-modal" class="modal hidden-by-default">
+            <div class="modal-content max-w-lg bg-gradient-to-br from-slate-100 to-red-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
+                <div class="flex justify-between items-center mb-5 pb-4 border-b-2 border-red-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-trash-alt text-red-500 mr-3 sm:mr-4 text-3xl sm:text-4xl"></i>
+                        <div>
+                            <h3 class="text-2xl sm:text-3xl font-bold text-red-700 leading-tight">¡ATENCIÓN!</h3>
+                        </div>
+                    </div>
+                    <button id="modal-cancel-clear-local-storage" class="text-slate-400 hover:text-red-600 transition-colors duration-300 p-1">
+                        <i class="fas fa-times fa-2x sm:fa-3x"></i>
+                    </button>
+                </div>
+        
+                <div class="text-center space-y-3">
+                    <p class="text-slate-700 text-base sm:text-lg">Estás a punto de borrar <strong class="font-semibold text-red-600">TODOS los datos locales</strong> de esta aplicación (horarios, notas, colores, historial, normas, etc.).</p>
+                    <p class="text-sm text-slate-500">Esta acción es <strong class="text-red-700 uppercase">PERMANENTE</strong> y no se podrá deshacer.</p>
+                    <p id="clear-local-storage-countdown-message" class="text-red-600 font-semibold text-md sm:text-lg my-3 h-6"></p>
+                </div>
+        
+                <div class="mt-8 pt-6 border-t-2 border-red-200 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                    <button id="modal-cancel-clear-local-storage-footer" class="action-button w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 focus:ring-4 focus:ring-slate-400/50 px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                        Cancelar
+                    </button>
+                    <button id="modal-confirm-clear-local-storage" class="action-button w-full sm:w-auto bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300/50 text-white px-6 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-skull-crossbones mr-2"></i>Confirmar Borrado
+                    </button>
                 </div>
             </div>
         </div>
+        
     </div>
 
     <div id="logo-editor-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-xl bg-white p-6 rounded-lg shadow-xl">
-            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-300">
-                <h3 class="text-xl font-semibold text-indigo-700 flex items-center">
-                    <i class="fas fa-palette mr-3 text-2xl text-indigo-500"></i>
-                    <span>Editor de Logo</span>
-                </h3>
-                <button id="close-logo-editor-modal" class="text-gray-500 hover:text-gray-700 transition-colors">
-                    <i class="fas fa-times fa-lg"></i>
+        <div class="modal-content max-w-md sm:max-w-lg md:max-w-xl bg-gradient-to-br from-slate-100 to-slate-200 p-3 sm:p-4 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4 sm:mb-5 pb-2.5 sm:pb-3 border-b-2 border-slate-300">
+                <div class="flex items-center">
+                    <i class="fas fa-signature text-slate-500 mr-2 sm:mr-2.5 text-xl sm:text-2xl md:text-3xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:rotate-[-6deg]"></i>
+                    <div>
+                        <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-slate-700 leading-tight">Editor de Logo</h3>
+                        <p class="text-xs sm:text-sm md:text-md text-slate-500 font-medium leading-tight">Personaliza tu Identidad</p>
+                    </div>
+                </div>
+                <button id="close-logo-editor-modal" class="text-slate-400 hover:text-slate-600 transition-colors duration-300 p-0.5 sm:p-1">
+                    <i class="fas fa-times text-lg sm:fa-xl"></i>
                 </button>
             </div>
     
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                <div class="md:border-r md:pr-6 border-gray-200 flex flex-col">
-                    <h4 class="text-md font-semibold text-indigo-600 mb-2">Previsualización (Web)</h4>
-                    <div id="logo-editor-preview-container" class="w-full flex-grow flex items-center justify-center bg-gray-100 rounded-md border border-gray-300 p-3 overflow-hidden mb-3" style="min-height: 120px;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 md:gap-x-4 gap-y-4">
+                <div class="group bg-white/80 backdrop-blur-lg p-3 sm:p-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out flex flex-col">
+                    <h4 class="text-md sm:text-lg font-semibold text-indigo-600 mb-2 pb-1 border-b border-indigo-200 flex items-center">
+                        <div class="w-6 h-6 sm:w-7 sm:h-7 mr-2 flex-shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+                            <i class="fas fa-eye text-xs sm:text-sm"></i>
                         </div>
-                    <p class="text-xs text-gray-500 mt-auto">
-                        Esta previsualización refleja los ajustes web. Los ajustes de PDF se aplican solo al exportar.
+                        Previsualización (Web)
+                    </h4>
+                    <div id="logo-editor-preview-container" class="w-full flex-grow flex items-center justify-center bg-slate-100/70 rounded-lg border border-slate-300 p-2 overflow-hidden mb-2" style="min-height: 100px;">
+                    </div>
+                    <p class="text-xs text-slate-500 mt-auto">
+                        Ajustes web. Los de PDF se aplican al exportar.
                     </p>
                 </div>
     
-                <div class="space-y-4">
-                    <div>
-                        <label for="logo-linea1-input" class="block text-sm font-medium text-gray-700 mb-1">Línea 1 del Logo:</label>
-                        <input type="text" id="logo-linea1-input" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="TÍTULO">
-                    </div>
-                    <div>
-                        <label for="logo-linea2-input" class="block text-sm font-medium text-gray-700 mb-1">Línea 2 del Logo:</label>
-                        <input type="text" id="logo-linea2-input" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="SUBTITULO">
-                    </div>
-                    <div class="grid grid-cols-2 gap-x-4">
-                        <div>
-                            <label for="logo-star-count-input" class="block text-sm font-medium text-gray-700 mb-1">Nº Estrellas: <span id="logo-star-count-value" class="font-normal text-gray-500">5</span></label>
-                            <input type="range" id="logo-star-count-input" min="0" max="5" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        </div>
-                        <div>
-                            <label for="logo-star-color-input" class="block text-sm font-medium text-gray-700 mb-1">Color Estrellas:</label>
-                            <input type="color" id="logo-star-color-input" value="#B08D57" class="w-full h-9 p-1 border border-gray-300 rounded-md cursor-pointer">
+                <div class="space-y-3">
+                    <div class="group bg-white/80 backdrop-blur-lg p-3 sm:p-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out">
+                        <h4 class="text-sm sm:text-md font-semibold text-slate-700 mb-2.5 flex items-center">
+                            <i class="fas fa-font mr-1.5 text-slate-500"></i>Contenido del Logo
+                        </h4>
+                        <div class="space-y-2.5">
+                            <div>
+                                <label for="logo-linea1-input" class="block text-xs font-medium text-slate-600 mb-0.5">Línea 1 (Principal):</label>
+                                <input type="text" id="logo-linea1-input" class="w-full p-1.5 sm:p-2 border border-slate-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs bg-white/90" placeholder="TÍTULO PRINCIPAL">
+                            </div>
+                            <div>
+                                <label for="logo-linea2-input" class="block text-xs font-medium text-slate-600 mb-0.5">Línea 2 (Subtítulo):</label>
+                                <input type="text" id="logo-linea2-input" class="w-full p-1.5 sm:p-2 border border-slate-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs bg-white/90" placeholder="SUBTÍTULO">
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <label for="logo-star-vertical-spacing-input" class="block text-sm font-medium text-gray-700 mb-1">Espaciado Vertical (Web, px): <span id="logo-star-vertical-spacing-value" class="font-normal text-gray-500">5</span></label>
-                        <input type="range" id="logo-star-vertical-spacing-input" min="0" max="30" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                    <div>
-                        <label for="logo-star-horizontal-offset-input" class="block text-sm font-medium text-gray-700 mb-1">Alineación Horizontal (Web, px): <span id="logo-star-horizontal-offset-value" class="font-normal text-gray-500">0</span></label>
-                        <input type="range" id="logo-star-horizontal-offset-input" min="-50" max="50" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+    
+                    <div class="group bg-white/80 backdrop-blur-lg p-3 sm:p-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out">
+                        <h4 class="text-sm sm:text-md font-semibold text-slate-700 mb-2.5 flex items-center">
+                            <i class="fas fa-star mr-1.5 text-amber-500"></i>Estrellas (Web)
+                        </h4>
+                        <div class="space-y-2.5">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-2.5 gap-y-2.5 items-end">
+                                <div>
+                                    <label for="logo-star-count-input" class="block text-xs font-medium text-slate-600 mb-0.5">Nº Estrellas: <span id="logo-star-count-value" class="font-normal text-indigo-500">5</span></label>
+                                    <input type="range" id="logo-star-count-input" min="0" max="5" class="w-full h-1.5 sm:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:ring-offset-1 thumb:bg-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="logo-star-color-input" class="block text-xs font-medium text-slate-600 mb-0.5">Color:</label>
+                                    <input type="color" id="logo-star-color-input" class="w-full h-8 sm:h-9 p-0.5 border border-slate-300 rounded-md cursor-pointer shadow-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="logo-star-vertical-spacing-input" class="block text-xs font-medium text-slate-600 mb-0.5">Esp. Vertical (px): <span id="logo-star-vertical-spacing-value" class="font-normal text-indigo-500">0</span></label>
+                                <input type="range" id="logo-star-vertical-spacing-input" min="-20" max="30" class="w-full h-1.5 sm:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:ring-offset-1 thumb:bg-indigo-500">
+                            </div>
+                            <div>
+                                <label for="logo-star-horizontal-offset-input" class="block text-xs font-medium text-slate-600 mb-0.5">Despl. Horizontal (px): <span id="logo-star-horizontal-offset-value" class="font-normal text-indigo-500">0</span></label>
+                                <input type="range" id="logo-star-horizontal-offset-input" min="-50" max="50" class="w-full h-1.5 sm:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:ring-offset-1 thumb:bg-indigo-500">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
     
-            <div class="pt-5 mt-6 border-t border-gray-200">
-                <h4 class="text-md font-semibold text-indigo-600 mb-4">Ajustes para Impresión PDF</h4>
-                <div class="space-y-5">
-                    
+            <div class="group bg-white/80 backdrop-blur-lg p-3 sm:p-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out mt-4">
+                <h4 class="text-md sm:text-lg font-semibold text-indigo-600 mb-2.5 pb-1 border-b border-indigo-200 flex items-center">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 mr-2 flex-shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+                         <i class="fas fa-file-pdf text-xs sm:text-sm"></i>
+                    </div>
+                    Ajustes para Exportación PDF
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2.5 text-xs sm:text-sm">
                     <div>
-                        <label for="logo-pdf-scale-input" class="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label for="logo-pdf-scale-input" class="block font-medium text-slate-700 mb-0.5">
                             Escalado General en PDF (%): 
                             <span id="logo-pdf-scale-value" class="font-semibold text-indigo-500 ml-1">100</span>
                         </label>
-                        <input type="range" id="logo-pdf-scale-input" min="20" max="150" value="100" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+                        <input type="range" id="logo-pdf-scale-input" min="20" max="200" class="w-full h-1.5 sm:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:ring-offset-1 thumb:bg-indigo-500">
                     </div>
-
                     <div>
-                        <label for="logo-pdf-star-vertical-spacing-input" class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Espaciado Vertical Estrellas PDF (px): 
-                            <span id="logo-pdf-star-vertical-spacing-value" class="font-semibold text-indigo-500 ml-1">5</span>
+                        <label for="logo-pdf-star-vertical-spacing-input" class="block font-medium text-slate-700 mb-0.5">
+                            Esp. Vertical Estrellas PDF (px): 
+                            <span id="logo-pdf-star-vertical-spacing-value" class="font-semibold text-indigo-500 ml-1">0</span>
                         </label>
-                        <input type="range" id="logo-pdf-star-vertical-spacing-input" min="-30" max="30" value="5" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+                        <input type="range" id="logo-pdf-star-vertical-spacing-input" min="-50" max="50" class="w-full h-1.5 sm:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:ring-offset-1 thumb:bg-indigo-500">
                     </div>
-
                 </div>
             </div>
     
-            <div class="flex flex-col sm:flex-row-reverse gap-3 mt-6 pt-5 border-t border-gray-300">
-                <button id="apply-logo-editor-changes" class="action-button w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-2 focus:ring-indigo-400">
-                    <i class="fas fa-check mr-2"></i>Aplicar y Cerrar
+            <div class="mt-5 sm:mt-6 pt-4 border-t-2 border-slate-300 flex flex-col sm:flex-row justify-end gap-2 sm:gap-2.5">
+                <button id="reset-logo-config-button" class="action-button w-full sm:w-auto bg-slate-500 hover:bg-slate-600 text-white focus:ring-2 focus:ring-slate-300/50 px-4 py-1.5 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                    <i class="fas fa-undo mr-1 sm:mr-1.5"></i>Restaurar Defecto
                 </button>
-                <button id="reset-logo-config-button" class="action-button w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white focus:ring-2 focus:ring-gray-400">
-                    <i class="fas fa-undo mr-2"></i>Restaurar Defecto
+                <button id="apply-logo-editor-changes" class="action-button w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-300/50 text-white px-4 py-1.5 text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-150 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-check mr-1 sm:mr-1.5"></i>Aplicar y Cerrar
                 </button>
             </div>
         </div>
     </div>
+    
+    
     
 
     <script>
@@ -2641,54 +3009,35 @@
             domCache.footerTextElement = document.getElementById('footer-text');
             domCache.creatorNameElement = document.getElementById('creator-name');
             domCache.footerHeartElement = document.getElementById('footer-heart');
-			
-		
+            
             // Editor de Logo
-			domCache.logoEditorModal = document.getElementById('logo-editor-modal'); // Nuevo
-			domCache.closeLogoEditorModalButton = document.getElementById('close-logo-editor-modal'); // Nuevo
-			domCache.applyLogoEditorChangesButton = document.getElementById('apply-logo-editor-changes'); // Nuevo
-			domCache.logoEditorPreviewContainer = document.getElementById('logo-editor-preview-container'); // NUEVO
+            domCache.logoEditorModal = document.getElementById('logo-editor-modal');
+            domCache.closeLogoEditorModalButton = document.getElementById('close-logo-editor-modal');
+            domCache.applyLogoEditorChangesButton = document.getElementById('apply-logo-editor-changes');
+            domCache.logoEditorPreviewContainer = document.getElementById('logo-editor-preview-container');
             domCache.logoLinea1Input = document.getElementById('logo-linea1-input');
             domCache.logoLinea2Input = document.getElementById('logo-linea2-input');
             domCache.logoStarColorInput = document.getElementById('logo-star-color-input');
-			domCache.logoStarCountInput = document.getElementById('logo-star-count-input'); // NUEVO
-			domCache.logoStarCountValue = document.getElementById('logo-star-count-value'); // NUEVO
-            domCache.logoStarSpacingInput = document.getElementById('logo-star-spacing-input');
-            domCache.logoStarSpacingValue = document.getElementById('logo-star-spacing-value'); // Para mostrar el valor del range
+            domCache.logoStarCountInput = document.getElementById('logo-star-count-input');
+            domCache.logoStarCountValue = document.getElementById('logo-star-count-value');
+            domCache.logoStarVerticalSpacingInput = document.getElementById('logo-star-vertical-spacing-input');
+            domCache.logoStarVerticalSpacingValue = document.getElementById('logo-star-vertical-spacing-value');
+            domCache.logoStarHorizontalOffsetInput = document.getElementById('logo-star-horizontal-offset-input');
+            domCache.logoStarHorizontalOffsetValue = document.getElementById('logo-star-horizontal-offset-value');
             domCache.logoPdfScaleInput = document.getElementById('logo-pdf-scale-input');
-            domCache.logoPdfScaleValue = document.getElementById('logo-pdf-scale-value'); // Para mostrar el valor del range
-			
-			// Slider y Span para Espaciado Vertical PDF (¡CORREGIDO!)
-			domCache.logoPdfStarVerticalSpacingInput = document.getElementById('logo-pdf-star-vertical-spacing-input');
-			domCache.logoPdfStarVerticalSpacingValue = document.getElementById('logo-pdf-star-vertical-spacing-value');
+            domCache.logoPdfScaleValue = document.getElementById('logo-pdf-scale-value');
+            domCache.logoPdfStarVerticalSpacingInput = document.getElementById('logo-pdf-star-vertical-spacing-input');
+            domCache.logoPdfStarVerticalSpacingValue = document.getElementById('logo-pdf-star-vertical-spacing-value');
             domCache.resetLogoConfigButton = document.getElementById('reset-logo-config-button');
-			// NUEVOS para alineación horizontal
-			domCache.logoStarHorizontalOffsetInput = document.getElementById('logo-star-horizontal-offset-input');
-			domCache.logoStarHorizontalOffsetValue = document.getElementById('logo-star-horizontal-offset-value');
-			domCache.logoStarVerticalSpacingInput = document.getElementById('logo-star-vertical-spacing-input');
-			domCache.logoStarVerticalSpacingValue = document.getElementById('logo-star-vertical-spacing-value'); 
-			domCache.openLogoEditorFromLegendModalButton = document.getElementById('open-logo-editor-from-legend-modal-button');
+            domCache.openLogoEditorFromLegendModalButton = document.getElementById('open-logo-editor-from-legend-modal-button');
         
-            domCache.pdfFontMainTitleInput = document.getElementById('pdf-font-main-title');
-            domCache.pdfFontSectionTitleInput = document.getElementById('pdf-font-section-title');
-            domCache.pdfFontTableHeaderInput = document.getElementById('pdf-font-table-header');
-            domCache.pdfFontTableCellInput = document.getElementById('pdf-font-table-cell');
-            domCache.pdfFontEmployeeNameInput = document.getElementById('pdf-font-employee-name');
-            domCache.pdfFontFooterInput = document.getElementById('pdf-font-footer');
-        
-            // Spans para mostrar valores actuales de fuentes PDF
-            domCache.pdfFontMainTitleValue = document.getElementById('pdf-font-main-title-value');
-            domCache.pdfFontSectionTitleValue = document.getElementById('pdf-font-section-title-value');
-            domCache.pdfFontTableHeaderValue = document.getElementById('pdf-font-table-header-value');
-            domCache.pdfFontTableCellValue = document.getElementById('pdf-font-table-cell-value');
-            domCache.pdfFontEmployeeNameValue = document.getElementById('pdf-font-employee-name-value');
-            domCache.pdfFontFooterValue = document.getElementById('pdf-font-footer-value');
-		
             // --- Controles de Importación, Año y Guardado/Exportación Principal ---
             domCache.csvFileInput = document.getElementById('csv-file-input');
-			domCache.titleYearInput = document.getElementById('title-year-input');
-			domCache.currentMonthYearTextPrefix = document.getElementById('current-month-year-text-prefix');
-			domCache.currentMonthText = document.getElementById('current-month-text'); // ID que podría estar causando el error si no se cachea bien o el HTML es incorrecto
+            domCache.csvFileInputText = document.getElementById('csv-file-input-text'); 
+            domCache.csvFileInputIcon = document.getElementById('csv-file-input-icon'); 
+            domCache.titleYearInput = document.getElementById('title-year-input');
+            domCache.currentMonthYearTextPrefix = document.getElementById('current-month-year-text-prefix');
+            domCache.currentMonthText = document.getElementById('current-month-text');
             domCache.saveLocalButton = document.getElementById('save-local-button');
             domCache.exportCsvButton = document.getElementById('export-csv-button');
             domCache.createEmptyCsvButton = document.getElementById('create-empty-csv-button');
@@ -2701,19 +3050,16 @@
             // --- Controles de Vista y Navegación del Horario Principal ---
             domCache.viewMonthlyButton = document.getElementById('view-monthly-button');
             domCache.viewAnnualButton = document.getElementById('view-annual-button');
-            domCache.viewModeButtonsContainer = document.getElementById('view-mode-buttons-container');
             domCache.monthTabsContainer = document.getElementById('month-tabs-container');
-			domCache.monthTabsWrapper = document.getElementById('month-tabs-wrapper');
+            domCache.monthTabsWrapper = document.getElementById('month-tabs-wrapper');
         
             // --- Secciones Principales de la UI ---
             domCache.welcomeMessage = document.getElementById('welcome-message');
             domCache.scheduleDisplaySection = document.getElementById('schedule-display-section');
             domCache.scheduleTableSection = document.getElementById('schedule-table-section');
-            // domCache.legendSection = document.getElementById('legend-section'); // Ya no existe como sección principal
         
             // --- Elementos de la Tabla de Horario Principal ---
             domCache.currentMonthYearDisplay = document.getElementById('current-month-year-display');
-            domCache.currentMonthYearText = document.getElementById('current-month-year-text');
             domCache.unsavedIndicatorTable = document.getElementById('unsaved-indicator-table');
             domCache.scheduleTableHead = document.getElementById('schedule-table-head');
             domCache.scheduleTableBody = document.getElementById('schedule-table-body');
@@ -2724,57 +3070,55 @@
             domCache.colorPalettePopupContainer = document.getElementById('color-palette-popup-container');
         
             // --- Leyenda (ahora dentro del modal) ---
-            domCache.legendItemsContainer = document.getElementById('legend-items-container'); // Sigue siendo el mismo ID, pero ahora está en el modal
+            domCache.legendItemsContainer = document.getElementById('legend-items-container');
         
-            // --- Historial de Cambios y Notas ---
-			
-            // Nuevos botones en la barra de navegación
+            // --- Historial de Cambios y Notas (Modales) ---
             domCache.openHistoryModalButton = document.getElementById('open-history-modal-button');
             domCache.openNotesModalButton = document.getElementById('open-notes-modal-button');
             
-            // Modal de Historial y sus elementos
             domCache.historyModal = document.getElementById('history-modal');
             domCache.closeHistoryModalButton = document.getElementById('close-history-modal-button');
             domCache.okHistoryModalButton = document.getElementById('ok-history-modal-button');
-            domCache.modalUndoButton = document.getElementById('modal-undo-button'); // Nuevo ID
-            domCache.modalRedoButton = document.getElementById('modal-redo-button'); // Nuevo ID
+            domCache.modalUndoButton = document.getElementById('modal-undo-button');
+            domCache.modalRedoButton = document.getElementById('modal-redo-button');
             domCache.modalChangeHistoryListContainer = document.getElementById('modal-change-history-list-container');
-            domCache.modalChangeHistoryList = document.getElementById('modal-change-history-list'); // Nuevo ID para la ul
+            domCache.modalChangeHistoryList = document.getElementById('modal-change-history-list');
             
-            // Modal de Notas y sus elementos
             domCache.notesModal = document.getElementById('notes-modal');
             domCache.closeNotesModalButton = document.getElementById('close-notes-modal-button');
             domCache.okNotesModalButton = document.getElementById('ok-notes-modal-button');
-            domCache.modalGeneralNotesTextarea = document.getElementById('modal-general-notes-textarea'); // Nuevo ID
-            // domCache.saveNotesModalButton = document.getElementById('save-notes-modal-button'); // Si añades botón de guardar
-            	
+            domCache.modalGeneralNotesTextarea = document.getElementById('modal-general-notes-textarea');
         
-            // --- Modales Existentes ---
+            // --- Modales Existentes y sus Botones "Cancelar" del Pie de Página ---
             domCache.addEmployeeModal = document.getElementById('add-employee-modal');
             domCache.modalEmployeeNameInput = document.getElementById('modal-employee-name-input');
             domCache.modalConfirmAddEmployee = document.getElementById('modal-confirm-add-employee');
-            domCache.modalCancelAddEmployee = document.getElementById('modal-cancel-add-employee');
-        
+            domCache.modalCancelAddEmployee = document.getElementById('modal-cancel-add-employee'); 
+            domCache.modalCancelAddEmployeeFooter = document.getElementById('modal-cancel-add-employee-footer'); 
+            
             domCache.deleteEmployeeModal = document.getElementById('delete-employee-modal');
             domCache.employeeNameToDeleteSpan = document.getElementById('employee-name-to-delete');
             domCache.deleteCountdownMessageSpan = document.getElementById('delete-countdown-message');
             domCache.modalConfirmDeleteEmployee = document.getElementById('modal-confirm-delete-employee');
-            domCache.modalCancelDeleteEmployee = document.getElementById('modal-cancel-delete-employee');
+            domCache.modalCancelDeleteEmployee = document.getElementById('modal-cancel-delete-employee'); 
+            domCache.modalCancelDeleteEmployeeFooter = document.getElementById('modal-cancel-delete-employee-footer'); 
         
             domCache.filenameModal = document.getElementById('filename-modal');
             domCache.filenameModalTitle = document.getElementById('filename-modal-title');
             domCache.filenameModalDescription = document.getElementById('filename-modal-description');
             domCache.modalFilenameInput = document.getElementById('modal-filename-input');
             domCache.modalConfirmFilename = document.getElementById('modal-confirm-filename');
-            domCache.modalCancelFilename = document.getElementById('modal-cancel-filename');
+            domCache.modalCancelFilename = document.getElementById('modal-cancel-filename'); 
+            domCache.modalCancelFilenameFooter = document.getElementById('modal-cancel-filename-footer'); 
         
             domCache.exportCalendarModal = document.getElementById('export-calendar-modal');
             domCache.modalCalendarEmployeeSelect = document.getElementById('modal-calendar-employee-select');
             domCache.modalConfirmExportCalendar = document.getElementById('modal-confirm-export-calendar');
-            domCache.modalCancelExportCalendar = document.getElementById('modal-cancel-export-calendar');
+            domCache.modalCancelExportCalendar = document.getElementById('modal-cancel-export-calendar'); 
+            domCache.modalCancelExportCalendarFooter = document.getElementById('modal-cancel-export-calendar-footer'); 
         
             domCache.tipsModal = document.getElementById('tips-modal');
-            domCache.helpIconContainer = document.getElementById('help-icon-container');
+            domCache.helpIconContainer = document.getElementById('help-icon-container'); 
             domCache.closeTipsModalButton = document.getElementById('close-tips-modal');
             domCache.okTipsModalButton = document.getElementById('ok-tips-modal');
         
@@ -2782,19 +3126,21 @@
             domCache.customEventModalTitle = document.getElementById('custom-event-modal-title');
             domCache.modalCustomEventInput = document.getElementById('modal-custom-event-input');
             domCache.modalConfirmCustomEvent = document.getElementById('modal-confirm-custom-event');
-            domCache.modalCancelCustomEvent = document.getElementById('modal-cancel-custom-event');
+            domCache.modalCancelCustomEvent = document.getElementById('modal-cancel-custom-event'); 
+            domCache.modalCancelCustomEventFooter = document.getElementById('modal-cancel-custom-event-footer'); 
         
             domCache.confirmLoadCsvModal = document.getElementById('confirm-load-csv-modal');
             domCache.confirmLoadCsvMessage = document.getElementById('confirm-load-csv-message');
-            domCache.modalCancelLoadCsv = document.getElementById('modal-cancel-load-csv');
+            domCache.modalCancelLoadCsv = document.getElementById('modal-cancel-load-csv'); 
+            domCache.modalCancelLoadCsvFooter = document.getElementById('modal-cancel-load-csv-footer'); 
             domCache.modalConfirmLoadCsv = document.getElementById('modal-confirm-load-csv');
         
             domCache.saveLocalHelpModal = document.getElementById('save-local-help-modal');
             domCache.closeSaveLocalHelpModalIcon = document.getElementById('close-save-local-help-modal-icon');
-            domCache.closeSaveLocalHelpModalButton = document.getElementById('close-save-local-help-modal-button');
+            domCache.closeSaveLocalHelpModalButton = document.getElementById('close-save-local-help-modal-button'); 
         
-            // --- Elementos de Estadísticas (sin cambios en este paso, pero listados por completitud) ---
-            domCache.statisticsSectionReformed = document.getElementById('statistics-section');
+            // --- Elementos de Estadísticas ---
+            domCache.statisticsSectionReformed = document.getElementById('statistics-section'); 
             domCache.mainStatsTableSection = document.getElementById('idea1-table-improved-expanded');
             domCache.statsTableHead = document.getElementById('stats-table-head');
             domCache.statsTableBody = document.getElementById('tbody-idea1-expanded');
@@ -2811,7 +3157,7 @@
             domCache.detailsMonthDropdownBtn = document.getElementById('details-month-dropdown-btn');
             domCache.detailsSelectedMonthText = document.getElementById('details-selected-month-text');
             domCache.detailsMonthDropdownOptions = document.getElementById('details-month-dropdown-options');
-            domCache.closeIndividualChartsBtn = document.getElementById('close-individual-charts');
+            domCache.closeIndividualChartsBtn = document.getElementById('close-individual-charts'); 
             domCache.donutChartCanvas = document.getElementById('donutChartCanvas');
             domCache.donutChartMessage = document.getElementById('donutChartMessage');
             domCache.calendarHeatmapTitle = document.getElementById('calendar-heatmap-title');
@@ -2832,70 +3178,77 @@
             domCache.filenameModalTitleStatsPdf = document.getElementById('filename-modal-title-stats-pdf');
             domCache.modalFilenameInputStatsPdf = document.getElementById('modal-filename-input-stats-pdf');
             domCache.filenameModalExtensionStatsPdf = document.getElementById('filename-modal-extension-stats-pdf');
-            domCache.modalCancelFilenameStatsPdf = document.getElementById('modal-cancel-filename-stats-pdf');
+            domCache.modalCancelFilenameStatsPdf = document.getElementById('modal-cancel-filename-stats-pdf'); 
+            domCache.modalCancelFilenameStatsPdfFooter = document.getElementById('modal-cancel-filename-stats-pdf-footer'); 
             domCache.modalConfirmFilenameStatsPdf = document.getElementById('modal-confirm-filename-stats-pdf');
             domCache.exportStatsToPdfButton = document.getElementById('export-stats-to-pdf-button');
         
-            // --- NUEVOS ELEMENTOS PARA MODALES DE LEYENDA Y NORMAS ---
-            domCache.modalTriggersContainer = document.getElementById('modal-triggers-container');
-			domCache.openLegendColorsModalButton = document.getElementById('open-legend-colors-modal-button-nav');
-			domCache.openRulesModalButton = document.getElementById('open-rules-modal-button-nav');
-        
-            // Modal de Leyenda y Colores
+            // --- Elementos para Modales de Leyenda y Normas ---
+            domCache.openLegendColorsModalButton = document.getElementById('open-legend-colors-modal-button-nav'); 
+            domCache.openRulesModalButton = document.getElementById('open-rules-modal-button-nav'); 
+            
             domCache.legendColorsModal = document.getElementById('legend-colors-modal');
             domCache.legendColorsModalBody = document.getElementById('legend-colors-modal-body');
             domCache.closeLegendColorsModalButton = document.getElementById('close-legend-colors-modal-button');
             domCache.modalApplyColorsButton = document.getElementById('modal-apply-colors-button');
             domCache.modalResetColorsButton = document.getElementById('modal-reset-colors-button');
             domCache.modalOkLegendColorsButton = document.getElementById('modal-ok-legend-colors-button');
-            // domCache.legendItemsContainer ya está cacheado arriba, se mantiene.
         
-            // Modal de Normas
             domCache.rulesModal = document.getElementById('rules-modal');
             domCache.rulesModalBody = document.getElementById('rules-modal-body');
             domCache.closeRulesModalButton = document.getElementById('close-rules-modal-button');
             domCache.saveRulesButton = document.getElementById('save-rules-button');
             domCache.modalOkRulesButton = document.getElementById('modal-ok-rules-button');
-            domCache.ruleViolationsSummary = document.getElementById('rule-violations-summary');
-			domCache.ruleViolationsSummarySection = document.getElementById('rule-violations-summary-section');
-			domCache.maxConsecutiveDaysEnabledToggle = document.getElementById('max-consecutive-days-enabled-toggle');
-			domCache.maxConsecutiveDaysSettingsInputs = document.getElementById('max-consecutive-days-settings-inputs');
-			domCache.maxConsecutiveDaysInput = document.getElementById('max-consecutive-days-input');
-			domCache.personsPerShiftViolationsSummary = document.getElementById('persons-per-shift-violations-summary');
-			domCache.maxConsecutiveDaysViolationsSummary = document.getElementById('max-consecutive-days-violations-summary');
-			
-			domCache.personsPerShiftEnabledToggle = document.getElementById('persons-per-shift-enabled-toggle');
-			domCache.personsPerShiftSettingsInputs = document.getElementById('persons-per-shift-settings-inputs');
-			domCache.personsMorningMin = document.getElementById('persons-morning-min');
-			domCache.personsMorningMax = document.getElementById('persons-morning-max');
-			domCache.personsAfternoonMin = document.getElementById('persons-afternoon-min');
-			domCache.personsAfternoonMax = document.getElementById('persons-afternoon-max');
-			domCache.personsNightMin = document.getElementById('persons-night-min');
-			domCache.personsNightMax = document.getElementById('persons-night-max');
-			
-			
-			// Botón del Footer para borrar datos locales
-			domCache.clearLocalStorageButton = document.getElementById('clear-local-storage-button');
-
-			// Elementos del Modal de Confirmación de Borrado de LocalStorage
-			domCache.confirmClearLocalStorageModal = document.getElementById('confirm-clear-local-storage-modal');
-			domCache.clearLocalStorageCountdownMessage = document.getElementById('clear-local-storage-countdown-message');
-			domCache.modalCancelClearLocalStorage = document.getElementById('modal-cancel-clear-local-storage');
-			domCache.modalConfirmClearLocalStorage = document.getElementById('modal-confirm-clear-local-storage');
-			// Botones para Exportar/Importar Estado de la Aplicación
-			domCache.exportAppStateButton = document.getElementById('export-app-state-button');
-			domCache.importAppStateButton = document.getElementById('import-app-state-button');
-			domCache.importAppStateFileInput = document.getElementById('import-app-state-file-input');
-			
-			domCache.manageAppConfigButton = document.getElementById('manage-app-config-button');
-			domCache.manageConfigModal = document.getElementById('manage-config-modal');
-			domCache.closeManageConfigModalButton = document.getElementById('close-manage-config-modal');
-			domCache.modalExportAppConfigButton = document.getElementById('modal-export-app-config-button');
-			domCache.modalImportAppConfigButton = document.getElementById('modal-import-app-config-button');
-			domCache.csvFileInputIcon = document.getElementById('csv-file-input-icon');
-			domCache.confirmImportAppStateModal = document.getElementById('confirm-import-app-state-modal');
-			domCache.cancelImportAppStateButton = document.getElementById('cancel-import-app-state');
-			domCache.confirmImportAppStateActionButton = document.getElementById('confirm-import-app-state-action');
+            
+            domCache.personsPerShiftEnabledToggle = document.getElementById('persons-per-shift-enabled-toggle');
+            domCache.personsPerShiftSettingsInputs = document.getElementById('persons-per-shift-settings-inputs');
+            domCache.personsMorningMin = document.getElementById('persons-morning-min');
+            domCache.personsMorningMax = document.getElementById('persons-morning-max');
+            domCache.personsAfternoonMin = document.getElementById('persons-afternoon-min');
+            domCache.personsAfternoonMax = document.getElementById('persons-afternoon-max');
+            domCache.personsNightMin = document.getElementById('persons-night-min');
+            domCache.personsNightMax = document.getElementById('persons-night-max');
+            domCache.personsPerShiftViolationsSummary = document.getElementById('persons-per-shift-violations-summary');
+        
+            domCache.maxConsecutiveDaysEnabledToggle = document.getElementById('max-consecutive-days-enabled-toggle');
+            domCache.maxConsecutiveDaysSettingsInputs = document.getElementById('max-consecutive-days-settings-inputs');
+            domCache.maxConsecutiveDaysInput = document.getElementById('max-consecutive-days-input');
+            domCache.maxConsecutiveDaysViolationsSummary = document.getElementById('max-consecutive-days-violations-summary');
+        
+            // --- Borrado de LocalStorage y Gestión de Configuración App ---
+            domCache.clearLocalStorageButton = document.getElementById('clear-local-storage-button');
+            domCache.confirmClearLocalStorageModal = document.getElementById('confirm-clear-local-storage-modal');
+            domCache.clearLocalStorageCountdownMessage = document.getElementById('clear-local-storage-countdown-message');
+            domCache.modalCancelClearLocalStorage = document.getElementById('modal-cancel-clear-local-storage'); 
+            domCache.modalCancelClearLocalStorageFooter = document.getElementById('modal-cancel-clear-local-storage-footer'); 
+            domCache.modalConfirmClearLocalStorage = document.getElementById('modal-confirm-clear-local-storage');
+        
+            domCache.manageAppConfigButton = document.getElementById('manage-app-config-button');
+            domCache.manageConfigModal = document.getElementById('manage-config-modal');
+            domCache.closeManageConfigModalButton = document.getElementById('close-manage-config-modal'); 
+            domCache.closeManageConfigModalButtonFooter = document.getElementById('close-manage-config-modal-button-footer'); 
+            domCache.modalExportAppConfigButton = document.getElementById('modal-export-app-config-button');
+            domCache.modalImportAppConfigButton = document.getElementById('modal-import-app-config-button');
+            domCache.importAppStateFileInput = document.getElementById('import-app-state-file-input');
+            domCache.confirmImportAppStateModal = document.getElementById('confirm-import-app-state-modal');
+            domCache.cancelImportAppStateButton = document.getElementById('cancel-import-app-state'); 
+            domCache.cancelImportAppStateButtonFooter = document.getElementById('cancel-import-app-state-footer'); 
+            domCache.confirmImportAppStateActionButton = document.getElementById('confirm-import-app-state-action');
+        
+            // Nuevos elementos para tamaños de fuente PDF
+            domCache.pdfFontMainTitleInput = document.getElementById('pdf-font-main-title');
+            domCache.pdfFontSectionTitleInput = document.getElementById('pdf-font-section-title');
+            domCache.pdfFontTableHeaderInput = document.getElementById('pdf-font-table-header');
+            domCache.pdfFontTableCellInput = document.getElementById('pdf-font-table-cell');
+            domCache.pdfFontEmployeeNameInput = document.getElementById('pdf-font-employee-name');
+            domCache.pdfFontFooterInput = document.getElementById('pdf-font-footer');
+        
+            domCache.pdfFontMainTitleValue = document.getElementById('pdf-font-main-title-value');
+            domCache.pdfFontSectionTitleValue = document.getElementById('pdf-font-section-title-value');
+            domCache.pdfFontTableHeaderValue = document.getElementById('pdf-font-table-header-value');
+            domCache.pdfFontTableCellValue = document.getElementById('pdf-font-table-cell-value');
+            domCache.pdfFontEmployeeNameValue = document.getElementById('pdf-font-employee-name-value');
+            domCache.pdfFontFooterValue = document.getElementById('pdf-font-footer-value');
         }
 
         // --- MANEJO DE EVENTOS DE SELECCIÓN DE CELDAS ---
@@ -3134,7 +3487,7 @@
         
 
         function setupEventListeners() {
-            // --- Listeners Existentes (DEBES MANTENER LOS QUE YA TENÍAS Y FUNCIONABAN) ---
+            // --- Listeners Existentes (se mantienen, solo se muestra una parte para contexto) ---
         
             if (domCache.cancelImportAppStateButton) {
                 domCache.cancelImportAppStateButton.addEventListener('click', () => {
@@ -3145,10 +3498,9 @@
             if (domCache.confirmImportAppStateActionButton) {
                 domCache.confirmImportAppStateActionButton.addEventListener('click', () => {
                     hideModal(domCache.confirmImportAppStateModal);
-                    // Ahora, proceder con la lógica de selección de archivo
                     if (domCache.importAppStateFileInput) {
-                        domCache.importAppStateFileInput.value = null; // Resetear por si se selecciona el mismo archivo
-                        domCache.importAppStateFileInput.click(); // Abrir el diálogo de selección de archivo
+                        domCache.importAppStateFileInput.value = null; 
+                        domCache.importAppStateFileInput.click(); 
                     }
                 });
             }
@@ -3233,7 +3585,7 @@
                     notesDebounceTimer = setTimeout(() => {
                         const lastUndoState = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
                         if (!lastUndoState || (lastUndoState.generalNotes !== undefined && lastUndoState.generalNotes !== domCache.modalGeneralNotesTextarea.value)) { 
-                            // saveStateForUndo("Notas generales modificadas."); // Considera si quieres que cada cambio de nota sea un estado de deshacer
+                            // saveStateForUndo("Notas generales modificadas.");
                         }
                     }, 1500);
                 });
@@ -3247,13 +3599,14 @@
                 });
             }
         
-            // Comprueba si estos botones existen en tu HTML antes de añadir listeners
-            if (domCache.exportAppStateButton) { 
+            // Comprobación para evitar error si los botones no están en el DOM (ej. versión antigua del HTML)
+            if (typeof domCache.exportAppStateButton !== 'undefined' && domCache.exportAppStateButton) { 
                 domCache.exportAppStateButton.addEventListener('click', prepareExportApplicationState);
             }
-            if (domCache.importAppStateButton) { 
+            if (typeof domCache.importAppStateButton !== 'undefined' && domCache.importAppStateButton) { 
                 domCache.importAppStateButton.addEventListener('click', prepareImportApplicationState);
             }
+
             if (domCache.importAppStateFileInput) {
                 domCache.importAppStateFileInput.addEventListener('change', handleImportApplicationStateFile);
             }			
@@ -3316,11 +3669,8 @@
                 domCache.scheduleTableBody.addEventListener('dragleave', handleDragLeave);
                 domCache.scheduleTableBody.addEventListener('drop', handleDrop);
                 domCache.scheduleTableBody.addEventListener('dragend', handleDragEnd);
-        
                 domCache.scheduleTableBody.addEventListener('mousedown', handleCellMouseDown);
-                
                 domCache.scheduleTableBody.addEventListener('touchstart', handleCellTouchStart, { passive: false });
-                
                 domCache.scheduleTableBody.addEventListener('contextmenu', (event) => {
                     const targetCell = event.target.closest('td.shift-cell');
                     if (targetCell && selectedCells.length > 0) {
@@ -3343,7 +3693,7 @@
                 const isClickOnLegendItem = event.target.closest('.legend-item-container'); 
                 const isClickOnControlsSection = event.target.closest('#controls-section');
                 const isClickOnNewStatsSection = event.target.closest('#statistics-section');
-                const isClickOnViewModeButtonsGroup = event.target.closest('#view-mode-buttons-group'); // Asumiendo que tienes este ID o una clase similar
+                const isClickOnViewModeButtonsGroup = event.target.closest('#view-mode-buttons-group'); 
                 const isClickOnFooterButton = event.target.closest('#clear-local-storage-button'); 
         
                 if (!isClickOnTableBody && !isClickOnToolbar && !isClickOnModalContent && 
@@ -3375,7 +3725,6 @@
                 domCache.scheduleTableHead.addEventListener('mouseout', handleRuleViolationMouseOut);
             }
             
-        
             const ruleInputs = [
                 domCache.personsMorningMin, domCache.personsMorningMax,
                 domCache.personsAfternoonMin, domCache.personsAfternoonMax,
@@ -3391,11 +3740,16 @@
                 domCache.saveRulesButton.addEventListener('click', saveRulesConfigFromModal);
             }
         
+            // --- Listeners para Modal Añadir Empleado ---
             if (domCache.modalConfirmAddEmployee) {
                 domCache.modalConfirmAddEmployee.addEventListener('click', handleAddEmployeeFromModal);
             }
-            if (domCache.modalCancelAddEmployee) {
+            if (domCache.modalCancelAddEmployee) { 
                 domCache.modalCancelAddEmployee.addEventListener('click', () => hideModal(domCache.addEmployeeModal));
+            }
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelAddEmployeeFooter) {
+                domCache.modalCancelAddEmployeeFooter.addEventListener('click', () => hideModal(domCache.addEmployeeModal));
             }
             if (domCache.addEmployeeModal) {
                 domCache.addEmployeeModal.addEventListener('click', (event) => {
@@ -3403,16 +3757,24 @@
                 });
             }
         
+            // --- Listeners para Modal Eliminar Empleado ---
             if (domCache.modalConfirmDeleteEmployee) {
                 domCache.modalConfirmDeleteEmployee.addEventListener('click', confirmEmployeeDeletion);
             }
-            if (domCache.modalCancelDeleteEmployee) {
+            if (domCache.modalCancelDeleteEmployee) { 
                 domCache.modalCancelDeleteEmployee.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
                     if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
                     employeeToDeleteName = null; 
                 }));
             }
-            if (domCache.deleteEmployeeModal) {
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelDeleteEmployeeFooter) {
+                domCache.modalCancelDeleteEmployeeFooter.addEventListener('click', () => hideModal(domCache.deleteEmployeeModal, () => {
+                    if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
+                    employeeToDeleteName = null;
+                }));
+            }
+            if (domCache.deleteEmployeeModal) { 
                 domCache.deleteEmployeeModal.addEventListener('click', (event) => {
                     if (event.target === domCache.deleteEmployeeModal) hideModal(domCache.deleteEmployeeModal, () => {
                         if (deleteCountdownInterval) clearInterval(deleteCountdownInterval);
@@ -3421,11 +3783,18 @@
                 });
             }
         
+            // --- Listeners para Modal Nombre de Archivo (General) ---
             if (domCache.modalConfirmFilename) {
                 domCache.modalConfirmFilename.addEventListener('click', handleFilenameConfirm);
             }
             if (domCache.modalCancelFilename) {
                 domCache.modalCancelFilename.addEventListener('click', () => hideModal(domCache.filenameModal, () => {
+                    currentFilenameConfirmCallback = null; currentFilenameExtension = ''; if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = '';
+                }));
+            }
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelFilenameFooter) {
+                domCache.modalCancelFilenameFooter.addEventListener('click', () => hideModal(domCache.filenameModal, () => {
                     currentFilenameConfirmCallback = null; currentFilenameExtension = ''; if(domCache.modalFilenameInput) domCache.modalFilenameInput.value = '';
                 }));
             }
@@ -3437,6 +3806,7 @@
                 });
             }
             
+            // --- Listeners para Modal Exportar a Calendar (.ics) ---
             if (domCache.modalConfirmExportCalendar) {
                 domCache.modalConfirmExportCalendar.addEventListener('click', () => {
                     const selectedEmployee = domCache.modalCalendarEmployeeSelect.value;
@@ -3452,6 +3822,12 @@
                     if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = '';
                 }));
             }
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelExportCalendarFooter) {
+                domCache.modalCancelExportCalendarFooter.addEventListener('click', () => hideModal(domCache.exportCalendarModal, () => {
+                    if(domCache.modalCalendarEmployeeSelect) domCache.modalCalendarEmployeeSelect.innerHTML = '';
+                }));
+            }
             if (domCache.exportCalendarModal) {
                 domCache.exportCalendarModal.addEventListener('click', (event) => {
                     if (event.target === domCache.exportCalendarModal) hideModal(domCache.exportCalendarModal, () => {
@@ -3460,6 +3836,7 @@
                 });
             }
         
+            // --- Listeners para Modal de Consejos ---
             if (domCache.helpIconContainer) {
                 domCache.helpIconContainer.addEventListener('click', () => {
                     showModal(domCache.tipsModal);
@@ -3483,11 +3860,16 @@
                 });
             }
         
+            // --- Listeners para Modal Evento Personalizado ---
             if (domCache.modalConfirmCustomEvent) {
                 domCache.modalConfirmCustomEvent.addEventListener('click', handleConfirmCustomEvent);
             }
             if (domCache.modalCancelCustomEvent) {
                 domCache.modalCancelCustomEvent.addEventListener('click', hideCustomEventModal);
+            }
+             // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelCustomEventFooter) {
+                domCache.modalCancelCustomEventFooter.addEventListener('click', hideCustomEventModal);
             }
             if (domCache.customEventModal) {
                 domCache.customEventModal.addEventListener('click', (event) => {
@@ -3497,6 +3879,7 @@
                 });
             }
         
+            // --- Listeners para Modal Confirmar Carga de CSV ---
             if (domCache.modalConfirmLoadCsv) {
                 domCache.modalConfirmLoadCsv.addEventListener('click', () => {
                     hideModal(domCache.confirmLoadCsvModal);
@@ -3554,6 +3937,14 @@
                     currentConfirmAction = null;
                 });
             }
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelLoadCsvFooter) {
+                domCache.modalCancelLoadCsvFooter.addEventListener('click', () => {
+                    hideModal(domCache.confirmLoadCsvModal);
+                    if(domCache.csvFileInput) domCache.csvFileInput.value = '';
+                    currentConfirmAction = null;
+                });
+            }
             if (domCache.confirmLoadCsvModal) {
                 domCache.confirmLoadCsvModal.addEventListener('click', (event) => {
                     if (event.target === domCache.confirmLoadCsvModal) {
@@ -3564,6 +3955,7 @@
                 });
             }
         
+            // --- Listeners para Modal Ayuda Guardado Local ---
             if (domCache.closeSaveLocalHelpModalIcon) { 
                 domCache.closeSaveLocalHelpModalIcon.addEventListener('click', () => {
                     hideModal(domCache.saveLocalHelpModal);
@@ -3582,15 +3974,21 @@
                 });
             }
             
+            // --- Listeners para Estadísticas ---
             if (typeof setupNewStatisticsEventListeners === 'function') {
                 setupNewStatisticsEventListeners(); 
             }
         
+            // --- Listeners para Modal Nombre de Archivo (PDF Estadísticas) ---
             if (domCache.modalConfirmFilenameStatsPdf) {
                 domCache.modalConfirmFilenameStatsPdf.addEventListener('click', handleStatsPdfFilenameConfirm);
             }
             if (domCache.modalCancelFilenameStatsPdf) {
                 domCache.modalCancelFilenameStatsPdf.addEventListener('click', hideStatsPdfFilenameModal);
+            }
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelFilenameStatsPdfFooter) {
+                domCache.modalCancelFilenameStatsPdfFooter.addEventListener('click', hideStatsPdfFilenameModal);
             }
             if (domCache.filenameModalStatsPdf) {
                 domCache.filenameModalStatsPdf.addEventListener('click', (event) => {
@@ -3603,10 +4001,12 @@
                 domCache.exportStatsToPdfButton.addEventListener('click', initiateStatsPdfExport);
             }
         
+            // --- Listener para Corazón del Footer ---
             if (domCache.footerHeartElement) {
                 domCache.footerHeartElement.addEventListener('click', handleFooterHeartClick);
             }
         
+            // --- Listener BeforeUnload ---
             window.addEventListener('beforeunload', (event) => {
                 if (hasUnsavedChanges) {
                     event.preventDefault();
@@ -3614,6 +4014,7 @@
                 }
             });
             
+            // --- Listeners para Modales de Leyenda y Normas ---
             if (domCache.openLegendColorsModalButton) { 
                 domCache.openLegendColorsModalButton.addEventListener('click', () => {
                     updateLegend(); 
@@ -3664,6 +4065,8 @@
                     if (event.target === domCache.rulesModal) hideModal(domCache.rulesModal);
                 });
             }
+
+            // --- Listeners para Gestión de Configuración de App ---
             if (domCache.manageAppConfigButton) {
                 domCache.manageAppConfigButton.addEventListener('click', () => {
                     showModal(domCache.manageConfigModal); 
@@ -3672,6 +4075,12 @@
             
             if (domCache.closeManageConfigModalButton) {
                 domCache.closeManageConfigModalButton.addEventListener('click', () => {
+                    hideModal(domCache.manageConfigModal); 
+                });
+            }
+            // BOTÓN ESPECÍFICO SOLICITADO (si existe, aunque no lo pediste explícitamente, lo añado por consistencia si tuvieras un footer):
+            if (domCache.closeManageConfigModalButtonFooter) { // Asumiendo que existe este ID
+                domCache.closeManageConfigModalButtonFooter.addEventListener('click', () => {
                     hideModal(domCache.manageConfigModal); 
                 });
             }
@@ -3713,6 +4122,7 @@
                 });
             }
         
+            // --- Listeners para Teclado (Deshacer/Rehacer, Escape) ---
             document.addEventListener('keydown', (event) => {
                 if (event.ctrlKey || event.metaKey) {
                     if (event.key === 'z' || event.key === 'Z') {
@@ -3745,6 +4155,7 @@
                 }
             });
         
+            // --- Listeners para Modal Confirmar Borrado de Datos Locales ---
             if (domCache.clearLocalStorageButton) {
                 domCache.clearLocalStorageButton.addEventListener('click', showConfirmClearLocalStorageModal);
             }
@@ -3753,6 +4164,16 @@
             }
             if (domCache.modalCancelClearLocalStorage) {
                 domCache.modalCancelClearLocalStorage.addEventListener('click', () => {
+                    hideModal(domCache.confirmClearLocalStorageModal);
+                    if (clearLocalStorageCountdownInterval) {
+                        clearInterval(clearLocalStorageCountdownInterval);
+                        clearLocalStorageCountdownInterval = null;
+                    }
+                });
+            }
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.modalCancelClearLocalStorageFooter) {
+                domCache.modalCancelClearLocalStorageFooter.addEventListener('click', () => {
                     hideModal(domCache.confirmClearLocalStorageModal);
                     if (clearLocalStorageCountdownInterval) {
                         clearInterval(clearLocalStorageCountdownInterval);
@@ -3771,25 +4192,36 @@
                     }
                 });
             }
+
+            // --- Listeners para Modal Confirmar Importación de Estado de App ---
+            // BOTÓN ESPECÍFICO SOLICITADO:
+            if (domCache.cancelImportAppStateButtonFooter) {
+                domCache.cancelImportAppStateButtonFooter.addEventListener('click', () => {
+                    hideModal(domCache.confirmImportAppStateModal);
+                });
+            }
+            // Los otros listeners para este modal (cancel-import-app-state y confirm-import-app-state-action) ya están al principio.
+
+
              document.addEventListener('mousemove', handleDocumentMouseMove);
              document.addEventListener('mouseup', handleDocumentMouseUp);
              document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
              document.addEventListener('touchend', handleDocumentTouchEnd);
         
-            // --- NUEVOS LISTENERS PARA TAMAÑOS DE FUENTE PDF ---
+            // --- LLAMADA A LISTENERS ESPECÍFICOS ---
             if (typeof setupPdfFontEventListeners === 'function') {
-                setupPdfFontEventListeners(); // Llamar a la función que configura los listeners para los inputs de fuentes PDF
+                setupPdfFontEventListeners(); 
             } else {
-                console.warn("La función setupPdfFontEventListeners no está definida. Los listeners para fuentes PDF no se configurarán.");
+                console.warn("La función setupPdfFontEventListeners no está definida.");
             }
             
-            // --- LISTENERS PARA EL EDITOR DE LOGO (SI ES UNA FUNCIÓN SEPARADA) ---
             if (typeof setupLogoEditorEventListeners === 'function') {
                 setupLogoEditorEventListeners();
             } else {
-                console.warn("La función setupLogoEditorEventListeners no está definida. Los listeners para el editor de logo no se configurarán.");
+                console.warn("La función setupLogoEditorEventListeners no está definida.");
             }
         }
+        
         
 
 
