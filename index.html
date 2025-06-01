@@ -616,6 +616,37 @@
             margin-right: 0.375rem;
         }
     
+        /* === INICIO: ESTILOS REFINADOS PARA RESALTADO DE ENCABEZADOS DE DÍA === */
+        .day-header-cell-content {
+            transition: transform 0.15s ease-out, font-weight 0.15s ease-out, color 0.15s ease-out; /* Quitar background-color de transition si no se usa */
+            display: inline-block;
+            transform-origin: center center;
+            padding: 2px 4px;
+            border-radius: 4px;
+            /* Importante: asegurar que el fondo sea transparente por defecto si no se define en hover/selection */
+            background-color: transparent;
+        }
+        
+        /* Efecto HOVER para el contenido del encabezado del día */
+        /* El TH obtiene la clase .day-header-hover-effect */
+        .day-header-hover-effect .day-header-cell-content {
+            transform: scale(1.18); /* Solo agrandamiento, un poco más notorio */
+            font-weight: 600; /* Un poco más de énfasis en el hover */
+            color: #4f46e5; /* Un color índigo sutil para el texto en hover */
+            /* Sin background-color explícito aquí, o uno muy sutil si se prefiere */
+            /* background-color: rgba(224, 231, 255, 0.5); /* Ejemplo: indigo-100 muy transparente */
+        }
+        
+        /* Efecto SELECCIÓN para el contenido del encabezado del día (prioritario sobre hover) */
+        /* El TH obtiene la clase .day-header-selection-effect */
+        .day-header-selection-effect .day-header-cell-content {
+            transform: scale(1.35); /* Agrandamiento un poco mayor para selección */
+            font-weight: 700;       /* Bold */
+            color: #2563eb;          /* Tailwind blue-600 (TEXTO AZULÓN para selección) */
+            background-color: transparent; /* Asegurar que no haya fondo */
+        }
+        /* === FIN: ESTILOS REFINADOS PARA RESALTADO DE ENCABEZADOS DE DÍA === */
+	
         #help-icon-container i {
             transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
         }
@@ -1140,33 +1171,24 @@
         input:focus + .slider { box-shadow: 0 0 1px #4f46e5; }
         input:checked + .slider:before { transform: translateX(20px); }
     
-        .day-rule-violation > div { /* Se aplica al div hijo directo del th.day-rule-violation */
-            display: inline-flex;   /* Permite usar flexbox para alinear contenido */
-            flex-direction: column; /* Apila el número y la letra verticalmente */
-            align-items: center;    /* Centra el contenido horizontalmente */
-            justify-content: center;/* Centra el contenido verticalmente */
-            padding: 2px 5px;       /* Ajusta el padding para dar espacio interno */
-            border: 2px solid #ef4444; /* Borde rojo */
-            border-radius: 12px;      /* Un radio para forma de píldora/ovalada, ajusta según gusto */
-            background-color: #fee2e2; /* Fondo rojo claro */
-            color: #ef4444;          /* Color de texto rojo (se hereda a los hijos) */
-            line-height: 1.1;       /* Ajusta el espaciado entre el número y la letra */
-            min-width: 26px;        /* Ancho mínimo para que no se vea muy apretado */
-            text-align: center;     /* Asegura que el texto interno esté centrado */
-            /* Quitar cualquier margen que pueda tener el div por defecto */
-            margin: 0 auto; 
+        /* Estilo para la violación de la norma "Personas por Turno" */
+        /* Se aplica al TH que tiene la clase .day-rule-violation */
+        th.day-rule-violation .day-header-cell-content {
+            /* Estos estilos se aplicarán al span interno cuando el TH padre tenga .day-rule-violation */
+            border: 2px solid #ef4444; /* Borde rojo (Tailwind red-500) */
+            background-color: #fee2e2; /* Fondo rojo muy claro (Tailwind red-100) */
+            color: #b91c1c;           /* Texto rojo oscuro (Tailwind red-700) para el número y día */
+            border-radius: 6px;       /* Bordes redondeados para el indicador */
+            padding: 1px 3px;         /* Un poco de padding interno para que no esté pegado */
+            /* El transform scale del hover/selection se aplicará igualmente */
         }
         
-        /* Estilos para asegurar que los spans internos (número y letra) se comporten bien */
-        .day-rule-violation > div .day-number-wrapper,
-        .day-rule-violation > div .day-header-weekday {
-            color: #ef4444; /* Asegurar color de texto rojo */
-            background-color: transparent; /* Sin fondo propio */
-            border: none;          /* Sin bordes propios */
-            padding: 0;            /* Sin padding propio */
-            border-radius: 0;      /* Sin redondeo propio */
-            display: block;        /* Para asegurar que se apilen correctamente */
+        /* Adicional: Asegurar que el color del texto de los hijos dentro del span también sea el de violación */
+        th.day-rule-violation .day-header-cell-content .day-header-date,
+        th.day-rule-violation .day-header-cell-content .day-header-weekday {
+            color: #b91c1c !important; /* Forzar color rojo oscuro para el número y la letra del día */
         }
+        
         
 
         .consecutive-workday-violation-cell {
@@ -3479,7 +3501,6 @@
             const currentCellInfo = getCellInfoFromElement(currentTd);
             if (!currentCellInfo) return;
         
-            // Evitar reprocesar la misma celda innecesariamente
             if (lastCellOverForDragSelectInfo && currentCellInfo.tdElement === lastCellOverForDragSelectInfo.tdElement) {
                 return;
             }
@@ -3503,21 +3524,21 @@
                     if (!isSelectedInGlobalList) {
                         selectedCells.push(cellIterInfo);
                         cellElement.classList.add('cell-selected');
-                        cellsAffectedByCurrentDrag.add(cellElement); // Marcar como afectada por ESTE arrastre
+                        cellsAffectedByCurrentDrag.add(cellElement);
                     }
                 } else {
-                    // Si la celda está fuera del rectángulo actual Y fue seleccionada por ESTE arrastre
                     if (isSelectedInGlobalList && cellsAffectedByCurrentDrag.has(cellElement)) {
                         const index = selectedCells.findIndex(sc => sc.tdElement === cellIterInfo.tdElement);
                         if (index > -1) selectedCells.splice(index, 1);
                         cellElement.classList.remove('cell-selected');
-                        // No la quitamos de cellsAffectedByCurrentDrag, ya que su estado cambió debido a este arrastre
                     }
                 }
             });
             updateMultiselectToolbar();
-            updateNameHighlightsBasedOnSelection(); // <--- LLAMADA AÑADIDA
+            updateNameHighlightsBasedOnSelection();
+            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
         }
+        
 
         function handleDocumentMouseUp(event) {
             if (isDraggingToSelect) {
@@ -3584,7 +3605,7 @@
         
 
         function handleDocumentTouchMove(event) {
-            if (!touchstartTarget) return; // Si no hubo un touchstart, no hacer nada
+            if (!touchstartTarget) return; 
         
             const deltaX = Math.abs(event.touches[0].clientX - touchstartX);
             const deltaY = Math.abs(event.touches[0].clientY - touchstartY);
@@ -3648,7 +3669,8 @@
                 }
             });
             updateMultiselectToolbar();
-            updateNameHighlightsBasedOnSelection(); // <--- LLAMADA AÑADIDA
+            updateNameHighlightsBasedOnSelection();
+            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
         }
 
         function handleDocumentTouchEnd(event) {
@@ -4535,53 +4557,69 @@
         }
 
         function handleConfirmCustomEvent() {
+            // Comprueba si el input del modal existe en el caché del DOM.
             if (!domCache.modalCustomEventInput) {
                 console.error("Error: Input de la modal de evento personalizado no encontrado.");
                 return;
             }
-            const newText = domCache.modalCustomEventInput.value.trim();
-
+            const newText = domCache.modalCustomEventInput.value.trim(); // Obtiene y limpia el texto introducido.
+        
+            // Valida que el texto no contenga comas.
             if (newText.includes(',')) {
                 showToast('El texto del evento no puede contener comas (,).', 'error');
                 if (domCache.modalCustomEventInput) {
-                    domCache.modalCustomEventInput.focus();
+                    domCache.modalCustomEventInput.focus(); // Devuelve el foco al input si hay error.
                 }
                 return;
             }
-
-            let changesMadeCount = 0;
+        
+            let changesMadeCount = 0; // Contador para los cambios realizados.
+            // Descripción para el historial de deshacer/rehacer.
             let undoDescription = `Modificación de ${cellsBeingEditedViaEventModal.length} celda(s) a '${newText === "" ? "Vacío" : newText}'.`;
-
+        
             if (cellsBeingEditedViaEventModal.length === 1) {
                 const cellToEdit = cellsBeingEditedViaEventModal[0];
                 const originalVal = cellToEdit.originalValue;
                 undoDescription = `Evento de ${cellToEdit.employee} (${cellToEdit.day}/${SHORT_MONTH_NAMES[cellToEdit.month-1]}) cambiado de '${originalVal || "Vacío"}' a '${newText || "Vacío"}'.`;
             }
-
+        
+            // Determina si es necesario guardar el estado para deshacer.
             if (cellsBeingEditedViaEventModal.some(cell => cell.originalValue !== newText)) {
-                saveStateForUndo(undoDescription);
+                saveStateForUndo(undoDescription); // Guarda el estado actual.
             }
-
+        
+            // Itera sobre cada celda que se está editando y aplica el nuevo texto.
             cellsBeingEditedViaEventModal.forEach((cellToEdit, index) => {
                 const { tdElement, employee, month, day, originalValue } = cellToEdit;
                 if (originalValue !== newText) {
+                    // Actualiza la estructura de datos del horario.
                     if (!scheduleData[employee]) scheduleData[employee] = {};
                     if (!scheduleData[employee][month]) scheduleData[employee][month] = {};
                     scheduleData[employee][month][day] = newText;
+                    
+                    // Actualiza el contenido visible de la celda en la tabla.
                     tdElement.textContent = newText;
-                    applyShiftCellStyles(tdElement, newText);
+                    applyShiftCellStyles(tdElement, newText); // Aplica los estilos correspondientes. Asume que applyShiftCellStyles está definida.
                     changesMadeCount++;
                 }
             });
-
+        
             if (changesMadeCount > 0) {
+                // Acciones adicionales si se hicieron cambios.
+                // initializeAndRenderNewStatistics(); // Descomentar si las estadísticas deben actualizarse aquí.
             }
-            hideCustomEventModal();
-			initializeAndRenderNewStatistics();
+            
+            // Llama a validateAndDisplayRuleViolations para actualizar los indicadores de normas inmediatamente.
+            validateAndDisplayRuleViolations(); // <--- LLAMADA CLAVE PARA ACTUALIZAR NORMAS
+            
+            hideCustomEventModal(); // Oculta el modal. Asume que hideCustomEventModal está definida.
+            
+            // Si la edición fue de una sola celda (no a través de la barra de multiselección), limpia la selección.
             if (isSingleCellEditViaModal) {
-                clearSelection();
+                clearSelection(); // Asume que clearSelection está definida.
             }
         }
+        
 
 
         // --- OTRAS FUNCIONES DE UI ---
@@ -6236,12 +6274,11 @@
         }
 
         function buildScheduleTableHeader(viewType, month, year) {
-            // No es necesario limpiar domCache.scheduleTableHead.innerHTML aquí,
-            // ya que las funciones renderMonthlyScheduleTable/renderAnnualScheduleTable lo hacen antes de llamar.
+            // Limpiar cabecera existente
+            domCache.scheduleTableHead.innerHTML = '';
         
             if (viewType === 'monthly') {
                 const headerRow = createElement('tr');
-                // Celda para "Empleado"
                 headerRow.appendChild(createElement('th', {
                     textContent: 'Empleado',
                     className: 'py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider sticky-col-header'
@@ -6249,129 +6286,182 @@
         
                 const daysInSelectedMonth = getDaysInMonth(month, year);
                 for (let day = 1; day <= daysInSelectedMonth; day++) {
-                    const dayNumberWrapper = createElement('span', { className: 'day-number-wrapper', textContent: day });
                     const dayHeaderContent = createElement('div');
-                    dayHeaderContent.appendChild(dayNumberWrapper);
+                    dayHeaderContent.appendChild(createElement('span', { className: 'day-header-date', textContent: day }));
                     dayHeaderContent.appendChild(createElement('span', { className: 'day-header-weekday', textContent: getWeekDayInitial(year, month, day) }));
                     
-                    headerRow.appendChild(createElement('th', {
-                        className: 'py-3 px-2 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider',
-                    }, [dayHeaderContent]));
+                    // Envolver dayHeaderContent en el nuevo span para estilos
+                    const dayContentSpanMonthly = createElement('span', { className: 'day-header-cell-content' });
+                    dayContentSpanMonthly.appendChild(dayHeaderContent);
+        
+                    const thDayMonthly = createElement('th', {
+                        className: 'py-3 px-2 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider day-header-th', // Clase añadida
+                        dataset: { colIndex: (day - 1).toString() } // Data attribute para el índice de columna
+                    }, [dayContentSpanMonthly]);
+        
+                    // Listeners para hover directo en el encabezado del día
+                    thDayMonthly.addEventListener('mouseenter', () => {
+                        if (!thDayMonthly.classList.contains('day-header-selection-effect')) {
+                            thDayMonthly.classList.add('day-header-hover-effect');
+                        }
+                    });
+                    thDayMonthly.addEventListener('mouseleave', () => {
+                        thDayMonthly.classList.remove('day-header-hover-effect');
+                    });
+        
+                    headerRow.appendChild(thDayMonthly);
                 }
-                domCache.scheduleTableHead.appendChild(headerRow); // Añade la fila de cabecera mensual
+                domCache.scheduleTableHead.appendChild(headerRow);
         
             } else if (viewType === 'annual') {
                 const monthNameRow = createElement('tr');
-                monthNameRow.classList.add('month-name-header-row'); // Clase para estilos CSS
+                monthNameRow.classList.add('month-name-header-row');
         
-                // Celda para "Empleado" en la fila de nombres de meses
-                const thEmployeeMonth = createElement('th', {
-                    textContent: 'Meses', // O dejar vacío, o "Empleado"
+                monthNameRow.appendChild(createElement('th', {
+                    textContent: 'Meses',
                     className: 'py-2 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sticky-col-header'
-                    // Nota: La clase 'sticky-col-header' la hará pegajosa.
-                    // Los estilos específicos para esta celda en la fila de meses se manejarán con CSS.
-                });
-                monthNameRow.appendChild(thEmployeeMonth);
+                }));
         
-                // Celdas para los nombres de los meses
                 for (let m = 1; m <= 12; m++) {
                     const daysInThisMonth = getDaysInMonth(m, year);
-                    const thMonth = createElement('th', {
-                        textContent: MONTH_NAMES[m - 1], // ENERO, FEBRERO, etc.
+                    monthNameRow.appendChild(createElement('th', {
+                        textContent: MONTH_NAMES[m - 1],
                         attributes: { colspan: daysInThisMonth.toString() },
-                        // Clases de Tailwind para estilo básico, se refinarán con CSS dedicado
                         className: 'py-2 px-1 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'
-                    });
-                    monthNameRow.appendChild(thMonth);
+                    }));
                 }
-                domCache.scheduleTableHead.appendChild(monthNameRow); // Añade la fila de nombres de meses
+                domCache.scheduleTableHead.appendChild(monthNameRow);
         
-                // Fila para los números de los días y las iniciales de la semana (como antes)
                 const dayNumberRow = createElement('tr');
-                dayNumberRow.classList.add('day-number-header-row'); // Clase para estilos CSS
-        
-                // Celda para "Empleado" en la fila de números de días
+                dayNumberRow.classList.add('day-number-header-row');
                 dayNumberRow.appendChild(createElement('th', {
                     textContent: 'Empleado',
                     className: 'py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider sticky-col-header'
                 }));
         
+                let currentAnnualColIndexForHeader = 0; // Contador para colIndex en vista anual
                 for (let m = 1; m <= 12; m++) {
                     const daysInThisMonth = getDaysInMonth(m, year);
                     for (let day = 1; day <= daysInThisMonth; day++) {
-                        const dayNumberWrapper = createElement('span', { className: 'day-number-wrapper', textContent: day });
                         const dayHeaderContent = createElement('div');
-                        dayHeaderContent.appendChild(dayNumberWrapper);
+                        dayHeaderContent.appendChild(createElement('span', { className: 'day-header-date', textContent: day }));
                         dayHeaderContent.appendChild(createElement('span', {
                             className: 'day-header-weekday',
                             textContent: getWeekDayInitial(year, m, day)
                         }));
-                        
-                        dayNumberRow.appendChild(createElement('th', {
-                            className: 'py-3 px-1.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[50px]',
-                        }, [dayHeaderContent]));
+        
+                        const dayContentSpanAnnual = createElement('span', { className: 'day-header-cell-content' });
+                        dayContentSpanAnnual.appendChild(dayHeaderContent);
+        
+                        const thDayAnnual = createElement('th', {
+                            className: 'py-3 px-1.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[50px] day-header-th', // Clase añadida
+                            dataset: { colIndex: currentAnnualColIndexForHeader.toString() } // Usar el índice de columna anual correcto
+                        }, [dayContentSpanAnnual]);
+        
+                        // Listeners para hover directo en el encabezado del día
+                        thDayAnnual.addEventListener('mouseenter', () => {
+                            if (!thDayAnnual.classList.contains('day-header-selection-effect')) {
+                                thDayAnnual.classList.add('day-header-hover-effect');
+                            }
+                        });
+                        thDayAnnual.addEventListener('mouseleave', () => {
+                            thDayAnnual.classList.remove('day-header-hover-effect');
+                        });
+        
+                        dayNumberRow.appendChild(thDayAnnual);
+                        currentAnnualColIndexForHeader++; // Incrementar después de usarlo
                     }
                 }
-                domCache.scheduleTableHead.appendChild(dayNumberRow); // Añade la fila de números de días
+                domCache.scheduleTableHead.appendChild(dayNumberRow);
             }
         }
         
 
         function buildEmployeeRow(employeeName, rowIndex, viewType, currentDisplayMonth, yearToDisplay) {
             const isEvenRow = rowIndex % 2 === 0;
+            // Clases para el fondo de la fila y la celda del nombre, alternando colores
             const rowAndNameCellBgClass = isEvenRow ? 'bg-white' : 'bg-gray-50';
+            // Clases para el efecto hover en toda la fila
             const rowHoverBgClass = isEvenRow ? 'hover:bg-gray-100' : 'hover:bg-gray-200';
         
+            // Crear el elemento TR para la fila del empleado
             const employeeRow = createElement('tr', {
                 className: `draggable-row ${rowAndNameCellBgClass} ${rowHoverBgClass}`,
-                dataset: { rowIndex: rowIndex.toString(), employeeName: employeeName } // Añadir employeeName como data-attribute
+                dataset: { 
+                    rowIndex: rowIndex.toString(), 
+                    employeeName: employeeName 
+                }
             });
         
+            // Crear la celda para el nombre del empleado (sticky)
             const nameCell = createElement('td', {
                 className: `py-2 px-4 whitespace-nowrap text-sm font-medium text-gray-800 sticky-col employee-name-cell ${rowAndNameCellBgClass}`,
                 title: 'Doble clic para editar. Arrastra para reordenar.'
             });
         
+            // Span para mostrar el nombre, hacerlo arrastrable
             const nameSpan = createElement('span', {
-                className: 'employee-name-display flex-grow',
+                className: 'employee-name-display flex-grow', // flex-grow para que ocupe espacio y permita al icono estar a la derecha
                 textContent: employeeName,
                 attributes: { draggable: "true" }
             });
-            const deleteIcon = createDeleteEmployeeIcon(employeeName);
+            // Icono para eliminar empleado
+            const deleteIcon = createDeleteEmployeeIcon(employeeName); // Asumiendo que createDeleteEmployeeIcon existe
         
             nameCell.appendChild(nameSpan);
             nameCell.appendChild(deleteIcon);
             employeeRow.appendChild(nameCell);
         
-            // Lógica para añadir celdas de turno (igual que antes)
+            // Lógica para añadir celdas de turno según la vista (mensual o anual)
             if (viewType === 'monthly') {
                 const daysInSelectedMonth = getDaysInMonth(currentDisplayMonth, yearToDisplay);
                 const employeeMonthData = scheduleData[employeeName]?.[currentDisplayMonth] || {};
                 for (let day = 1; day <= daysInSelectedMonth; day++) {
                     const shift = employeeMonthData[day] || "";
+                    const colIdx = day - 1; // El colIndex para la cabecera y la celda de datos debe coincidir
+        
                     const tdShift = createElement('td', {
                         textContent: shift,
-                        className: 'shift-cell',
+                        className: 'shift-cell', // Clase base para todas las celdas de turno
                         dataset: {
                             employee: employeeName,
                             month: currentDisplayMonth.toString(),
                             day: day.toString(),
-                            colIndex: (day - 1).toString()
+                            colIndex: colIdx.toString() // Importante para el hover cruzado y la selección
                         }
                     });
-                    applyShiftCellStyles(tdShift, shift);
+                    applyShiftCellStyles(tdShift, shift); // Aplica colores y estilos basados en el turno
+        
+                    // Aplicar clase de selección si la celda está seleccionada
                     if (selectedCells.some(sc => sc.employee === employeeName && sc.month === currentDisplayMonth && sc.day === day)) {
                         tdShift.classList.add('cell-selected');
                     }
+        
+                    // Listeners para el efecto hover cruzado (de celda de datos a encabezado de día)
+                    tdShift.addEventListener('mouseenter', () => {
+                        const headerCell = domCache.scheduleTableHead.querySelector(`th.day-header-th[data-col-index="${colIdx}"]`);
+                        if (headerCell && !headerCell.classList.contains('day-header-selection-effect')) {
+                            headerCell.classList.add('day-header-hover-effect');
+                        }
+                    });
+                    tdShift.addEventListener('mouseleave', () => {
+                        const headerCell = domCache.scheduleTableHead.querySelector(`th.day-header-th[data-col-index="${colIdx}"]`);
+                        if (headerCell) {
+                            // Solo quitar el hover si no está seleccionado, aunque updateDayHeaderHighlights debería manejar esto
+                            headerCell.classList.remove('day-header-hover-effect');
+                        }
+                    });
                     employeeRow.appendChild(tdShift);
                 }
             } else if (viewType === 'annual') {
-                let currentAnnualColIndex = 0;
+                let currentAnnualColIndex = 0; // Este debe ser el mismo índice usado en buildScheduleTableHeader para los TH
                 for (let m = 1; m <= 12; m++) {
                     const employeeMonthData = scheduleData[employeeName]?.[m] || {};
                     const daysInThisMonth = getDaysInMonth(m, yearToDisplay);
                     for (let day = 1; day <= daysInThisMonth; day++) {
                         const shift = employeeMonthData[day] || "";
+                        const colIdx = currentAnnualColIndex; // Usar el índice de columna anual
+        
                         const tdShift = createElement('td', {
                             textContent: shift,
                             className: 'shift-cell',
@@ -6379,37 +6469,47 @@
                                 employee: employeeName,
                                 month: m.toString(),
                                 day: day.toString(),
-                                colIndex: currentAnnualColIndex.toString()
+                                colIndex: colIdx.toString()
                             }
                         });
                         applyShiftCellStyles(tdShift, shift);
                         if (selectedCells.some(sc => sc.employee === employeeName && sc.month === m && sc.day === day)) {
                             tdShift.classList.add('cell-selected');
                         }
+        
+                        // Listeners para el efecto hover cruzado
+                        tdShift.addEventListener('mouseenter', () => {
+                            const headerCell = domCache.scheduleTableHead.querySelector(`th.day-header-th[data-col-index="${colIdx}"]`);
+                            if (headerCell && !headerCell.classList.contains('day-header-selection-effect')) {
+                                headerCell.classList.add('day-header-hover-effect');
+                            }
+                        });
+                        tdShift.addEventListener('mouseleave', () => {
+                            const headerCell = domCache.scheduleTableHead.querySelector(`th.day-header-th[data-col-index="${colIdx}"]`);
+                            if (headerCell) {
+                                headerCell.classList.remove('day-header-hover-effect');
+                            }
+                        });
                         employeeRow.appendChild(tdShift);
                         currentAnnualColIndex++;
                     }
                 }
             }
         
-            // --- LÓGICA DE HOVER MODIFICADA ---
-            if (nameSpan) { // Ahora los listeners se aplican al nameSpan para controlar sus clases
+            // Listeners para el resaltado del nombre del empleado (hover y selección)
+            if (nameSpan) {
                 employeeRow.addEventListener('mouseenter', () => {
-                    // Solo aplicar efecto hover si el efecto de selección no está activo
                     if (!nameSpan.classList.contains('employee-name-selection-effect')) {
                         nameSpan.classList.add('employee-name-hover-effect');
                     }
                 });
-        
                 employeeRow.addEventListener('mouseleave', () => {
-                    // Siempre quitar el efecto hover al salir
                     nameSpan.classList.remove('employee-name-hover-effect');
                 });
             }
-            // --- FIN LÓGICA DE HOVER MODIFICADA ---
-        
             return employeeRow;
         }
+        
 
         /**
          * Actualiza el resaltado de los nombres de los empleados basado en las celdas actualmente seleccionadas.
@@ -6418,28 +6518,21 @@
          */
         function updateNameHighlightsBasedOnSelection() {
             if (!domCache.scheduleTableBody) return;
-        
-            // Obtener todas las filas de empleados visibles
             const employeeRows = domCache.scheduleTableBody.querySelectorAll('tr.draggable-row[data-employee-name]');
         
             employeeRows.forEach(row => {
                 const employeeNameForRow = row.dataset.employeeName;
-                const nameSpan = row.querySelector('.employee-name-display'); // El span dentro de la celda del nombre
-        
+                const nameSpan = row.querySelector('.employee-name-display');
                 if (!nameSpan || !employeeNameForRow) return;
         
-                // Comprobar si alguna celda de este empleado está en selectedCells
                 const isEmployeeSelected = selectedCells.some(sc => sc.employee === employeeNameForRow);
         
                 if (isEmployeeSelected) {
-                    // Empleado tiene celdas seleccionadas:
-                    nameSpan.classList.remove('employee-name-hover-effect'); // Quitar efecto hover para dar prioridad al de selección
+                    nameSpan.classList.remove('employee-name-hover-effect'); // <--- LÍNEA MODIFICADA/ASEGURADA
                     nameSpan.classList.add('employee-name-selection-effect');
                 } else {
-                    // Empleado NO tiene celdas seleccionadas:
                     nameSpan.classList.remove('employee-name-selection-effect');
-                    // El efecto hover se manejará por sus propios listeners (mouseenter/mouseleave en la fila)
-                    // Si el cursor está actualmente sobre la fila, el mouseenter ya se habrá encargado o se encargará.
+                    // El efecto hover se maneja por sus propios listeners de mouseenter/mouseleave en la fila
                 }
             });
         }
@@ -6719,7 +6812,7 @@
 		
         function processCellClick(cellInfo, isShiftKey, isCtrlOrMetaKey, isTap = false) {
             if (isShiftKey && lastSelectedCellInfo) {
-                clearSelection(false); // No ocultar toolbar todavía
+                clearSelection(false); 
                 const minRow = Math.min(lastSelectedCellInfo.rowIndex, cellInfo.rowIndex);
                 const maxRow = Math.max(lastSelectedCellInfo.rowIndex, cellInfo.rowIndex);
                 const minCol = Math.min(lastSelectedCellInfo.colIndex, cellInfo.colIndex);
@@ -6738,32 +6831,29 @@
                     }
                 });
             } else if (isCtrlOrMetaKey || isTap) {
-                // Si es un toque y la celda ya está seleccionada y es la única, deseleccionarla.
                 if (isTap && selectedCells.length === 1 && selectedCells[0].tdElement === cellInfo.tdElement) {
                     toggleCellSelection(cellInfo);
                 } else if (isCtrlOrMetaKey) {
                     toggleCellSelection(cellInfo);
                 } else if (isTap && !selectedCells.some(sc => sc.tdElement === cellInfo.tdElement)) {
-                    // Si es un tap y la celda no está seleccionada, limpiar otras y seleccionarla
                     clearSelection(false);
                     toggleCellSelection(cellInfo);
-                } else if (isTap) { // Si es tap y la celda está seleccionada (pero no es la única)
+                } else if (isTap) { 
                     toggleCellSelection(cellInfo);
                 }
                 lastSelectedCellInfo = cellInfo;
-            } else { // Click normal (sin Shift, Ctrl/Meta, o no es un tap especial)
+            } else { 
                 if (!selectedCells.some(sc => sc.tdElement === cellInfo.tdElement) || selectedCells.length > 1) {
                     clearSelection(false);
                     toggleCellSelection(cellInfo);
                 } else if (selectedCells.length === 1 && selectedCells[0].tdElement === cellInfo.tdElement) {
-                    // Si es click normal y la celda ya es la única seleccionada, no hacer nada o deseleccionar.
-                    // Para este caso, la deseleccionaremos, que es lo que hace toggleCellSelection.
                      toggleCellSelection(cellInfo);
                 }
                 lastSelectedCellInfo = cellInfo;
             }
             updateMultiselectToolbar();
-            updateNameHighlightsBasedOnSelection(); // <--- LLAMADA AÑADIDA
+            updateNameHighlightsBasedOnSelection();
+            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
         }
 
         function toggleCellSelection(cellInfo) {
@@ -6781,7 +6871,7 @@
         
         function clearSelection(hideToolbar = true) {
             selectedCells.forEach(cell => {
-                if (cell.tdElement) { // Comprobar si tdElement existe
+                if (cell.tdElement) {
                     cell.tdElement.classList.remove('cell-selected');
                 }
             });
@@ -6790,7 +6880,8 @@
             if (hideToolbar) {
                 updateMultiselectToolbar();
             }
-            updateNameHighlightsBasedOnSelection(); // <--- LLAMADA AÑADIDA
+            updateNameHighlightsBasedOnSelection();
+            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
         }
         function setupMultiselectToolbar() {
             if (!domCache.multiselectToolbar) {
@@ -6836,10 +6927,13 @@
         }
         
         function applyShiftToSelection(newShift) {
+            // Comprueba si hay celdas seleccionadas; si no, no hace nada.
             if (selectedCells.length === 0) {
+                // console.warn("applyShiftToSelection: No hay celdas seleccionadas."); // Descomentar para depuración si es necesario
                 return;
             }
         
+            // Si el turno es "Otro", muestra el modal para introducir un evento personalizado.
             if (newShift === 'Otro') {
                 cellsBeingEditedViaEventModal = selectedCells.map(sc => ({
                     tdElement: sc.tdElement,
@@ -6848,7 +6942,7 @@
                     day: sc.day,
                     originalValue: scheduleData[sc.employee]?.[sc.month]?.[sc.day] || ""
                 }));
-                isSingleCellEditViaModal = false;
+                isSingleCellEditViaModal = false; // Indica que la edición podría ser para múltiples celdas.
                 let modalTitle;
                 if (selectedCells.length === 1) {
                     const sc = selectedCells[0];
@@ -6856,11 +6950,12 @@
                 } else {
                     modalTitle = `Establecer Evento para ${selectedCells.length} Celdas`;
                 }
-                showCustomEventModal(modalTitle, "");
+                showCustomEventModal(modalTitle, ""); // Muestra el modal. Asume que showCustomEventModal está definida.
                 return;
             }
         
-            let changesMadeCount = 0;
+            let changesMadeCount = 0; // Contador para los cambios realizados.
+            // Descripción para el historial de deshacer/rehacer.
             let undoDescription = `Turno de ${selectedCells.length} celda(s) cambiado a '${newShift || "Vacío"}'.`;
             if (selectedCells.length === 1) {
                  const sc = selectedCells[0];
@@ -6868,27 +6963,36 @@
                  undoDescription = `Turno de ${sc.employee} (${sc.day}/${SHORT_MONTH_NAMES[sc.month-1]}) cambiado de '${originalShift || "Vacío"}' a '${newShift || "Vacío"}'.`;
             }
         
+            // Determina si es necesario guardar el estado para deshacer.
             let needsStateSave = selectedCells.some(cellInfo => {
                 const originalShift = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
                 return originalShift !== newShift;
             });
         
             if (needsStateSave) {
-                saveStateForUndo(undoDescription);
+                saveStateForUndo(undoDescription); // Guarda el estado actual para poder deshacer. Asume que saveStateForUndo está definida.
             }
         
+            // Itera sobre cada celda seleccionada y aplica el nuevo turno.
             selectedCells.forEach(cellInfo => {
                 const originalShift = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
                 if (originalShift !== newShift) {
+                    // Llama a updateShift para actualizar los datos y la UI de la celda.
+                    // El último argumento 'false' indica que no se registre esta acción individualmente en el historial de deshacer,
+                    // ya que se guardó un estado global para toda la operación.
                     updateShift(cellInfo.tdElement, cellInfo.employee, cellInfo.month, cellInfo.day, newShift, originalShift, false);
                     changesMadeCount++;
                 }
             });
         
             if (changesMadeCount > 0) {
-                // Lógica post-cambio si es necesaria, por ejemplo:
-                // initializeAndRenderNewStatistics(); // Si es pertinente
+                // Aquí se podrían realizar acciones adicionales si se hicieron cambios,
+                // como actualizar estadísticas si fuera pertinente.
+                // initializeAndRenderNewStatistics(); // Descomentar si las estadísticas deben actualizarse aquí.
             }
+            
+            // Llama a validateAndDisplayRuleViolations para actualizar los indicadores de normas inmediatamente.
+            validateAndDisplayRuleViolations(); // <--- LLAMADA CLAVE PARA ACTUALIZAR NORMAS
         }
         
         
@@ -10643,7 +10747,36 @@
                 }
             });
         }
-            
+   
+        /**
+         * Actualiza el resaltado de los encabezados de los días basado en las celdas actualmente seleccionadas.
+         */
+        function updateDayHeaderHighlights() {
+            if (!domCache.scheduleTableHead) return;
+        
+            const dayHeaderCells = domCache.scheduleTableHead.querySelectorAll('th.day-header-th');
+        
+            dayHeaderCells.forEach(th => {
+                const colIndexOfHeader = th.dataset.colIndex;
+                if (colIndexOfHeader === undefined) return;
+        
+                const isColumnSelected = selectedCells.some(sc => sc.colIndex.toString() === colIndexOfHeader);
+        
+                // const contentSpan = th.querySelector('.day-header-cell-content'); // No es necesario interactuar con el span aquí directamente
+                // if (!contentSpan) return;
+        
+                if (isColumnSelected) {
+                    // Si la columna está seleccionada, quitar efecto hover y aplicar efecto selección
+                    th.classList.remove('day-header-hover-effect'); 
+                    th.classList.add('day-header-selection-effect');
+                } else {
+                    // Si la columna no está seleccionada, quitar efecto selección
+                    th.classList.remove('day-header-selection-effect');
+                    // El efecto hover se manejará por sus propios listeners (mouseenter/mouseleave en el 'th' o en las 'td')
+                }
+            });
+        }
+          
 
     </script>
 </body>
