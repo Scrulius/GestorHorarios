@@ -306,11 +306,15 @@
         }
         
         /* Estilo base para todas las celdas (th y td) de la tabla de horarios */
-        #schedule-table th,
-        #schedule-table td {
-            border-right: 1px solid #e5e7eb; /* Borde derecho gris claro (Tailwind gray-200) */
-            border-bottom: 1px solid #e5e7eb; /* Borde inferior gris claro */
-        }
+		#schedule-table th,
+		#schedule-table td {
+			/* border-right: 1px solid #94a3b8; */ /* LÍNEA COMENTADA O ELIMINADA */
+			/* border-bottom: 1px solid #94a3b8; */ /* LÍNEA COMENTADA O ELIMINADA */
+			/* Puedes añadir un padding ligero si es necesario para asegurar separación si no hay bordes */
+			/* padding: 1px; */ /* Ejemplo de padding mínimo, ajusta según necesidad */
+		}
+
+
         
         /* Eliminar borde derecho de la última celda de cada fila */
         #schedule-table tr th:last-child,
