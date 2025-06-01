@@ -306,31 +306,54 @@
         }
         
         /* Estilo base para todas las celdas (th y td) de la tabla de horarios */
-		#schedule-table th,
-		#schedule-table td {
-			/* border-right: 1px solid #94a3b8; */ /* LÍNEA COMENTADA O ELIMINADA */
-			/* border-bottom: 1px solid #94a3b8; */ /* LÍNEA COMENTADA O ELIMINADA */
-			/* Puedes añadir un padding ligero si es necesario para asegurar separación si no hay bordes */
-			/* padding: 1px; */ /* Ejemplo de padding mínimo, ajusta según necesidad */
-		}
-
-
+        /* Estilo base para todas las celdas (th y td) de la tabla de horarios - ESTADO POR DEFECTO CON BORDES */
+        #schedule-table th,
+        #schedule-table td {
+            border-right: 1px solid #d1d5db; /* Borde derecho gris (Tailwind gray-300) */
+            border-bottom: 1px solid #d1d5db; /* Borde inferior gris (Tailwind gray-300) */
+            /* Opcional: transición suave si cambias colores dinámicamente, aunque aquí es más un on/off */
+            /* transition: border-color 0.2s ease-in-out; */
+        }
         
-        /* Eliminar borde derecho de la última celda de cada fila */
+        /* Reglas para eliminar bordes en los extremos (cuando los bordes son visibles) */
         #schedule-table tr th:last-child,
         #schedule-table tr td:last-child {
             border-right: none;
         }
         
-        /* Eliminar borde inferior de la última fila del thead y tbody */
-        /* (Esto puede ser opcional o necesitar ajustes según cómo quieras los bordes externos de la tabla) */
-        #schedule-table thead tr:last-child th {
-            /* border-bottom: 1px solid #d1d5db; /* Un borde más grueso para separar cabecera de cuerpo */
-        }
         #schedule-table tbody tr:last-child td {
-            border-bottom: none; /* Si la tabla tiene un borde general, este podría no ser necesario */
+            border-bottom: none;
         }
-        /* --- FIN: ESTILOS PARA TABLA CON BORDER-COLLAPSE: SEPARATE --- */
+        /* Opcional: Borde inferior para la cabecera para separarla del cuerpo cuando los bordes son visibles */
+        /*
+        #schedule-table thead tr:last-child th {
+            border-bottom: 1px solid #d1d5db;
+        }
+		
+        /* Cuando la tabla tiene la clase .grid-borders-hidden, se quitan los bordes */
+        #schedule-table.grid-borders-hidden th,
+        #schedule-table.grid-borders-hidden td {
+            border-right-color: transparent; /* O puedes usar border-right: none; */
+            border-bottom-color: transparent; /* O puedes usar border-bottom: none; */
+        }
+        
+        /* Si usaste 'none' arriba, estas reglas de :last-child no son estrictamente necesarias
+           cuando .grid-borders-hidden está activo, pero no hacen daño.
+           Si usaste 'transparent', estas aseguran que los bordes externos realmente desaparezcan. */
+        #schedule-table.grid-borders-hidden tr th:last-child,
+        #schedule-table.grid-borders-hidden tr td:last-child {
+            border-right: none;
+        }
+        
+        #schedule-table.grid-borders-hidden tbody tr:last-child td {
+            border-bottom: none;
+        }
+        /* Si tenías un borde inferior para la cabecera, también quítalo cuando los bordes están ocultos */
+        /*
+        #schedule-table.grid-borders-hidden thead tr:last-child th {
+            border-bottom-color: transparent;
+        }
+        */
         
         
         /* Estilos para la nueva fila de nombres de meses en la cabecera anual */
@@ -418,6 +441,60 @@
             border-right: 1px solid #e5e7eb !important;
             z-index: 15; 
         }
+		
+        #toggle-grid-borders-button {
+            padding: 0.4rem 0.6rem; /* Ajusta el padding si es necesario */
+            border-radius: 0.375rem; /* Esquinas redondeadas (Tailwind rounded-md) */
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent; /* Borde base transparente */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Estilo cuando los bordes están INACTIVOS (por defecto o cuando se ocultan) */
+        #toggle-grid-borders-button.button-grid-inactive {
+            background-color: #f3f4f6; /* Tailwind bg-gray-100 */
+            border-color: #d1d5db;    /* Tailwind border-gray-300 */
+            color: #4b5563;           /* Tailwind text-gray-600 */
+        }
+        #toggle-grid-borders-button.button-grid-inactive:hover {
+            background-color: #e5e7eb; /* Tailwind bg-gray-200 */
+            border-color: #9ca3af;    /* Tailwind border-gray-400 */
+            color: #1f2937;           /* Tailwind text-gray-800 */
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        /* Estilo cuando los bordes están ACTIVOS (visibles) */
+        #toggle-grid-borders-button.button-grid-active {
+            background-color: #e0e7ff; /* Tailwind bg-indigo-100 */
+            border-color: #a5b4fc;    /* Tailwind border-indigo-300 */
+            color: #4f46e5;           /* Tailwind text-indigo-600 */
+        }
+        #toggle-grid-borders-button.button-grid-active:hover {
+            background-color: #c7d2fe; /* Tailwind bg-indigo-200 */
+            border-color: #818cf8;    /* Tailwind border-indigo-400 */
+            color: #4338ca;           /* Tailwind text-indigo-700 */
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        /* Estilo general al presionar el botón */
+        #toggle-grid-borders-button:active {
+            transform: scale(0.96);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        /* Estilo para el icono dentro del botón (opcional, si quieres que el icono también cambie) */
+        #toggle-grid-borders-button.button-grid-inactive .fa-border-none {
+            color: #374151; /* Un gris más oscuro para el icono cuando está inactivo */
+        }
+        #toggle-grid-borders-button.button-grid-active .fa-border-all {
+            color: #4f46e5; /* Color índigo para el icono cuando está activo */
+        }
+        
+
         /* --- FIN DE LA CORRECCIÓN PARA EL FONDO Y BORDES DE LA COLUMNA DE EMPLEADOS --- */
 
         /* Estilo base para la transición del nombre del empleado */
@@ -1678,9 +1755,14 @@
             </div>
             <section id="schedule-table-section" class="bg-white rounded-xl shadow-xl">
                 <h2 id="current-month-year-display" class="text-2xl font-bold text-gray-800 p-5 pr-28 sm:pr-32 border-b border-gray-200 bg-gray-50 rounded-t-xl relative flex items-center">
-                    <span id="current-month-year-text-prefix">Horario para</span> 
-                    <span id="current-month-text" class="ml-1 mr-2"></span> 
+                    <span id="current-month-year-text-prefix">Horario para</span>
+                    <span id="current-month-text" class="ml-1 mr-2"></span>
                     <input type="number" id="title-year-input" value="2026" class="p-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-2xl font-bold text-gray-800 w-24 text-center" style="max-width: 100px;">
+                    
+                    <button id="toggle-grid-borders-button" 
+                            title="Mostrar/Ocultar Bordes de Cuadrícula" 
+                            class="ml-3 p-1.5 text-gray-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 rounded-md transition-colors duration-150">
+                        <i id="toggle-grid-icon" class="fas fa-border-all"></i> </button>
                     <span id="unsaved-indicator-table" class="unsaved-dot hidden-by-default ml-3" title="Hay cambios sin guardar"></span>
                     
                     <button id="help-icon-container" 
@@ -2950,6 +3032,10 @@
         let currentShiftColors = { ...DEFAULT_SHIFT_COLORS };
         let activeColorPalette = null;
 
+		const GRID_BORDERS_PREF_KEY = 'scheduleAppGridBordersVisible_v1';
+		let gridBordersVisible = false; // Estado por defecto: bordes visibles
+
+
         let scheduleData = {};
         let employeeNamesOrdered = [];
         let currentViewMode = 'monthly';
@@ -3279,6 +3365,8 @@
             domCache.welcomeMessage = document.getElementById('welcome-message');
             domCache.scheduleDisplaySection = document.getElementById('schedule-display-section');
             domCache.scheduleTableSection = document.getElementById('schedule-table-section');
+			domCache.toggleGridBordersButton = document.getElementById('toggle-grid-borders-button');
+			domCache.toggleGridIcon = document.getElementById('toggle-grid-icon');
         
             // --- Elementos de la Tabla de Horario Principal ---
             domCache.currentMonthYearDisplay = document.getElementById('current-month-year-display');
@@ -3286,6 +3374,8 @@
             domCache.scheduleTableHead = document.getElementById('schedule-table-head');
             domCache.scheduleTableBody = document.getElementById('schedule-table-body');
             domCache.noDataMessage = document.getElementById('no-data-message');
+			domCache.scheduleTable = document.getElementById('schedule-table'); // <<< AÑADE ESTA LÍNEA
+
         
             // --- Barra de Herramientas de Multiselección y Paleta de Colores ---
             domCache.multiselectToolbar = document.getElementById('animated-grouped-toolbar');
@@ -3758,6 +3848,11 @@
                     }
                 });
             }
+			
+            if (domCache.toggleGridBordersButton) {
+                domCache.toggleGridBordersButton.addEventListener('click', toggleGridBorders);
+            }
+            
         
             if (domCache.openHistoryModalButton) {
                 domCache.openHistoryModalButton.addEventListener('click', () => {
@@ -4482,6 +4577,7 @@
             loadRulesConfigFromLocalStorage(); // Carga normas
             loadLogoConfig();                // Carga config del logo
             loadPdfFontSizes();              // <--- ¡AÑADIR ESTA LÍNEA AQUÍ! Carga config de fuentes PDF
+			loadGridBordersPreference();
         
             // --- CONFIGURAR LISTENERS (AHORA setupEventListeners llamará a setupPdfFontEventListeners) ---
             setupEventListeners(); 
@@ -10781,6 +10877,41 @@
             });
         }
           
+        function toggleGridBorders() {
+            gridBordersVisible = !gridBordersVisible;
+            applyGridBordersState();
+            localStorage.setItem(GRID_BORDERS_PREF_KEY, gridBordersVisible.toString());
+            showToast(gridBordersVisible ? 'Bordes de cuadrícula mostrados.' : 'Bordes de cuadrícula ocultados.', 'info');
+        }
+        
+        function loadGridBordersPreference() {
+            const savedPref = localStorage.getItem(GRID_BORDERS_PREF_KEY);
+            // Si no hay preferencia guardada, el valor por defecto ahora es false (NO visible)
+            gridBordersVisible = (savedPref === null) ? false : (savedPref === 'true');
+            applyGridBordersState();
+        }
+        
+        
+        function applyGridBordersState() {
+            if (!domCache.scheduleTable || !domCache.toggleGridIcon || !domCache.toggleGridBordersButton) {
+                console.warn("applyGridBordersState: Elementos del DOM no encontrados.");
+                return;
+            }
+            // Aplicar/quitar clase a la tabla para mostrar/ocultar bordes
+            domCache.scheduleTable.classList.toggle('grid-borders-hidden', !gridBordersVisible);
+        
+            // Cambiar el icono del botón
+            domCache.toggleGridIcon.className = gridBordersVisible ? 'fas fa-border-all' : 'fas fa-border-none';
+        
+            // Cambiar el título del botón (tooltip)
+            domCache.toggleGridBordersButton.title = gridBordersVisible ? 'Ocultar Bordes de Cuadrícula' : 'Mostrar Bordes de Cuadrícula';
+        
+            // NUEVO: Aplicar clases al botón para cambiar su estilo base según el estado
+            domCache.toggleGridBordersButton.classList.toggle('button-grid-active', gridBordersVisible);
+            domCache.toggleGridBordersButton.classList.toggle('button-grid-inactive', !gridBordersVisible);
+        }
+        
+        
 
     </script>
 </body>
