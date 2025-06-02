@@ -121,9 +121,27 @@
 		
 
         .cell-selected {
-            outline: 2px dashed #4f46e5; /* indigo-600 */
-            outline-offset: -2px;
-            background-color: #e0e7ff !important; /* indigo-100 */
+            /* Eliminamos el outline de aquí */
+            /* background-color: transparent !important; */ /* Asegúrate de que no haya un fondo que interfiera */
+            transform: scale(1);
+            font-weight: bold; /* Opcional */
+            z-index: 3;
+            /* border-radius: 4px; */ /* Opcional, si tus celdas lo usan */
+            /* ¡Importante! Asegúrate de que no haya otras propiedades de borde aquí
+               que puedan entrar en conflicto con las clases que añadiremos. */
+        }
+		
+        .selected-border-top {
+            border-top: 3px dashed #4F46E5 !important; /* indigo-600 */
+        }
+        .selected-border-right {
+            border-right: 3px dashed #4F46E5 !important; /* indigo-600 */
+        }
+        .selected-border-bottom {
+            border-bottom: 3px dashed #4F46E5 !important; /* indigo-600 */
+        }
+        .selected-border-left {
+            border-left: 3px dashed #4F46E5 !important; /* indigo-600 */
         }
     
         .hidden-by-default {
@@ -3619,6 +3637,7 @@
             const currentCellInfo = getCellInfoFromElement(currentTd);
             if (!currentCellInfo) return;
         
+            // Evitar reprocesar la misma celda si el ratón no se ha movido a una nueva
             if (lastCellOverForDragSelectInfo && currentCellInfo.tdElement === lastCellOverForDragSelectInfo.tdElement) {
                 return;
             }
@@ -3636,25 +3655,29 @@
         
                 const isInCurrentRect = cellIterInfo.rowIndex >= minRow && cellIterInfo.rowIndex <= maxRow &&
                                         cellIterInfo.colIndex >= minCol && cellIterInfo.colIndex <= maxCol;
+                
                 let isSelectedInGlobalList = selectedCells.some(sc => sc.tdElement === cellIterInfo.tdElement);
         
                 if (isInCurrentRect) {
                     if (!isSelectedInGlobalList) {
                         selectedCells.push(cellIterInfo);
-                        cellElement.classList.add('cell-selected');
+                        cellElement.classList.add('cell-selected'); // Clase base de selección
                         cellsAffectedByCurrentDrag.add(cellElement);
                     }
                 } else {
+                    // Si la celda está fuera del rectángulo actual Y fue afectada por este arrastre específico
                     if (isSelectedInGlobalList && cellsAffectedByCurrentDrag.has(cellElement)) {
                         const index = selectedCells.findIndex(sc => sc.tdElement === cellIterInfo.tdElement);
                         if (index > -1) selectedCells.splice(index, 1);
-                        cellElement.classList.remove('cell-selected');
+                        cellElement.classList.remove('cell-selected'); // Quitar clase base
+                        // Las clases de borde se actualizarán globalmente
                     }
                 }
             });
             updateMultiselectToolbar();
             updateNameHighlightsBasedOnSelection();
-            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
+            updateDayHeaderHighlights();
+            updateSelectedCellsMergedBorders(); // <--- LLAMADA A LA NUEVA FUNCIÓN
         }
         
 
@@ -6936,7 +6959,7 @@
 		
         function processCellClick(cellInfo, isShiftKey, isCtrlOrMetaKey, isTap = false) {
             if (isShiftKey && lastSelectedCellInfo) {
-                clearSelection(false); 
+                clearSelection(false); // Limpiar selección anterior sin ocultar la barra de herramientas inmediatamente
                 const minRow = Math.min(lastSelectedCellInfo.rowIndex, cellInfo.rowIndex);
                 const maxRow = Math.max(lastSelectedCellInfo.rowIndex, cellInfo.rowIndex);
                 const minCol = Math.min(lastSelectedCellInfo.colIndex, cellInfo.colIndex);
@@ -6955,29 +6978,36 @@
                     }
                 });
             } else if (isCtrlOrMetaKey || isTap) {
+                // Lógica para Ctrl/Cmd + Clic o toques múltiples
+                // Si es un toque y la celda ya es la única seleccionada, la deselecciona.
                 if (isTap && selectedCells.length === 1 && selectedCells[0].tdElement === cellInfo.tdElement) {
                     toggleCellSelection(cellInfo);
-                } else if (isCtrlOrMetaKey) {
+                } else if (isCtrlOrMetaKey) { // Ctrl/Cmd siempre alterna
                     toggleCellSelection(cellInfo);
                 } else if (isTap && !selectedCells.some(sc => sc.tdElement === cellInfo.tdElement)) {
+                    // Si es un toque en una nueva celda y no hay otras seleccionadas (o queremos reemplazar la selección)
                     clearSelection(false);
                     toggleCellSelection(cellInfo);
-                } else if (isTap) { 
+                } else if (isTap) { // Si es un toque y hay otras celdas seleccionadas, añade a la selección
                     toggleCellSelection(cellInfo);
                 }
-                lastSelectedCellInfo = cellInfo;
-            } else { 
+                lastSelectedCellInfo = cellInfo; // Actualizar la última celda interactuada
+            } else { // Clic simple sin modificadores
+                // Si la celda no está seleccionada, o si hay múltiples celdas seleccionadas,
+                // limpiar la selección actual y seleccionar solo esta celda.
                 if (!selectedCells.some(sc => sc.tdElement === cellInfo.tdElement) || selectedCells.length > 1) {
                     clearSelection(false);
                     toggleCellSelection(cellInfo);
                 } else if (selectedCells.length === 1 && selectedCells[0].tdElement === cellInfo.tdElement) {
+                    // Si la celda ya es la única seleccionada, un clic simple la deselecciona.
                      toggleCellSelection(cellInfo);
                 }
                 lastSelectedCellInfo = cellInfo;
             }
             updateMultiselectToolbar();
             updateNameHighlightsBasedOnSelection();
-            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
+            updateDayHeaderHighlights();
+            updateSelectedCellsMergedBorders(); // <--- LLAMADA A LA NUEVA FUNCIÓN
         }
 
         function toggleCellSelection(cellInfo) {
@@ -6996,16 +7026,19 @@
         function clearSelection(hideToolbar = true) {
             selectedCells.forEach(cell => {
                 if (cell.tdElement) {
-                    cell.tdElement.classList.remove('cell-selected');
+                    cell.tdElement.classList.remove('cell-selected'); // Quitas la clase base de selección
+                    // Las clases de borde individuales se limpiarán por updateSelectedCellsMergedBorders
                 }
             });
             selectedCells = [];
             lastSelectedCellInfo = null;
+            
             if (hideToolbar) {
                 updateMultiselectToolbar();
             }
             updateNameHighlightsBasedOnSelection();
-            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
+            updateDayHeaderHighlights();
+            updateSelectedCellsMergedBorders(); // <--- LLAMADA A LA NUEVA FUNCIÓN
         }
         function setupMultiselectToolbar() {
             if (!domCache.multiselectToolbar) {
@@ -7051,13 +7084,10 @@
         }
         
         function applyShiftToSelection(newShift) {
-            // Comprueba si hay celdas seleccionadas; si no, no hace nada.
             if (selectedCells.length === 0) {
-                // console.warn("applyShiftToSelection: No hay celdas seleccionadas."); // Descomentar para depuración si es necesario
                 return;
             }
         
-            // Si el turno es "Otro", muestra el modal para introducir un evento personalizado.
             if (newShift === 'Otro') {
                 cellsBeingEditedViaEventModal = selectedCells.map(sc => ({
                     tdElement: sc.tdElement,
@@ -7066,7 +7096,7 @@
                     day: sc.day,
                     originalValue: scheduleData[sc.employee]?.[sc.month]?.[sc.day] || ""
                 }));
-                isSingleCellEditViaModal = false; // Indica que la edición podría ser para múltiples celdas.
+                isSingleCellEditViaModal = false;
                 let modalTitle;
                 if (selectedCells.length === 1) {
                     const sc = selectedCells[0];
@@ -7074,12 +7104,11 @@
                 } else {
                     modalTitle = `Establecer Evento para ${selectedCells.length} Celdas`;
                 }
-                showCustomEventModal(modalTitle, ""); // Muestra el modal. Asume que showCustomEventModal está definida.
+                showCustomEventModal(modalTitle, "");
                 return;
             }
         
-            let changesMadeCount = 0; // Contador para los cambios realizados.
-            // Descripción para el historial de deshacer/rehacer.
+            let changesMadeCount = 0;
             let undoDescription = `Turno de ${selectedCells.length} celda(s) cambiado a '${newShift || "Vacío"}'.`;
             if (selectedCells.length === 1) {
                  const sc = selectedCells[0];
@@ -7087,36 +7116,32 @@
                  undoDescription = `Turno de ${sc.employee} (${sc.day}/${SHORT_MONTH_NAMES[sc.month-1]}) cambiado de '${originalShift || "Vacío"}' a '${newShift || "Vacío"}'.`;
             }
         
-            // Determina si es necesario guardar el estado para deshacer.
             let needsStateSave = selectedCells.some(cellInfo => {
                 const originalShift = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
                 return originalShift !== newShift;
             });
         
             if (needsStateSave) {
-                saveStateForUndo(undoDescription); // Guarda el estado actual para poder deshacer. Asume que saveStateForUndo está definida.
+                saveStateForUndo(undoDescription);
             }
         
-            // Itera sobre cada celda seleccionada y aplica el nuevo turno.
             selectedCells.forEach(cellInfo => {
                 const originalShift = scheduleData[cellInfo.employee]?.[cellInfo.month]?.[cellInfo.day] || "";
                 if (originalShift !== newShift) {
-                    // Llama a updateShift para actualizar los datos y la UI de la celda.
-                    // El último argumento 'false' indica que no se registre esta acción individualmente en el historial de deshacer,
-                    // ya que se guardó un estado global para toda la operación.
                     updateShift(cellInfo.tdElement, cellInfo.employee, cellInfo.month, cellInfo.day, newShift, originalShift, false);
                     changesMadeCount++;
                 }
             });
+            
+            // No es necesario llamar a updateSelectedCellsMergedBorders() aquí porque
+            // la selección no cambia, solo el contenido de las celdas.
+            // Los bordes ya deberían estar correctos.
         
             if (changesMadeCount > 0) {
-                // Aquí se podrían realizar acciones adicionales si se hicieron cambios,
-                // como actualizar estadísticas si fuera pertinente.
-                // initializeAndRenderNewStatistics(); // Descomentar si las estadísticas deben actualizarse aquí.
+                // initializeAndRenderNewStatistics(); // Si las estadísticas dependen de los turnos
             }
             
-            // Llama a validateAndDisplayRuleViolations para actualizar los indicadores de normas inmediatamente.
-            validateAndDisplayRuleViolations(); // <--- LLAMADA CLAVE PARA ACTUALIZAR NORMAS
+            validateAndDisplayRuleViolations();
         }
         
         
@@ -10935,7 +10960,50 @@
             domCache.toggleGridBordersButton.classList.toggle('button-grid-inactive', !gridBordersVisible);
         }
         
+        function updateSelectedCellsMergedBorders() {
+            if (!domCache.scheduleTableBody) return;
         
+            // Primero, limpiar todos los bordes de selección de todas las celdas de turno
+            // Esto es importante para celdas que fueron deseleccionadas.
+            const allShiftCells = domCache.scheduleTableBody.querySelectorAll('td.shift-cell');
+            allShiftCells.forEach(cell => {
+                cell.classList.remove('selected-border-top', 'selected-border-right', 'selected-border-bottom', 'selected-border-left');
+            });
+        
+            if (selectedCells.length === 0) {
+                return; // No hay nada que hacer si no hay celdas seleccionadas
+            }
+        
+            // Crear un conjunto (Set) de identificadores únicos para las celdas seleccionadas para búsquedas rápidas
+            const selectedCellIds = new Set();
+            selectedCells.forEach(sc => {
+                // Asumiendo que cellInfo (sc) tiene rowIndex y colIndex
+                selectedCellIds.add(`${sc.rowIndex}_${sc.colIndex}`);
+            });
+        
+            selectedCells.forEach(cellInfo => {
+                const { tdElement, rowIndex, colIndex } = cellInfo;
+        
+                // Comprobar vecina de ARRIBA
+                if (!selectedCellIds.has(`${rowIndex - 1}_${colIndex}`)) {
+                    tdElement.classList.add('selected-border-top');
+                }
+                // Comprobar vecina de la DERECHA
+                if (!selectedCellIds.has(`${rowIndex}_${colIndex + 1}`)) {
+                    tdElement.classList.add('selected-border-right');
+                }
+                // Comprobar vecina de ABAJO
+                if (!selectedCellIds.has(`${rowIndex + 1}_${colIndex}`)) {
+                    tdElement.classList.add('selected-border-bottom');
+                }
+                // Comprobar vecina de la IZQUIERDA
+                if (!selectedCellIds.has(`${rowIndex}_${colIndex - 1}`)) {
+                    tdElement.classList.add('selected-border-left');
+                }
+            });
+        }
+
+
 
     </script>
 </body>
