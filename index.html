@@ -121,29 +121,44 @@
 		
 
         .cell-selected {
-            /* Eliminamos el outline de aquí */
-            /* background-color: transparent !important; */ /* Asegúrate de que no haya un fondo que interfiera */
-            transform: scale(1);
-            font-weight: bold; /* Opcional */
-            z-index: 3;
-            /* border-radius: 4px; */ /* Opcional, si tus celdas lo usan */
-            /* ¡Importante! Asegúrate de que no haya otras propiedades de borde aquí
-               que puedan entrar en conflicto con las clases que añadiremos. */
+            position: relative; 
+            font-weight: bold; 
+            z-index: 3;        
         }
-		
-        .selected-border-top {
-            border-top: 3px dashed #4F46E5 !important; /* indigo-600 */
+        
+        
+        .table-container {
+            position: relative; /* Necesario para posicionar el SVG absolutamente dentro de él */
         }
-        .selected-border-right {
-            border-right: 3px dashed #4F46E5 !important; /* indigo-600 */
+        
+        .selection-border-svg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            /* El width y height se establecerán dinámicamente con JS para que coincidan con la tabla scrolleable */
+            pointer-events: none; /* El SVG no debe interceptar clics */
+            z-index: 2; /* Detrás de las celdas seleccionadas (.cell-selected tiene z-index: 3) 
+                           pero encima de las celdas no seleccionadas. */
+            overflow: visible; /* Para que los trazos no se corten si se dibujan justo en el borde */
         }
-        .selected-border-bottom {
-            border-bottom: 3px dashed #4F46E5 !important; /* indigo-600 */
+        
+        .marching-ants-svg-line {
+            fill: none;
+            stroke: #4F46E5;
+            stroke-width: 5px; /* Ajusta este valor si quieres un borde más grueso o más fino */
+            stroke-dasharray: 7, 5;
+            stroke-linecap: round;
+            stroke-linejoin: round; /* Ayuda a que las esquinas se vean mejor */
+            animation: marching-ants-svg-animation 1.5s linear infinite; /* Ejemplo: 1.2 segundos */
         }
-        .selected-border-left {
-            border-left: 3px dashed #4F46E5 !important; /* indigo-600 */
+        
+        @keyframes marching-ants-svg-animation {
+            to {
+                stroke-dashoffset: -24; /* (7+5)*2 = 24 para un bucle suave de dos patrones completos */
+            }
         }
-    
+        
+
         .hidden-by-default {
             display: none !important;
         }
@@ -1821,6 +1836,7 @@
                         <thead id="schedule-table-head" class="bg-gray-50 sticky-header"></thead>
                         <tbody id="schedule-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
+                    <svg id="selection-border-svg" class="selection-border-svg-overlay"></svg>
                 </div>
                  <div id="no-data-message" class="p-8 text-center text-gray-500 text-lg hidden-by-default">
                     <i class="fas fa-folder-open fa-2x mb-3 text-gray-400"></i><br>
@@ -1956,6 +1972,7 @@
             </div>
         </footer>
     </div>
+    
 
     <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
     <div id="color-palette-popup-container"></div>
@@ -2854,6 +2871,32 @@
         };
         let currentPdfFontSizes = JSON.parse(JSON.stringify(DEFAULT_PDF_FONT_SIZES));
         const LOCAL_STORAGE_KEY_PDF_FONT_SIZES = 'scheduleAppPdfFontSizes_v1';
+		
+        let resizeDebounceTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(() => {
+                if (selectedCells.length > 0) {
+                    console.log("Window resized, redrawing SVG borders.");
+                    updateSelectedCellsMergedBorders();
+                }
+            }, 100); // Un pequeño debounce para no sobrecargar
+        });
+		let globalSvgStrokeWidth = 3;
+        const tableContainerForScroll = document.querySelector('.table-container');
+        if (tableContainerForScroll) {
+            let scrollDebounceTimer;
+            tableContainerForScroll.addEventListener('scroll', () => {
+                clearTimeout(scrollDebounceTimer);
+                scrollDebounceTimer = setTimeout(() => {
+                    if (selectedCells.length > 0) {
+                        // console.log("Table container scrolled, redrawing SVG borders."); // Puede ser muy verboso
+                        updateSelectedCellsMergedBorders();
+                    }
+                }, 50); // Debounce más corto para scroll
+            });
+        }
+        
 		
         // --- CONSTANTES Y CONFIGURACIÓN DEL LOGO ---
         const DEFAULT_LOGO_CONFIG = {
@@ -4614,8 +4657,9 @@
             loadCustomShiftTimes();
             loadRulesConfigFromLocalStorage(); // Carga normas
             loadLogoConfig();                // Carga config del logo
-            loadPdfFontSizes();              // <--- ¡AÑADIR ESTA LÍNEA AQUÍ! Carga config de fuentes PDF
+            loadPdfFontSizes();              // Carga config de fuentes PDF
 			loadGridBordersPreference();
+			initializeGlobalStrokeWidth()
         
             // --- CONFIGURAR LISTENERS (AHORA setupEventListeners llamará a setupPdfFontEventListeners) ---
             setupEventListeners(); 
@@ -10962,49 +11006,117 @@
         }
         
         function updateSelectedCellsMergedBorders() {
-            if (!domCache.scheduleTableBody) return;
+            const svgOverlay = document.getElementById('selection-border-svg');
+            const table = domCache.scheduleTable; // Asegúrate que domCache.scheduleTable esté correctamente cacheado
+            const tableContainer = table.parentElement; // Este es tu div.table-container
         
-            // Primero, limpiar todos los bordes de selección de todas las celdas de turno
-            // Esto es importante para celdas que fueron deseleccionadas.
-            const allShiftCells = domCache.scheduleTableBody.querySelectorAll('td.shift-cell');
-            allShiftCells.forEach(cell => {
-                cell.classList.remove('selected-border-top', 'selected-border-right', 'selected-border-bottom', 'selected-border-left');
-            });
-        
-            if (selectedCells.length === 0) {
-                return; // No hay nada que hacer si no hay celdas seleccionadas
+            if (!svgOverlay || !table || !domCache.scheduleTableBody || !tableContainer) {
+                console.warn("SVG overlay, tabla, tbody o tableContainer no encontrados para dibujar bordes.");
+                return;
             }
         
-            // Crear un conjunto (Set) de identificadores únicos para las celdas seleccionadas para búsquedas rápidas
+            svgOverlay.innerHTML = ''; // Limpiar SVG anterior
+        
+            if (selectedCells.length === 0) {
+                svgOverlay.style.display = 'none';
+                return;
+            }
+            svgOverlay.style.display = 'block';
+        
+            // 1. Establecer el tamaño del SVG para que coincida con el área scrolleable del contenedor de la tabla.
+            const svgWidth = tableContainer.scrollWidth;
+            const svgHeight = tableContainer.scrollHeight;
+        
+            svgOverlay.setAttribute('width', svgWidth);
+            svgOverlay.setAttribute('height', svgHeight);
+            svgOverlay.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+            svgOverlay.style.transform = ''; // Asegurarse de que no haya transformaciones previas
+        
             const selectedCellIds = new Set();
             selectedCells.forEach(sc => {
-                // Asumiendo que cellInfo (sc) tiene rowIndex y colIndex
                 selectedCellIds.add(`${sc.rowIndex}_${sc.colIndex}`);
             });
         
-            selectedCells.forEach(cellInfo => {
-                const { tdElement, rowIndex, colIndex } = cellInfo;
+            const segments = new Set();
+            const fragment = document.createDocumentFragment(); // <--- CREAR DOCUMENT FRAGMENT
         
-                // Comprobar vecina de ARRIBA
+            // USA LA VARIABLE GLOBAL (calculada en Paso 1)
+            const strokeWidth = globalSvgStrokeWidth; 
+            const halfStroke = strokeWidth / 2;
+        
+            selectedCells.forEach((cellInfo) => {
+                const { tdElement, rowIndex, colIndex } = cellInfo;
+                if (!tdElement) return;
+        
+                // Usar offsetTop y offsetLeft de la celda. Estas son relativas al offsetParent.
+                // Si la tabla es el offsetParent y está al inicio del tableContainer (que tiene el scroll),
+                // estas coordenadas deberían funcionar directamente dentro del viewBox del SVG.
+                const cellTopInSVG = table.offsetTop + tdElement.offsetTop;
+                const cellLeftInSVG = table.offsetLeft + tdElement.offsetLeft;
+                const cellWidth = tdElement.offsetWidth;
+                const cellHeight = tdElement.offsetHeight;
+                const cellRightInSVG = cellLeftInSVG + cellWidth;
+                const cellBottomInSVG = cellTopInSVG + cellHeight;
+        
+                const addSegment = (x1, y1, x2, y2) => {
+                    const key = (x1 < x2 || (x1 === x2 && y1 < y2))
+                              ? `${x1},${y1},${x2},${y2}`
+                              : `${x2},${y2},${x1},${y1}`;
+                    if (!segments.has(key)) {
+                        segments.add(key);
+                        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute('x1', x1);
+                        line.setAttribute('y1', y1);
+                        line.setAttribute('x2', x2);
+                        line.setAttribute('y2', y2);
+                        line.setAttribute('class', 'marching-ants-svg-line');
+                        fragment.appendChild(line); // <--- AÑADIR AL FRAGMENTO
+                    }
+                };
+        
+                // Dibuja las líneas para que el *centro* del trazo esté en el borde de la celda.
+                // stroke-linejoin: round y stroke-linecap: round ayudarán con las esquinas.
+                // Borde Superior:
                 if (!selectedCellIds.has(`${rowIndex - 1}_${colIndex}`)) {
-                    tdElement.classList.add('selected-border-top');
+                    addSegment(cellLeftInSVG, cellTopInSVG, cellRightInSVG, cellTopInSVG);
                 }
-                // Comprobar vecina de la DERECHA
+                // Borde Derecho:
                 if (!selectedCellIds.has(`${rowIndex}_${colIndex + 1}`)) {
-                    tdElement.classList.add('selected-border-right');
+                    addSegment(cellRightInSVG, cellTopInSVG, cellRightInSVG, cellBottomInSVG);
                 }
-                // Comprobar vecina de ABAJO
+                // Borde Inferior:
                 if (!selectedCellIds.has(`${rowIndex + 1}_${colIndex}`)) {
-                    tdElement.classList.add('selected-border-bottom');
+                    addSegment(cellLeftInSVG, cellBottomInSVG, cellRightInSVG, cellBottomInSVG);
                 }
-                // Comprobar vecina de la IZQUIERDA
+                // Borde Izquierdo:
                 if (!selectedCellIds.has(`${rowIndex}_${colIndex - 1}`)) {
-                    tdElement.classList.add('selected-border-left');
+                    addSegment(cellLeftInSVG, cellTopInSVG, cellLeftInSVG, cellBottomInSVG);
                 }
             });
+        
+            svgOverlay.appendChild(fragment); // <--- AÑADIR EL FRAGMENTO AL SVG UNA SOLA VEZ
         }
-
-
+        
+        function initializeGlobalStrokeWidth() {
+            const svgOverlay = document.getElementById('selection-border-svg');
+            if (!svgOverlay) {
+                console.warn("SVG overlay no encontrado al intentar inicializar strokeWidth.");
+                return;
+            }
+            // Crear una línea temporal para obtener el estilo computado
+            const tempLineForStyle = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            tempLineForStyle.setAttribute('class', 'marching-ants-svg-line'); // Usa la clase de tu línea animada
+        
+            // Añadir temporalmente al DOM para que getComputedStyle funcione
+            svgOverlay.appendChild(tempLineForStyle);
+            const computedStyle = window.getComputedStyle(tempLineForStyle);
+            const sw = parseFloat(computedStyle.strokeWidth);
+            if (!isNaN(sw) && sw > 0) {
+                globalSvgStrokeWidth = sw;
+            }
+            svgOverlay.removeChild(tempLineForStyle); // Limpiar el elemento temporal
+            console.log("Ancho de trazo SVG global inicializado:", globalSvgStrokeWidth);
+        }
 
     </script>
 </body>
