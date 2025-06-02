@@ -1960,6 +1960,12 @@
     <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
     <div id="color-palette-popup-container"></div>
     <div id="animated-grouped-toolbar" class="hidden-toolbar">
+        <div id="selection-counter-container" class="text-center mb-1.5">
+            <span id="selection-counter-text" class="text-xs font-medium text-white bg-indigo-500 px-2 py-0.5 rounded-full shadow">
+                0 días seleccionados
+            </span>
+        </div>
+    
         <div class="toolbar-row" id="top-button-row">
             <div class="shift-group">
                 <button data-shift="M"><i class="fa-solid fa-sun fa-fw"></i> <span class="button-text">M</span></button>
@@ -1974,6 +1980,7 @@
                 <button data-shift="N2"><i class="fa-solid fa-moon fa-fw"></i> <span class="button-text">N2</span></button>
             </div>
         </div>
+    
         <div class="toolbar-row" id="bottom-button-row">
             <button data-shift="L"><i class="fa-solid fa-bed fa-fw"></i> <span class="button-text">L</span></button>
             <button data-shift="V"><i class="fa-solid fa-plane-departure fa-fw"></i> <span class="button-text">V</span></button>
@@ -1981,6 +1988,7 @@
             <button class="other-selection" data-shift="Otro"><i class="fa-solid fa-ellipsis fa-fw"></i> <span class="button-text">Otro</span></button>
         </div>
     </div>
+    
     
     <div id="add-employee-modal" class="modal hidden-by-default">
         <div class="modal-content max-w-md bg-gradient-to-br from-slate-100 to-sky-100 p-6 sm:p-8 rounded-2xl shadow-2xl">
@@ -3422,6 +3430,7 @@
             // --- Barra de Herramientas de Multiselección y Paleta de Colores ---
             domCache.multiselectToolbar = document.getElementById('animated-grouped-toolbar');
             domCache.colorPalettePopupContainer = document.getElementById('color-palette-popup-container');
+		    domCache.selectionCounterText = document.getElementById('selection-counter-text');
         
             // --- Leyenda (ahora dentro del modal) ---
             domCache.legendItemsContainer = document.getElementById('legend-items-container');
@@ -3690,59 +3699,41 @@
         function handleCellTouchStart(event) {
             const targetTd = event.target.closest('td.shift-cell');
             if (!targetTd) return;
+        
+            event.preventDefault(); 
+        
             const cellInfo = getCellInfoFromElement(targetTd);
             if (!cellInfo) return;
         
-            touchstartTarget = targetTd;
+            touchstartTarget = targetTd; 
             touchstartTime = new Date().getTime();
             touchstartX = event.touches[0].clientX;
             touchstartY = event.touches[0].clientY;
-            wasLongPress = false;
-            isDraggingToSelect = false; // Se activará en touchmove si hay suficiente movimiento
-            cellsAffectedByCurrentDrag = new Set(); // Limpiar para este nuevo toque/arrastre
-        
-            // Guardar el estado actual de selectedCells para el longPress
-            // Si es un toque simple, processCellClick se encargará de la selección.
-            // Si se convierte en arrastre, dragSelectionStartCellInfo se establecerá en touchmove.
-            const isAlreadySelected = selectedCells.some(sc => sc.tdElement === cellInfo.tdElement);
-        
-            if (isAlreadySelected) {
-                // Si ya está seleccionada, el inicio del arrastre potencial es esta celda.
-                dragSelectionStartCellInfo = cellInfo;
-                lastCellOverForDragSelectInfo = cellInfo;
-            } else {
-                // Si no está seleccionada, el inicio del arrastre se determinará en touchmove.
-                // O si es un toque simple, processCellClick lo manejará.
-                dragSelectionStartCellInfo = null;
-                lastCellOverForDragSelectInfo = null;
-            }
-            // Registrar celdas afectadas por si se convierte en arrastre
-            selectedCells.forEach(sc => {
-                cellsAffectedByCurrentDrag.add(sc.tdElement);
-            });
-        
+            
+            wasLongPress = false;       
+            isDraggingToSelect = false; 
+            didTapSelect = false;       
         
             if (longPressTimer) clearTimeout(longPressTimer);
+        
             longPressTimer = setTimeout(() => {
-                if (isDraggingToSelect) { // Si ya se está arrastrando, no es long press
+                if (isDraggingToSelect) { 
                     longPressTimer = null;
                     return;
                 }
                 wasLongPress = true;
-                const currentCellInfoOnTimeout = getCellInfoFromElement(touchstartTarget); // Usar el target original del touchstart
+                longPressTimer = null;
+                
+                const currentCellInfoOnTimeout = getCellInfoFromElement(touchstartTarget);
                 if (currentCellInfoOnTimeout) {
                     const currentValue = scheduleData[currentCellInfoOnTimeout.employee]?.[currentCellInfoOnTimeout.month]?.[currentCellInfoOnTimeout.day] || "";
-                    if (!SHIFT_TYPES.includes(currentValue)) { // Solo editar si no es un turno estándar
-                         event.preventDefault(); // Prevenir otros manejadores si es long press para editar
-                         editCellOnLongPress(currentCellInfoOnTimeout);
+                    if (!SHIFT_TYPES.includes(currentValue)) { 
+                        editCellOnLongPress(currentCellInfoOnTimeout); 
                     }
                 }
-                longPressTimer = null;
-            }, LONG_PRESS_DURATION);
-            // No llamar a processCellClick aquí directamente, se llamará en touchend si no fue arrastre/longpress
-            // o al inicio del arrastre en touchmove.
-            // updateNameHighlightsBasedOnSelection(); // Se llamará cuando selectedCells cambie
+            }, LONG_PRESS_DURATION); 
         }
+        
         
 
         function handleDocumentTouchMove(event) {
@@ -3753,23 +3744,30 @@
         
             if (!isDraggingToSelect && (deltaX > MAX_TOUCH_MOVE_THRESHOLD || deltaY > MAX_TOUCH_MOVE_THRESHOLD)) {
                 isDraggingToSelect = true;
+                wasLongPress = false; 
+                didTapSelect = true;  
+        
                 if (longPressTimer) {
                     clearTimeout(longPressTimer);
                     longPressTimer = null;
                 }
-                wasLongPress = false;
         
                 dragSelectionStartCellInfo = getCellInfoFromElement(touchstartTarget);
+                lastCellOverForDragSelectInfo = dragSelectionStartCellInfo; 
+                cellsAffectedByCurrentDrag = new Set(); 
+                 selectedCells.forEach(sc => { 
+                    cellsAffectedByCurrentDrag.add(sc.tdElement);
+                });
                 if (dragSelectionStartCellInfo && !selectedCells.some(sc => sc.tdElement === dragSelectionStartCellInfo.tdElement)) {
                     selectedCells.push(dragSelectionStartCellInfo);
                     dragSelectionStartCellInfo.tdElement.classList.add('cell-selected');
                     cellsAffectedByCurrentDrag.add(dragSelectionStartCellInfo.tdElement);
                 }
-                lastCellOverForDragSelectInfo = dragSelectionStartCellInfo;
             }
         
-            if (!isDraggingToSelect || !dragSelectionStartCellInfo) return;
-            event.preventDefault();
+            if (!isDraggingToSelect || !dragSelectionStartCellInfo) return; 
+        
+            event.preventDefault(); 
         
             const currentTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
             const currentTd = currentTarget ? currentTarget.closest('td.shift-cell') : null;
@@ -3777,7 +3775,7 @@
         
             const currentCellInfo = getCellInfoFromElement(currentTd);
             if (!currentCellInfo || (lastCellOverForDragSelectInfo && currentCellInfo.tdElement === lastCellOverForDragSelectInfo.tdElement)) {
-                return;
+                return; 
             }
             lastCellOverForDragSelectInfo = currentCellInfo;
         
@@ -3793,13 +3791,14 @@
         
                 const isInCurrentRect = cellIterInfo.rowIndex >= minRow && cellIterInfo.rowIndex <= maxRow &&
                                         cellIterInfo.colIndex >= minCol && cellIterInfo.colIndex <= maxCol;
+                
                 let isSelectedInGlobalList = selectedCells.some(sc => sc.tdElement === cellIterInfo.tdElement);
         
                 if (isInCurrentRect) {
                     if (!isSelectedInGlobalList) {
                         selectedCells.push(cellIterInfo);
                         cellElement.classList.add('cell-selected');
-                        cellsAffectedByCurrentDrag.add(cellElement);
+                        cellsAffectedByCurrentDrag.add(cellElement); 
                     }
                 } else {
                     if (isSelectedInGlobalList && cellsAffectedByCurrentDrag.has(cellElement)) {
@@ -3809,46 +3808,38 @@
                     }
                 }
             });
+        
             updateMultiselectToolbar();
             updateNameHighlightsBasedOnSelection();
-            updateDayHeaderHighlights(); // <--- LLAMADA AÑADIDA
+            updateDayHeaderHighlights();
+            updateSelectedCellsMergedBorders(); 
         }
 
         function handleDocumentTouchEnd(event) {
-            const wasActuallyDragging = isDraggingToSelect; // Guardar estado antes de resetear
-            if (isDraggingToSelect) {
-                isDraggingToSelect = false; // Resetear estado de arrastre
-            }
-        
             if (longPressTimer) {
                 clearTimeout(longPressTimer);
                 longPressTimer = null;
             }
         
-            if (!wasActuallyDragging && !wasLongPress && touchstartTarget) {
-                // Solo procesar como clic/toque si NO fue un arrastre Y NO fue una pulsación larga
+            if (!isDraggingToSelect && !wasLongPress && touchstartTarget && !didTapSelect) {
                 const cellInfo = getCellInfoFromElement(touchstartTarget);
                 if (cellInfo) {
-                    // Verificar si el movimiento fue mínimo (para distinguirlo de un scroll accidental)
                     const deltaX = Math.abs(event.changedTouches[0].clientX - touchstartX);
                     const deltaY = Math.abs(event.changedTouches[0].clientY - touchstartY);
         
                     if (deltaX <= MAX_TOUCH_MOVE_THRESHOLD && deltaY <= MAX_TOUCH_MOVE_THRESHOLD) {
-                        // Es un toque simple, procesarlo.
-                        // El tercer argumento 'false' para isCtrlOrMetaKey, y 'true' para isTap
-                        processCellClick(cellInfo, false, false, true);
+                        processCellClick(cellInfo, false, false, true); 
                     }
                 }
             }
         
-            // Resetear variables de estado del toque
             touchstartTarget = null;
             touchstartTime = 0;
-            dragSelectionStartCellInfo = null; // Asegurarse de resetear esto también
+            dragSelectionStartCellInfo = null;
             lastCellOverForDragSelectInfo = null;
-            // cellsAffectedByCurrentDrag se limpia al inicio de un nuevo toque/arrastre
-            // updateNameHighlightsBasedOnSelection(); // Ya se llama dentro de processCellClick o al final de touchmove
+            cellsAffectedByCurrentDrag = new Set(); 
         }
+        
         
 
 
@@ -6958,13 +6949,16 @@
         }
 		
         function processCellClick(cellInfo, isShiftKey, isCtrlOrMetaKey, isTap = false) {
+            if (!cellInfo || !cellInfo.tdElement) return;
+        
             if (isShiftKey && lastSelectedCellInfo) {
-                clearSelection(false); // Limpiar selección anterior sin ocultar la barra de herramientas inmediatamente
+                // --- Lógica de Selección con Shift ---
+                clearSelection(false); 
                 const minRow = Math.min(lastSelectedCellInfo.rowIndex, cellInfo.rowIndex);
                 const maxRow = Math.max(lastSelectedCellInfo.rowIndex, cellInfo.rowIndex);
                 const minCol = Math.min(lastSelectedCellInfo.colIndex, cellInfo.colIndex);
                 const maxCol = Math.max(lastSelectedCellInfo.colIndex, cellInfo.colIndex);
-        
+                
                 const allCellsInTable = domCache.scheduleTableBody.querySelectorAll('td.shift-cell');
                 allCellsInTable.forEach(cellElement => {
                     const cellIterInfo = getCellInfoFromElement(cellElement);
@@ -6973,44 +6967,45 @@
                         cellIterInfo.colIndex >= minCol && cellIterInfo.colIndex <= maxCol) {
                         if (!selectedCells.some(sc => sc.tdElement === cellIterInfo.tdElement)) {
                             selectedCells.push(cellIterInfo);
-                            cellIterInfo.tdElement.classList.add('cell-selected');
+                            cellElement.classList.add('cell-selected');
                         }
                     }
                 });
-            } else if (isCtrlOrMetaKey || isTap) {
-                // Lógica para Ctrl/Cmd + Clic o toques múltiples
-                // Si es un toque y la celda ya es la única seleccionada, la deselecciona.
-                if (isTap && selectedCells.length === 1 && selectedCells[0].tdElement === cellInfo.tdElement) {
-                    toggleCellSelection(cellInfo);
-                } else if (isCtrlOrMetaKey) { // Ctrl/Cmd siempre alterna
-                    toggleCellSelection(cellInfo);
-                } else if (isTap && !selectedCells.some(sc => sc.tdElement === cellInfo.tdElement)) {
-                    // Si es un toque en una nueva celda y no hay otras seleccionadas (o queremos reemplazar la selección)
+            } else if (isCtrlOrMetaKey) {
+                // --- Lógica de Selección con Ctrl/Cmd (alternar) ---
+                toggleCellSelection(cellInfo);
+                lastSelectedCellInfo = cellInfo; 
+            } else if (isTap) {
+                // --- Lógica para Tap Simple ---
+                const isCurrentlySelected = selectedCells.some(sc => sc.tdElement === cellInfo.tdElement);
+        
+                if (!isCurrentlySelected && selectedCells.length > 0) {
                     clearSelection(false);
                     toggleCellSelection(cellInfo);
-                } else if (isTap) { // Si es un toque y hay otras celdas seleccionadas, añade a la selección
+                } else {
                     toggleCellSelection(cellInfo);
                 }
-                lastSelectedCellInfo = cellInfo; // Actualizar la última celda interactuada
-            } else { // Clic simple sin modificadores
-                // Si la celda no está seleccionada, o si hay múltiples celdas seleccionadas,
-                // limpiar la selección actual y seleccionar solo esta celda.
-                if (!selectedCells.some(sc => sc.tdElement === cellInfo.tdElement) || selectedCells.length > 1) {
+                lastSelectedCellInfo = cellInfo; 
+            } else { 
+                // --- Lógica para Clic Simple de Ratón (sin Shift ni Ctrl/Cmd) ---
+                const isCurrentlySelected = selectedCells.some(sc => sc.tdElement === cellInfo.tdElement);
+                if (!isCurrentlySelected || selectedCells.length > 1) {
                     clearSelection(false);
                     toggleCellSelection(cellInfo);
-                } else if (selectedCells.length === 1 && selectedCells[0].tdElement === cellInfo.tdElement) {
-                    // Si la celda ya es la única seleccionada, un clic simple la deselecciona.
+                } else { 
                      toggleCellSelection(cellInfo);
                 }
-                lastSelectedCellInfo = cellInfo;
+                lastSelectedCellInfo = cellInfo; 
             }
+        
             updateMultiselectToolbar();
             updateNameHighlightsBasedOnSelection();
             updateDayHeaderHighlights();
-            updateSelectedCellsMergedBorders(); // <--- LLAMADA A LA NUEVA FUNCIÓN
+            updateSelectedCellsMergedBorders(); 
         }
 
         function toggleCellSelection(cellInfo) {
+            if (!cellInfo || !cellInfo.tdElement) return;
             const existingIndex = selectedCells.findIndex(sc => sc.tdElement === cellInfo.tdElement);
             if (existingIndex > -1) {
                 selectedCells.splice(existingIndex, 1);
@@ -7019,9 +7014,8 @@
                 selectedCells.push(cellInfo);
                 cellInfo.tdElement.classList.add('cell-selected');
             }
-            // No llamamos a updateMultiselectToolbar aquí, se hace en processCellClick
-            updateNameHighlightsBasedOnSelection(); // <--- LLAMADA AÑADIDA
         }
+        
         
         function clearSelection(hideToolbar = true) {
             selectedCells.forEach(cell => {
@@ -7067,21 +7061,28 @@
         
         
         function updateMultiselectToolbar() {
-            if (!domCache.multiselectToolbar) {
-                console.warn("updateMultiselectToolbar: domCache.multiselectToolbar no está definido.");
+            if (!domCache.multiselectToolbar || !domCache.selectionCounterText) { // Asegurarse que ambos existan
+                console.warn("updateMultiselectToolbar: Elementos de la barra o contador no definidos en domCache.");
                 return;
             }
         
-            if (selectedCells.length === 0) {
-                // Ocultar la barra: quitar 'visible' y añadir 'hidden-toolbar'
+            const count = selectedCells.length; // `selectedCells` es tu array global de celdas seleccionadas
+        
+            if (count === 0) {
                 domCache.multiselectToolbar.classList.remove('visible');
                 domCache.multiselectToolbar.classList.add('hidden-toolbar');
+                domCache.selectionCounterText.textContent = '0 días seleccionados'; // Texto por defecto
             } else {
-                // Mostrar la barra: quitar 'hidden-toolbar' y añadir 'visible'
                 domCache.multiselectToolbar.classList.remove('hidden-toolbar');
                 domCache.multiselectToolbar.classList.add('visible');
+                if (count === 1) {
+                    domCache.selectionCounterText.textContent = '1 día seleccionado';
+                } else {
+                    domCache.selectionCounterText.textContent = `${count} días seleccionados`;
+                }
             }
         }
+        
         
         function applyShiftToSelection(newShift) {
             if (selectedCells.length === 0) {
