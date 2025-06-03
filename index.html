@@ -770,18 +770,26 @@
             transform: translateY(-50%); 
         }
         #tips-modal .modal-content {
-    		max-width: 42rem;
-    		background-color: #f9fafb;
-    		border-radius: 0.75rem;
-    		box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-    		padding: 1.5rem;
-    		width: 90%;
-    		max-height: 85vh;
-    		overflow-y: auto;
-    		display: flex;
-    		flex-direction: column;
-    		margin-bottom: 5vh;
+            background-color: #f9fafb; /* Fondo */
+            border-radius: 0.75rem; /* Bordes redondeados */
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); /* Sombra */
+        
+            display: flex; /* CLAVE: Habilitar Flexbox */
+            flex-direction: column; /* CLAVE: Organizar hijos verticalmente (header, body, footer) */
+        
+            width: 90%; /* Ancho relativo al viewport */
+            max-width: 48rem; /* Un ancho máximo razonable (ej. 3xl o 4xl de Tailwind) */
+        
+            /* --- AJUSTES DE ALTURA --- */
+            height: 85vh; /* ALTURA MÁXIMA RELATIVA AL VIEWPORT (ej. 85% de la altura visible) */
+            /* O puedes usar una max-height fija si lo prefieres, pero vh es más adaptable */
+            /* max-height: 600px; */ /* EJEMPLO: ALTURA MÁXIMA FIJA REDUCIDA */
+            /* Es importante que 'height' o 'max-height' estén definidos para que 'flex-grow' en el cuerpo funcione. */
+        
+            /* El padding se aplicará a las secciones internas (cabecera, cuerpo, pie) */
+            /* overflow-y: auto; /* ELIMINAR de aquí, se manejará en el cuerpo del modal */
         }
+        
         #tips-modal h3 { font-family: 'Inter', sans-serif; }
         #tips-modal h4 { font-family: 'Inter', sans-serif; font-size: 1rem; margin-top: 0.75rem; }
         #tips-modal ul { margin-left: 1rem; }
@@ -2116,199 +2124,166 @@
     
 
     <div id="tips-modal" class="modal hidden-by-default">
-        <div class="modal-content max-w-xs sm:max-w-xl md:max-w-3xl lg:max-w-6xl bg-gradient-to-br from-slate-100 to-indigo-100 p-4 sm:p-6 md:p-10 rounded-xl sm:rounded-2xl shadow-2xl">
-            <div class="flex justify-between items-center mb-6 sm:mb-8 pb-4 sm:pb-5 border-b-2 border-indigo-200">
-                <div class="flex items-center">
-                    <i class="fas fa-star text-amber-400 mr-2 sm:mr-3 md:mr-4 text-3xl sm:text-4xl md:text-5xl transform transition-all duration-300 ease-in-out hover:scale-125 hover:rotate-[-10deg]"></i>
-                    <div>
-                        <h3 class="text-2xl sm:text-3xl md:text-4xl font-bold text-indigo-700 leading-tight">Guía Rápida</h3>
-                        <p class="text-md sm:text-lg md:text-xl text-indigo-500 font-medium leading-tight">y Consejos Clave</p>
+        <div class="modal-content"> <!-- Estilos de flex, width, height/max-height van aquí -->
+    
+            <!-- CABECERA FIJA -->
+            <div id="tips-modal-header" class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b-2 border-indigo-200">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-star text-amber-400 mr-2 sm:mr-3 text-2xl sm:text-3xl transform transition-all duration-300 ease-in-out hover:scale-125 hover:rotate-[-10deg]"></i>
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold text-indigo-700 leading-tight">Guía Rápida</h3>
+                            <p class="text-sm sm:text-base text-indigo-500 font-medium leading-tight">y Consejos Clave</p>
+                        </div>
                     </div>
+                    <button id="close-tips-modal" class="text-slate-400 hover:text-indigo-600 transition-colors duration-300 p-1">
+                        <i class="fas fa-times fa-lg sm:fa-xl"></i>
+                    </button>
                 </div>
-                <button id="close-tips-modal" class="text-slate-400 hover:text-indigo-600 transition-colors duration-300 p-1">
-                    <i class="fas fa-times fa-2x sm:fa-3x"></i>
-                </button>
             </div>
-        
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-5 md:gap-y-6 text-slate-800 text-sm sm:text-base leading-relaxed">
-        
-                
-                <div class="space-y-5 md:space-y-6"> 
-        
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-rocket text-lg sm:text-xl"></i>
+    
+            <!-- CUERPO DEL MODAL (CON SCROLL) -->
+            <div id="tips-modal-body-content" class="flex-grow overflow-y-auto p-4 sm:p-6">
+                <!-- El grid con los consejos va aquí dentro -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 md:gap-x-6 gap-y-4 md:gap-y-5 text-slate-800 text-xs sm:text-sm leading-relaxed">
+                    <!-- Tarjeta de Consejo 1: Primeros Pasos -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                        <h4 class="text-md sm:text-lg font-bold text-indigo-600 mb-3 pb-1.5 border-b border-indigo-100 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                                <i class="fas fa-rocket text-sm"></i>
                             </div>
                             Primeros Pasos
                         </h4>
-                        <ul class="space-y-3 sm:space-y-3.5">
+                        <ul class="space-y-2.5 text-xs sm:text-sm">
                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-file-import"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cargar Horario:</strong> Usa "Importar CSV" para un horario existente o "Nuevo Horario Vacío" para empezar de cero.</div>
+                                <div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 shadow-sm"><i class="fas fa-file-import text-xs"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Cargar Horario:</strong> Usa "Importar CSV" o "Nuevo Horario Vacío".</div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-save"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Guardado Esencial:</strong>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Guardado Local:</strong> Almacena tu progreso en el navegador. ¡Ojo! Esto no modifica tu archivo CSV original.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Autoguardado:</strong> Actívalo y la app guardará los cambios automáticamente cada 30 segundos.</p>
-                                </div>
+                                <div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 shadow-sm"><i class="fas fa-save text-xs"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Guardado:</strong> Usa "Guardado Local" y considera activar "Autoguardado".</div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-cogs"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Configuración App:</strong> Desde "Gestionar Configuración App", puedes exportar una copia completa de todo (horario, notas, colores, etc.) o importar una configuración guardada previamente.</div>
+                                <div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 shadow-sm"><i class="fas fa-cogs text-xs"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Configuración App:</strong> Exporta/Importa todo el estado de tu app (horario, notas, personalizaciones, etc.).</div>
                             </li>
                         </ul>
                     </div>
-        
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-sky-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                               <i class="fas fa-hand-pointer text-lg sm:text-xl"></i>
-                            </div>
-                            Manejo del Horario
-                        </h4>
-                        <ul class="space-y-3 sm:space-y-3.5">
-                            <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-mouse-pointer"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Seleccionar Celdas:</strong>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Un Clic/Toque:</strong> Selecciona una celda.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Ctrl/Cmd + Clic (PC):</strong> Añade o quita celdas de la selección actual.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Clic + Arrastrar (PC/Móvil):</strong> Selecciona un bloque de celdas contiguas.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Limpiar Selección:</strong> Clic derecho (PC) o haz un toque fuera de la tablas.</p>
-                                </div>
-                            </li>
-                            <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-700 text-xs sm:text-sm shadow-sm"> <i class="fas fa-bolt"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Barra de Acciones Rápida (al seleccionar celdas):</strong>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Asigna turnos estándar (<code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">M</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">T</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">N</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">L</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">V</code>, <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">B</code>) con un clic.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Botón <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Otro</code>: Abre una ventana para escribir un texto personalizado (ej. "Reunión", "Curso", etc.).</p>
-                                </div>
-                            </li>
-                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 text-xs sm:text-sm shadow-sm"> <i class="fas fa-search-plus"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Feedback Visual:</strong> Al pasar el ratón sobre una celda de turno, esta se ampliará ligeramente para destacar sobre cuál estás interactuando.</div>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                             <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-slate-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-keyboard text-lg sm:text-xl"></i>
-                            </div>
-                            Atajos de Teclado (PC/Mac)
-                        </h4>
-                        <ul class="space-y-2.5 sm:space-y-3">
-                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Ctrl+Z</code> / <code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Cmd+Z</code>: Deshacer última acción.</div></li>
-                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Ctrl+Y</code> / <code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Cmd+Y</code>: Rehacer acción deshecha.</div></li>
-                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Ctrl/Cmd + Clic</code>: Añadir o quitar celdas de la selección.</div></li>
-                            <li class="flex items-center"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-keyboard"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-medium font-mono shadow-sm">Esc</code>: Limpiar selección de celdas o cerrar ventanas emergentes.</div></li>
-                        </ul>
-                    </div>
-                </div>
-        
-                
-                <div class="space-y-5 md:space-y-6"> 
-                    
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-green-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-users-cog text-lg sm:text-xl"></i>
-                            </div>
-                            Gestión de Empleados
-                        </h4>
-                        <ul class="space-y-3 sm:space-y-3.5">
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-green-100 rounded-full text-green-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-user-plus"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Añadir:</strong> Usa el botón "Añadir Empleado" al final de la tabla.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-pen"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Editar Nombre:</strong> Doble clic (PC) o pulsación larga (Móvil) sobre el nombre del empleado.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-purple-100 rounded-full text-purple-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-sort"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Reordenar:</strong> Simplemente arrastra el nombre del empleado a su nueva posición en la lista.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-red-100 rounded-full text-red-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-user-minus"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Eliminar:</strong> Haz clic en el icono de la papelera (<i class="fas fa-trash-alt"></i>) que aparece junto al nombre.</div></li>
-                        </ul>
-                    </div>
-        
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-cyan-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-eye text-lg sm:text-xl"></i>
+    
+                    <!-- Tarjeta de Consejo 2: Vistas y Navegación (MOVIDA AQUÍ) -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                        <h4 class="text-md sm:text-lg font-bold text-cyan-600 mb-3 pb-1.5 border-b border-cyan-100 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-cyan-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                                <i class="fas fa-eye text-sm"></i>
                             </div>
                             Vistas y Navegación
                         </h4>
-                        <ul class="space-y-3 sm:space-y-3.5">
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-calendar-alt"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cambiar Vista:</strong> Alterna entre "Vista Mensual" y "Vista Anual" con los botones superiores.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-calendar-day"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Navegar Meses (Vista Mensual):</strong> Usa las pestañas (ENE, FEB...) para saltar rápidamente de un mes a otro.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-calendar-week"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Cambiar Año:</strong> Haz clic directamente sobre el año en el título del horario (ej. "... Enero <strong>2024</strong>") para editarlo.</div></li>
+                        <ul class="space-y-2.5 text-xs sm:text-sm">
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 shadow-sm"><i class="fas fa-calendar-alt text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Cambiar Vista:</strong> Alterna "Vista Mensual" y "Vista Anual".</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 shadow-sm"><i class="fas fa-calendar-day text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Navegar Meses:</strong> Usa las pestañas (ENE, FEB...).</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-cyan-100 rounded-full text-cyan-600 shadow-sm"><i class="fas fa-calendar-week text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Cambiar Año:</strong> Clic en el año en el título del horario.</div></li>
                         </ul>
                     </div>
-        
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-paint-brush text-lg sm:text-xl"></i>
+    
+                    <!-- Tarjeta de Consejo 3: Manejo del Horario -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                        <h4 class="text-md sm:text-lg font-bold text-sky-600 mb-3 pb-1.5 border-b border-sky-100 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-sky-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                               <i class="fas fa-hand-pointer text-sm"></i>
                             </div>
-                            Personalización y Configuración
+                            Manejo del Horario
                         </h4>
-                        <ul class="space-y-3.5">
+                        <ul class="space-y-2.5 text-xs sm:text-sm">
                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-palette"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Colores y Horarios de Turno</strong> (en "Personalización" <i class="fas fa-palette text-xs"></i>):
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Cambia los colores de fondo para cada tipo de turno.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Define las horas de inicio y fin de los turnos principales.</p>
-                                </div>
+                                <div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 shadow-sm"><i class="fas fa-mouse-pointer text-xs"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Seleccionar Celdas:</strong> Un clic, Ctrl/Cmd+Clic, o arrastrar. Clic derecho (PC) o toque fuera para limpiar.</div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-signature"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Editor de Logo</strong> (en "Personalización" <i class="fas fa-palette text-xs"></i> <i class="fas fa-chevron-right text-2xs mx-0.5"></i> "Editar Logo"):
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Modifica el texto, número de estrellas y colores de tu logo.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Ajusta su espaciado y tamaño para la web y exportaciones PDF.</p>
-                                </div>
+                                <div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-700 shadow-sm"><i class="fas fa-bolt text-xs"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Barra Rápida:</strong> Asigna turnos (M, T, N, L, V, B) o "Otro" para texto personalizado.</div>
                             </li>
                             <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-font"></i></div> 
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Tamaños de Fuente PDF</strong> (en "Personalización" <i class="fas fa-palette text-xs"></i>):
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Ajusta el tamaño (en puntos, "pt") de los textos en los PDF exportados.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1">- Puedes cambiar el tamaño para: Título Principal, Títulos de Sección, Cabeceras y Celdas de la Tabla, Nombres de Empleado y Pie de Página.</p>
-                                </div>
-                            </li>
-                            <li class="flex">
-                                <div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-gavel"></i></div>
-                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Normas del Horario</strong> (en "Normas" <i class="fas fa-gavel text-xs"></i>):
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Personas por Turno:</strong> Define el mínimo y máximo de empleados necesarios para los turnos de Mañana, Tarde y Noche.</p>
-                                    <p class="text-slate-600 text-[0.85rem] sm:text-[0.9rem] mt-1 ml-1"><strong class="text-slate-700">- Máx. Días Consecutivos:</strong> Establece cuántos días seguidos puede trabajar un empleado antes de infringir la norma.</p>
-                                </div>
+                                <div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-sky-100 rounded-full text-sky-600 shadow-sm"><i class="fas fa-search-plus text-xs"></i></div>
+                                <div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Feedback Visual:</strong> Las celdas de turno se agrandan al pasar el ratón.</div>
                             </li>
                         </ul>
                     </div>
-        
-                    
-                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.015]">
-                        <h4 class="text-lg sm:text-xl font-bold text-indigo-600 mb-4 sm:mb-5 pb-2 sm:pb-2.5 border-b border-indigo-200 flex items-center">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 sm:mr-3.5 flex-shrink-0 bg-teal-500 text-white rounded-full flex items-center justify-center shadow-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-8deg]">
-                                <i class="fas fa-tools text-lg sm:text-xl"></i>
+    
+                    <!-- Tarjeta de Consejo 4: Gestión de Empleados -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                        <h4 class="text-md sm:text-lg font-bold text-green-600 mb-3 pb-1.5 border-b border-green-100 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-green-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                                <i class="fas fa-users-cog text-sm"></i>
+                            </div>
+                            Gestión de Empleados
+                        </h4>
+                        <ul class="space-y-2.5 text-xs sm:text-sm">
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-green-100 rounded-full text-green-600 shadow-sm"><i class="fas fa-user-plus text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Añadir:</strong> Botón al final de la tabla.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 shadow-sm"><i class="fas fa-pen text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Editar Nombre:</strong> Doble clic o pulsación larga.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-purple-100 rounded-full text-purple-600 shadow-sm"><i class="fas fa-sort text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Reordenar:</strong> Arrastra el nombre del empleado.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-red-100 rounded-full text-red-600 shadow-sm"><i class="fas fa-user-minus text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Eliminar:</strong> Icono de papelera junto al nombre.</div></li>
+                        </ul>
+                    </div>
+    
+                    <!-- Tarjeta de Consejo 5: Personalización -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                         <h4 class="text-md sm:text-lg font-bold text-pink-600 mb-3 pb-1.5 border-b border-pink-100 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                                <i class="fas fa-paint-brush text-sm"></i>
+                            </div>
+                            Personalización
+                        </h4>
+                        <ul class="space-y-2.5 text-xs sm:text-sm">
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 shadow-sm"><i class="fas fa-palette text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Colores y Horarios:</strong> En "Personalización" (<i class="fas fa-palette text-xs"></i>), ajusta colores de turno y sus horas.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 shadow-sm"><i class="fas fa-signature text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Logo:</strong> Edita texto, estrellas y colores del logo en "Personalización" <i class="fas fa-chevron-right text-2xs mx-0.5"></i> "Editar Logo".</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 shadow-sm"><i class="fas fa-font text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Fuentes PDF:</strong> Ajusta tamaños de texto para exportaciones PDF en "Personalización".</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-pink-100 rounded-full text-pink-600 shadow-sm"><i class="fas fa-gavel text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Normas:</strong> Define personas por turno y máx. días consecutivos en "Normas" (<i class="fas fa-gavel text-xs"></i>).</div></li>
+                        </ul>
+                    </div>
+    
+                    <!-- Tarjeta de Consejo 6: Herramientas Adicionales (MOVIDA AQUÍ) -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                        <h4 class="text-md sm:text-lg font-bold text-teal-600 mb-3 pb-1.5 border-b border-teal-100 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-teal-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                                <i class="fas fa-tools text-sm"></i>
                             </div>
                             Herramientas Adicionales
                         </h4>
-                        <ul class="space-y-3 sm:space-y-3.5">
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-undo-alt"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Deshacer/Rehacer:</strong> Desde "Historial" <i class="fas fa-history text-xs"></i> o con <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+Z</code> / <code class="bg-slate-200 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+Y</code>.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-history"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Historial de Cambios:</strong> Consulta el registro de todas las modificaciones realizadas.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-sticky-note"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Notas Generales:</strong> Un espacio para añadir comentarios o recordatorios sobre el horario.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-file-export"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Exportaciones:</strong> Genera archivos CSV, .ics (para Calendar) y PDF del horario o las estadísticas.</div></li>
-                            <li class="flex items-start"><div class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 text-xs sm:text-sm shadow-sm"><i class="fas fa-chart-bar"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-900">Estadísticas:</strong> Analiza datos de turnos, días trabajados, fines de semana libres y más. Puedes filtrar por mes/año y ver detalles por empleado.</div></li>
+                        <ul class="space-y-2.5 text-xs sm:text-sm">
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 shadow-sm"><i class="fas fa-undo-alt text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Deshacer/Rehacer:</strong> Desde "Historial" (<i class="fas fa-history text-xs"></i>) o atajos.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 shadow-sm"><i class="fas fa-history text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Historial:</strong> Consulta el registro de cambios.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 shadow-sm"><i class="fas fa-sticky-note text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Notas:</strong> Añade comentarios generales al horario.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 shadow-sm"><i class="fas fa-file-export text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Exportaciones:</strong> CSV, .ics (Calendar), PDF del horario/estadísticas.</div></li>
+                            <li class="flex"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 shadow-sm"><i class="fas fa-chart-bar text-xs"></i></div><div class="flex-1 min-w-0"><strong class="font-semibold text-slate-700">Estadísticas:</strong> Analiza turnos, días trabajados, FDS libres y más.</div></li>
                         </ul>
                     </div>
+    
+                    <!-- Tarjeta de Consejo 7: Atajos de Teclado (MOVIDA AL FINAL) -->
+                    <div class="group bg-white/80 backdrop-blur-lg p-4 sm:p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-out">
+                        <h4 class="text-md sm:text-lg font-bold text-slate-600 mb-3 pb-1.5 border-b border-slate-200 flex items-center">
+                            <div class="w-7 h-7 mr-2.5 flex-shrink-0 bg-slate-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                                <i class="fas fa-keyboard text-sm"></i>
+                            </div>
+                            Atajos de Teclado (PC/Mac)
+                        </h4>
+                        <ul class="space-y-2 text-xs sm:text-sm">
+                            <li class="flex items-center"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 shadow-sm"><i class="fas fa-keyboard text-xs"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 py-0.5 rounded text-xs font-medium font-mono shadow-sm">Ctrl+Z</code> / <code class="bg-slate-300 px-1.5 py-0.5 rounded text-xs font-medium font-mono shadow-sm">Cmd+Z</code>: Deshacer.</div></li>
+                            <li class="flex items-center"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 shadow-sm"><i class="fas fa-keyboard text-xs"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 py-0.5 rounded text-xs font-medium font-mono shadow-sm">Ctrl+Y</code> / <code class="bg-slate-300 px-1.5 py-0.5 rounded text-xs font-medium font-mono shadow-sm">Cmd+Y</code>: Rehacer.</div></li>
+                            <li class="flex items-center"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 shadow-sm"><i class="fas fa-keyboard text-xs"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 py-0.5 rounded text-xs font-medium font-mono shadow-sm">Ctrl/Cmd + Clic</code>: Selección Múltiple.</div></li>
+                            <li class="flex items-center"><div class="flex-shrink-0 w-5 h-5 mr-2 flex items-center justify-center bg-slate-200 rounded-full text-slate-600 shadow-sm"><i class="fas fa-keyboard text-xs"></i></div><div class="flex-1 min-w-0"><code class="bg-slate-300 px-1.5 py-0.5 rounded text-xs font-medium font-mono shadow-sm">Esc</code>: Limpiar selección / Cerrar modales.</div></li>
+                        </ul>
+                    </div>
+    
                 </div>
             </div>
-        
-            <div class="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t-2 border-indigo-200 text-center">
-                <button id="ok-tips-modal" class="action-button w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300/50 text-white px-8 sm:px-12 py-3 sm:py-3.5 rounded-lg text-md sm:text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
+    
+            <!-- PIE DE PÁGINA FIJO -->
+            <div id="tips-modal-footer" class="flex-shrink-0 p-4 sm:p-6 pt-4 sm:pt-5 border-t-2 border-indigo-200 text-center">
+                <button id="ok-tips-modal" class="action-button w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300/50 text-white px-6 sm:px-10 py-2.5 sm:py-3 rounded-lg text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-150 ease-in-out transform hover:scale-105">
                     ¡Entendido!
                 </button>
             </div>
+    
         </div>
     </div>
     
